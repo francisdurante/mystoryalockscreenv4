@@ -1,0 +1,142 @@
+package lockscreen.myoneworld.com.myoneworldlockscreen.registration;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.CountDownTimer;
+import android.widget.Toast;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
+import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
+import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
+import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLogin;
+import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
+import lockscreen.myoneworld.com.myoneworldlockscreen.login.LoginDAO;
+import lockscreen.myoneworld.com.myoneworldlockscreen.login.LoginVO;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.makeNotification;
+
+public class RegistrationDAO {
+
+    public void registration(RegistrationVO vo, Context context, Activity activity){
+        Utility util = new Utility();
+        util.showLoading(context);
+        RequestParams rp = new RequestParams();
+        ApiClass api = new ApiClass();
+        rp.add("first_name", vo.getFirstName());
+        rp.add("last_name", vo.getLastName());
+        rp.add("email", vo.getEmail());
+        rp.add("password", vo.getPassword());
+        rp.add("birthday", vo.getBirthday());
+        rp.add("country_name", vo.getCountry());
+        rp.add("mobile_number", vo.getContact());
+        rp.add("address", vo.getAddress());
+        rp.put("applications[0]", 2);
+        rp.put("applications[1]", 4);
+        rp.put("applications[2]", 5);
+
+        api.getByUrl(G_VERSION_REGISTRATION_LIVE,rp,new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    JSONObject serverResp = new JSONObject(response.toString());
+                    vo.setRegistrationStatusMessage(serverResp.getString("status"));
+                    if("success".equals(vo.getRegistrationStatusMessage())){
+                        makeNotification("success",REGISTER_SUCCESS,activity);
+                        new CountDownTimer(2000,1000){
+
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                context.startActivity(new Intent(context,ActivityLogin.class));
+                                activity.finish();
+                            }
+                        }.start();
+                    }else{
+                        util.hideLoading();
+                        makeNotification("error",vo.getRegistrationStatusMessage(),activity);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                if(null == errorResponse){
+                    makeNotification("error","Please check connection.",activity);
+                    util.hideLoading();
+                }else{
+                    makeNotification("error","Error occured while signing in.",activity);
+                }
+            }
+        });
+    }
+    public void registration(RegistrationVO registerVO, LoginVO loginVO,Context context,Activity activity){
+        RequestParams rp = new RequestParams();
+        ApiClass api = new ApiClass();
+        switch (loginVO.getLoginPlatform()){
+            case "FACEBOOK":
+                rp.add("facebook_key",loginVO.getSocialId());
+                break;
+            case "GOOGLE":
+                rp.add("google_key",loginVO.getSocialId());
+                break;
+            case "TWITTER":
+                rp.add("twitter_key",loginVO.getSocialId());
+                break;
+        }
+
+        String email = registerVO.getEmail();
+        String birthday = registerVO.getBirthday().equals("") ? DEFAULT_BIRTHDAY : registerVO.getBirthday();
+        String country = registerVO.getCountry().equals("") ? DEFAULT_COUNTRY : registerVO.getCountry();
+        String mobileNumber = registerVO.getContact().equals("") ? DEFAULT_CONTACT+registerVO.getSocialID() : registerVO.getContact();
+        String address = registerVO.getAddress().equals("") ? DEFAULT_ADDRESS : registerVO.getAddress();
+        System.out.println(mobileNumber + " aaaaaaaaaaaa");
+        rp.add("first_name", "".equals(registerVO.getFirstName()) ? "" : DEFAULT_FIRST_NAME);
+        rp.add("last_name", "".equals(registerVO.getLastName()) ? "" : DEFAULT_LAST_NAME);
+        rp.add("password", registerVO.getPassword());
+        rp.add("email", email);
+        rp.add("birthday", birthday);
+        rp.add("country_name", country);
+        rp.add("mobile_number", mobileNumber);
+        rp.add("address", address);
+        rp.put("applications[0]", 2);
+        rp.put("applications[1]", 4);
+        rp.put("applications[2]", 5);
+
+        api.getByUrl(G_VERSION_REGISTRATION_LIVE,rp,new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    LoginDAO loginDAO = new LoginDAO(context,activity);
+                    JSONObject serverResp = new JSONObject(response.toString());
+                    registerVO.setRegistrationStatusMessage(serverResp.getString("status"));
+                    loginVO.setEmail(email);
+                    loginVO.setPassword(registerVO.getPassword());
+                    loginDAO.login(loginVO);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+
+    }
+}

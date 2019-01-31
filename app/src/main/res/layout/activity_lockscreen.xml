@@ -1,0 +1,278 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/lockscreen_touch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="0dp"
+        android:scaleType="centerCrop">
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp">
+        <!--<ImageView-->
+        <!--android:id="@+id/lbg"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_marginStart="0dp"-->
+        <!--android:layout_marginTop="0dp"-->
+        <!--tools:layout_editor_absoluteX="0dp"-->
+        <!--tools:layout_editor_absoluteY="53dp" />-->
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            tools:overScrollMode="never"/>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/slide"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp" >
+
+            <ImageView
+                android:id="@+id/showhide"
+                android:layout_width="match_parent"
+                android:layout_height="373dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <TextView
+                    android:id="@+id/title_lockscreen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:shadowColor="@color/text_shadow"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="2"
+                    android:textSize="35sp"
+                    android:visibility="gone"
+                    android:textColor="#fff"
+                    android:paddingTop="15sp"
+                    />
+                <android.widget.TextClock
+                    android:id="@+id/time_hr"
+                    android:layout_width="202dp"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/time_date"
+                    android:layout_marginEnd="-1dp"
+                    android:layout_marginBottom="-3dp"
+                    android:layout_toStartOf="@+id/time_a"
+                    android:format12Hour="hh:mm"
+                    android:format24Hour="H:mm"
+                    android:freezesText="false"
+                    android:gravity="bottom"
+                    android:shadowColor="@color/text_shadow"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="2"
+                    android:text="@string/time_hour"
+                    android:textAlignment="textEnd"
+                    android:textAllCaps="true"
+                    android:textColor="@color/light_font"
+                    android:textSize="75px"
+                    app:layout_constraintBottom_toTopOf="@+id/time_date"
+                    app:layout_constraintEnd_toStartOf="@+id/time_a"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <android.widget.TextClock
+                    android:id="@+id/time_a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/time_date"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="1dp"
+                    android:format12Hour="a"
+                    android:format24Hour=""
+                    android:padding="1dp"
+                    android:paddingLeft="15dp"
+                    android:shadowColor="@color/text_shadow"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="2"
+                    android:text="@string/time_hour"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="true"
+                    android:textColor="@color/light_font"
+                    android:textSize="30px"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/time_date"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <android.widget.TextClock
+                    android:id="@+id/time_date"
+                    android:layout_width="222dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="1dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="0dp"
+                    android:format12Hour="E, MMMM dd"
+                    android:format24Hour="E, MMMM dd"
+                    android:paddingBottom="1dp"
+                    android:shadowColor="@color/text_shadow"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="2"
+                    android:text="@string/time_hour"
+                    android:textAlignment="viewEnd"
+                    android:textAllCaps="true"
+                    android:textColor="@color/light_font"
+                    android:textSize="30px"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </RelativeLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
+
+
+        <!--<com.romainpiel.shimmer.ShimmerTextView-->
+        <!--android:id="@+id/shimmer_tv"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="13dp"-->
+        <!--android:gravity="bottom"-->
+        <!--android:textColor="#444"-->
+        <!--android:textSize="30sp" />-->
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/arrow"
+            android:layout_width="match_parent"
+            android:layout_height="139dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="0dp"
+            android:onClick="startListening1">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/right"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/slide_right"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/left"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/slide_left"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/up"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/slide_up"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/down"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="15dp"
+                android:src="@drawable/slide_down"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/listening"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="100dp"
+                android:drawableStart="@drawable/ic_microphone_black_shape"
+                android:shadowColor="@color/text_shadow"
+                android:shadowDx="4"
+                android:shadowDy="4"
+                android:shadowRadius="2"
+                android:text="@string/im_listening"
+                android:textColor="#FFF"
+                android:textSize="20sp"
+                android:textAlignment="viewStart"
+                android:padding="5sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+
+        <LinearLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="139dp"
+            android:layout_alignBottom="@+id/viewPager"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="0dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            tools:orientation="vertical">
+
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/image"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:src="@drawable/m1w_logo" />
+
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

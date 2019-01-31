@@ -1,0 +1,212 @@
+package lockscreen.myoneworld.com.myoneworldlockscreen.articles;
+
+import android.app.Activity;
+import android.content.Context;
+import android.os.CountDownTimer;
+import android.support.v4.view.ViewPager;
+import android.text.Html;
+import android.text.Spanned;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.android.gms.analytics.HitBuilders;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Date;
+
+import cz.msebera.android.httpclient.Header;
+import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
+import lockscreen.myoneworld.com.myoneworldlockscreen.R;
+
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
+
+public class ArticleDAO {
+
+    public void getComicsTypeImage(String id, Context context,
+                                   ImageView initial,
+                                   Button textComment,
+                                   ImageButton likeButton,
+                                   ImageButton shareButton,
+                                   LinearLayout likeAnimation,
+                                   final ViewPager viewPager,
+                                   Activity activity,
+                                   LinearLayout commentThings
+                                   ) {
+        ApiClass api = new ApiClass();
+        RequestParams rp = new RequestParams();
+        showProgressBar(context);
+        api.getByUrl(MY_STORYA_SINGLE_CONTENT + id, rp, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    try {
+                        ActivityArticle.imageUrl = new ArrayList<String>();
+                        JSONObject serverResp = new JSONObject(response.toString());
+                        JSONObject data = serverResp.getJSONObject("data");
+                        JSONArray imageSlideShow = data.getJSONArray("slide_show_images");
+                        for (int x = 0; x < imageSlideShow.length(); x++) {
+                            ActivityArticle.imageUrl.add(imageSlideShow.get(x).toString());
+                        }
+                    }catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                if(!ActivityArticle.imageUrl.isEmpty()) {
+                    hideProgressBar();
+                    initial.setVisibility(View.GONE);
+                    textComment.bringToFront();
+                    likeButton.bringToFront();
+                    shareButton.bringToFront();
+                    likeAnimation.bringToFront();
+                    ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(context, ActivityArticle.imageUrl, 1);
+                    viewPager.setAdapter(viewPagerAdapter);
+                    viewPager.setCurrentItem(0);
+                    viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                        boolean lastPageChange = false;
+
+                        @Override
+                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                            int lastIdx = viewPagerAdapter.getCount() - 1;
+                            if (position == lastIdx) {
+                                commentThings.setVisibility(View.VISIBLE);
+                                sendAnalytics(getValueString("USER_ID", context), ActivityArticle.article_id, context);
+                            }
+                        }
+
+                        @Override
+                        public void onPageSelected(int position) {
+                            viewPager.setCurrentItem(position);
+                        }
+
+                        @Override
+                        public void onPageScrollStateChanged(int state) {
+                            int lastIdx = viewPagerAdapter.getCount() - 1;
+
+                            int curItem = viewPager.getCurrentItem();
+                            if (curItem == lastIdx && state == 1) {
+                                lastPageChange = true;
+                            } else {
+                                lastPageChange = false;
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(context, "Please check connection", Toast.LENGTH_LONG).show();
+                    activity.finish();
+                }
+            }
+
+        });
+    }
+
+    public void sendAnalytics(String user_id,String article_id,Context context){
+        ApiClass api = new ApiClass();
+        RequestParams rp = new RequestParams();
+        rp.add("id", user_id);
+        rp.add("mystorya_id", article_id);
+        api.getByUrl(ANALYTICS_STORIES_LIVE, rp, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    JSONObject serverResp = new JSONObject(response.toString());
+                    if ("success".equals(serverResp.getString("status"))) {
+                        Toast.makeText(context,serverResp.getString("message"),Toast.LENGTH_LONG).show();
+                    } else if ("fail".equals(serverResp.getString("status")) && serverResp.has("message")) {
+                        Toast.makeText(context,serverResp.getString("message"),Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void sendComment(String storyId, String userId, String comment, Context context){
+        ApiClass api = new ApiClass();
+        RequestParams rp = new RequestParams();
+        rp.add("story_id",storyId);
+        rp.add("user_id",userId);
+        rp.add("comment",comment);
+
+        api.getByUrl(SEND_COMMENT_LIVE,rp,new JsonHttpResponseHandler(){
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    JSONObject responseStatus = new JSONObject(response.toString());
+                    Toast.makeText(context,responseStatus.getString("message"),Toast.LENGTH_LONG).show();
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+    }
+    public void getCommentByStoryId(String storyId, Context context, ListView listView,ImageView loading,Activity activity){
+        ApiClass api = new ApiClass();
+        RequestParams rp = new RequestParams();
+        rp.add("story_id",storyId);
+        api.getByUrl(GET_COMMENT_STORY_ID_LIVE,rp,new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    JSONObject commentResponse = new JSONObject(response.toString());
+                    JSONArray commentDetail = commentResponse.getJSONArray("comments");
+                    String[] _comments = new String[commentDetail.length()];
+                    String[] _datePosted = new String[commentDetail.length()];
+                    String[] _userCommented = new String[commentDetail.length()];
+                    for(int x = 0; x < commentDetail.length(); x++){
+                        _comments[x] = commentDetail.getJSONObject(x).getString("comment");
+                        _datePosted[x] = parseDateToddMMyyyy(commentDetail.getJSONObject(x).getString("created_at"));
+                        _userCommented[x] = commentDetail.getJSONObject(x).getString("first_name") + " " + commentDetail.getJSONObject(x).getString("last_name");
+
+                    }
+                    loading.clearAnimation();
+                    loading.setVisibility(View.GONE);
+                    ArrayList<Spanned> comment = new ArrayList<Spanned>();
+                    if(_comments.length == 0){
+                        Toast.makeText(context,"No comment yet.",Toast.LENGTH_LONG).show();
+                    }else {
+                        for (int index = 0; index < _comments.length; index++) {
+                            String commentContent = "<html><pre><b>" + _userCommented[index] + "</b> " +
+                                    "<i><small>" + getDatePostedComputations(_datePosted[index]) + "</i></small></pre></html>" +
+                                    "<br><br><html><pre><b>\t\t" + _comments[index] + "</b><pre></html>";
+
+                            comment.add(Html.fromHtml(commentContent));
+                        }
+
+                        listView.setAdapter(new ArrayAdapter<Spanned>(activity,
+                                R.layout.comment_list_item, android.R.id.text1, comment));
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+    }
+}

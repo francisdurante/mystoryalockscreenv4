@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">my|ONEworld lockscreen</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="sign_up_link_login_page">Or Sign up. <u>Click Here.</u></string>
+    <string name="facebook_app_id">2020717174654511</string>
+    <string name="fb_login_protocol_scheme">fb2020717174654511</string>
+    <string name="server_client_id">881704997121-67phn1rapqgr07o70hicg0akff52aa4b.apps.googleusercontent.com</string>
+    <string name="setting">Settings</string>
+    <string name="show_hide_data_usage">HIDE / SHOW DATA USAGE</string>
+    <string name="story_download_setting">my|storya Article Download Settings</string>
+    <string name="setting_sign">+</string>
+    <string name="wifi_mobile"><b>MOBILE DATA OR WIFI</b>\n<font size='10'><i>Data charges may apply</i></font></string>
+    <string name="wifi_only"><b>WIFI ONLY</b></string>
+    <string name="do_not_download"><b>DO NOT DOWNLOAD</b></string>
+    <string name="account_setting"><i>Account Settings</i></string>
+    <string name="change_password"><b>CHANGE PASSWORD</b></string>
+    <string name="logout_login"><b>LOG OUT</b></string>
+    <string name="time_hour">00</string>
+    <string name="time_min">00</string>
+    <string name="date">0-0-0000</string>
+    <string name="im_listening">Im listening…</string>
+    <string name="write_a_comment">Write a comment…</string>
+    <string name="no_comment_found">No comment found.</string>
+    <string name="comment_section">Comment Section</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="re_type_password">Confirm Password</string>
+    <string name="birthday">Birthday (Optional)</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="address">Address</string>
+    <string name="submit">SUBMIT</string>
+    <string name="create_account">CREATE ACCOUNT</string>
+    <string name="briefing_text"><font color='#FFFFFFFF'>\nSharing uplifting stories\nto influence the people,\nas they inspire us.\n\n</font><font color='#FFD800'><b>WRITE. INSPIRE. CHANGE</b></font>
+    </string>
+    <string name="dont_show_again">Dont show again</string>
+</resources>
