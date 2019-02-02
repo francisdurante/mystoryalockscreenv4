@@ -78,77 +78,82 @@ public class ActivityArticle extends AppCompatActivity {
     Animation rotate;
     private PopupWindow popWindow;
     private int videoStopped = 0;
+    private int shared = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.activity_article);
-        rotate = AnimationUtils.loadAnimation(mContext,R.anim.rotation_fast);
-        initial = findViewById(R.id.initial_page);
-        BitmapDrawable initialBackground = new BitmapDrawable(filePath(article_id,mContext));
-        initial.setBackground(initialBackground);
-        initial.bringToFront();
-        textComment = findViewById(R.id.text_comment);
-        likeButton = findViewById(R.id.like);
-        shareButton = findViewById(R.id.share);
-        commentThings = findViewById(R.id.comment_things);
-        likeAnimation = findViewById(R.id.heart_anim_linear);
-        textComment.setOnClickListener(v -> {
-            onShowPopup(v);
-            commentThings.setVisibility(View.GONE);
-        });
-        shareButton.setOnClickListener(v -> dialogShare());
-        likeButton.setOnClickListener(v -> {
-            clickLikeButton(tempLikeStatus);
-            tempLikeStatus = !tempLikeStatus;
-        });
-        commentThings.setVisibility(View.VISIBLE);
-        textComment.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        if(shared != 1) {
+            setContentView(R.layout.activity_article);
+            rotate = AnimationUtils.loadAnimation(mContext, R.anim.rotation_fast);
+            initial = findViewById(R.id.initial_page);
+            BitmapDrawable initialBackground = new BitmapDrawable(filePath(article_id, mContext));
+            initial.setBackground(initialBackground);
+            initial.bringToFront();
+            textComment = findViewById(R.id.text_comment);
+            likeButton = findViewById(R.id.like);
+            shareButton = findViewById(R.id.share);
+            commentThings = findViewById(R.id.comment_things);
+            likeAnimation = findViewById(R.id.heart_anim_linear);
+            textComment.setOnClickListener(v -> {
+                onShowPopup(v);
+                commentThings.setVisibility(View.GONE);
+            });
+            shareButton.setOnClickListener(v -> dialogShare());
+            likeButton.setOnClickListener(v -> {
+                clickLikeButton(tempLikeStatus);
+                tempLikeStatus = !tempLikeStatus;
+            });
+            commentThings.setVisibility(View.VISIBLE);
+            textComment.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!textComment.getText().toString().equals("")) {
-                    textComment.setBackgroundColor(Color.parseColor("#ffffff"));
-
-                }else {
-                    textComment.setBackgroundColor(Color.parseColor("#60ffffff"));
                 }
-            }
 
-            @Override
-            public void afterTextChanged(Editable s) {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (!textComment.getText().toString().equals("")) {
+                        textComment.setBackgroundColor(Color.parseColor("#ffffff"));
 
-            }
-        });
-        textComment.bringToFront();
-        likeButton.bringToFront();
-        shareButton.bringToFront();
-        likeAnimation.bringToFront();
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        videoView = findViewById(R.id.flipper);
-        if("video_with_slide_show".equals(getValueString("article_kind_"+article_id,mContext))){
-            String[] articleType = {"Video Article", "Comic Article"};
+                    } else {
+                        textComment.setBackgroundColor(Color.parseColor("#60ffffff"));
+                    }
+                }
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.AppCompatAlertDialogStyle);
-            builder.setTitle("Choose Article Type");
-            builder.setIcon(mContext.getResources().getDrawable(R.drawable.m1w_logo));
-            builder.setCancelable(false);
-            builder.setItems(articleType, (dialog, which) -> {
-                if("Video Article".equals(articleType[which])){
-                    chooseOptionArticle("video");
-                }else if("Comic Article".equals(articleType[which])){
-                    chooseOptionArticle("slide_show");
+                @Override
+                public void afterTextChanged(Editable s) {
+
                 }
             });
-            builder.show();
+            textComment.bringToFront();
+            likeButton.bringToFront();
+            shareButton.bringToFront();
+            likeAnimation.bringToFront();
+            AnalyticsApplication application = (AnalyticsApplication) getApplication();
+            mTracker = application.getDefaultTracker();
+            videoView = findViewById(R.id.flipper);
+            if ("video_with_slide_show".equals(getValueString("article_kind_" + article_id, mContext))) {
+                String[] articleType = {"Video Article", "Comic Article"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+                builder.setTitle("Choose Article Type");
+                builder.setIcon(mContext.getResources().getDrawable(R.drawable.m1w_logo));
+                builder.setCancelable(false);
+                builder.setItems(articleType, (dialog, which) -> {
+                    if ("Video Article".equals(articleType[which])) {
+                        chooseOptionArticle("video");
+                    } else if ("Comic Article".equals(articleType[which])) {
+                        chooseOptionArticle("slide_show");
+                    }
+                });
+                builder.show();
+            } else {
+                chooseOptionArticle(getValueString("article_kind_" + article_id, mContext));
+            }
+            super.onCreate(savedInstanceState);
         }else{
-            chooseOptionArticle(getValueString("article_kind_"+article_id,mContext));
+            videoView.stopPlayback();
         }
-        super.onCreate(savedInstanceState);
     }
 
     private void dialogShare(){
@@ -235,11 +240,12 @@ public class ActivityArticle extends AppCompatActivity {
                     } else {
                         message = PLEASE_WAIT;
                     }
+                    String path;
                     mDialog.setMessage(message);
                     mDialog.setCanceledOnTouchOutside(false);
                     mDialog.show();
                     if (!videoView.isPlaying()) {
-                        String path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
+                        path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
                         videoView.setVideoPath(path);
                         initial.setVisibility(View.GONE);
                         videoView.start();
@@ -248,20 +254,26 @@ public class ActivityArticle extends AppCompatActivity {
                         videoView.setOnCompletionListener(mp -> {
                             if (!getValueString("FULL_NAME",mContext).equals("")) {
                                 commentThings.setVisibility(View.VISIBLE);
+                                videoView.stopPlayback();
                                 sendAnalytics(mContext,article_id);
                             } else {
                                 finish();
                             }
                         });
                         videoView.setOnErrorListener((mp, what, extra) -> {
+                            videoStopped = mp.getCurrentPosition();
                             videoView.pause();
+                            util.showLoading(mContext);
+                            videoView.setVideoPath(path);
+                            videoView.seekTo(videoStopped);
                             return true;
                         });
                     }
                 } else {// cloud video played
                     if (!isNetworkAvailable(mContext)) { // error no connection
                         errorOnPlayingVideo("cloud");
-                    } else {
+                    }
+                    else {
                         try { // cloud loading
                             String message = "";
                             if (!"MOBILE".equalsIgnoreCase(getConnectionType(mContext))) {
@@ -299,11 +311,12 @@ public class ActivityArticle extends AppCompatActivity {
                                     } else {
                                         message1 = PLEASE_WAIT;
                                     }
+                                    String path;
                                     mDialog.setMessage(message1);
                                     mDialog.setCanceledOnTouchOutside(false);
                                     mDialog.show();
                                     if (!videoView.isPlaying()) {
-                                        String path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
+                                        path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
                                         videoView.setVideoPath(path);
                                         initial.setVisibility(View.GONE);
                                         videoView.start();
@@ -311,7 +324,7 @@ public class ActivityArticle extends AppCompatActivity {
                                         mDialog.dismiss();
                                         videoView.setOnCompletionListener(mp -> {
                                             if (!getValueString("FULL_NAME",mContext).equals("")) {
-//                                                dialogShare();
+                                                videoView.stopPlayback();
                                                 commentThings.setVisibility(View.VISIBLE);
                                                 sendAnalytics(mContext,article_id);
                                             } else {
@@ -319,7 +332,11 @@ public class ActivityArticle extends AppCompatActivity {
                                             }
                                         });
                                         videoView.setOnErrorListener((mp, what, extra) -> {
+                                            videoStopped = mp.getCurrentPosition();
                                             videoView.pause();
+                                            util.showLoading(mContext);
+                                            videoView.setVideoPath(path);
+                                            videoView.seekTo(videoStopped);
                                             util.showLoading(mContext);
                                             return true;
                                         });
@@ -338,7 +355,6 @@ public class ActivityArticle extends AppCompatActivity {
             }
             videoView.requestFocus();
             videoView.setOnPreparedListener(mp -> {
-//                mDialog.dismiss();
                 initial.setVisibility(View.GONE);
                 mp.setLooping(false);
                 videoView.start();
@@ -484,6 +500,18 @@ public class ActivityArticle extends AppCompatActivity {
     private void showPopUpShowDataUsage(){
         if("MOBILE".equalsIgnoreCase(getConnectionType(mContext))){
             globalMessageBox(mContext,"Using Mobile Data Connection, may cause data charges","Data Usage",MSG_BOX_WARNING);
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 1010) {
+            videoView.stopPlayback();
+            if (resultCode == RESULT_OK) {
+                finish();
+            }else if (resultCode == RESULT_CANCELED){
+               shared = 1;
+            }
         }
     }
 }

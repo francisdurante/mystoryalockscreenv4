@@ -21,6 +21,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
@@ -246,7 +247,6 @@ public class LoginDAO {
             Rvo.setCountry("");
 
             registrationDAO.registration(Rvo,vo,mContext,activity);
-
         } catch (ApiException e) {
             switch (e.getStatusCode()) {
                 case GoogleSignInStatusCodes.CANCELED:

@@ -211,6 +211,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
             LoginDAO loginDAO = new LoginDAO(mContext, this);
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             loginDAO.googleSignIn(task);
+            mGoogleSignInClient.signOut();
         }
         twitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }

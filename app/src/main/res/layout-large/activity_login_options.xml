@@ -64,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40sp"
                 android:layout_gravity="center"
-                android:background="@drawable/ic_facebook_button"
+                android:background="@drawable/ic_facebook_button_v2"
                 android:foregroundGravity="center"
                 android:gravity="center"
                 android:paddingTop="10dp"

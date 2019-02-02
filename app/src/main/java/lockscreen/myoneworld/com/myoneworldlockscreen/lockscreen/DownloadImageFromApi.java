@@ -245,7 +245,7 @@ public class DownloadImageFromApi extends AsyncTask<String, Integer, String> {
         input_file = new File(new_folder, name);
         OutputStream outputStream = new FileOutputStream(input_file);
         bitmap = BitmapFactory.decodeStream(srt);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
         bitmapDrawable = new BitmapDrawable(bitmap);
         filePath = input_file.getPath();
         srt.close();

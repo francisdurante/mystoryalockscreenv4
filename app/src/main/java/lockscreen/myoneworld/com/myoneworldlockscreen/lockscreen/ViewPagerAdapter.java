@@ -68,9 +68,13 @@ public class ViewPagerAdapter extends PagerAdapter {
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             File path = new File(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position));
             if(path.exists())
-                Picasso.with(context).load(path).fit().centerCrop().into(imageView);
+                Picasso.with(context)
+                        .load(path)
+                        .fit()
+                        .into(imageView);
             ViewPager vp = (ViewPager) container;
             vp.addView(view, 0);
+
 //            imageView.setOnClickListener(v -> startListening(context,mSpeechRecognizer,listeningText,mIslistening,mSpeechRecognizerIntent));
             return view;
         }catch (Exception e){
@@ -85,7 +89,10 @@ public class ViewPagerAdapter extends PagerAdapter {
             ImageView imageView = view.findViewById(R.id.imageView);
             File path = new File(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position));
             if(path.exists())
-                Picasso.with(context).load(path).fit().centerCrop().into(imageView);
+                Picasso.with(context)
+                        .load(path)
+                        .fit()
+                        .into(imageView);
 
             ViewPager vp = (ViewPager) container;
             vp.addView(view, 0);
