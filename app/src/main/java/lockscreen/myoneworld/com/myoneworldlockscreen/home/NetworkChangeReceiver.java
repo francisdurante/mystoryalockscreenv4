@@ -16,7 +16,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessa
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.settings.ActivitySettings;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.save;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
     ImageView header;
@@ -41,6 +41,10 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                     });
                     if(networkInfo.getType() == ConnectivityManager.TYPE_MOBILE && networkInfo.isConnected()){
                         globalMessageBox(context,"Using Mobile Data Connection, may cause data charges","Data Usage",MSG_BOX_WARNING);
+
+                    }
+                    if("outdated".equalsIgnoreCase(getValueString("VERSION_ONLINE",context))){
+                        globalMessageBox(context,"New Version is now available in Google Play Store. Please update to continue using the lockscreen.","Application Update",MSG_BOX_WARNING);
                     }
                 }
                 else {

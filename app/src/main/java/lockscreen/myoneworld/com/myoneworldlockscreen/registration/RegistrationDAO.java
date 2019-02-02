@@ -103,7 +103,6 @@ public class RegistrationDAO {
         String country = registerVO.getCountry().equals("") ? DEFAULT_COUNTRY : registerVO.getCountry();
         String mobileNumber = registerVO.getContact().equals("") ? DEFAULT_CONTACT+registerVO.getSocialID() : registerVO.getContact();
         String address = registerVO.getAddress().equals("") ? DEFAULT_ADDRESS : registerVO.getAddress();
-        System.out.println(mobileNumber + " aaaaaaaaaaaa");
         rp.add("first_name", "".equals(registerVO.getFirstName()) ? "" : DEFAULT_FIRST_NAME);
         rp.add("last_name", "".equals(registerVO.getLastName()) ? "" : DEFAULT_LAST_NAME);
         rp.add("password", registerVO.getPassword());
@@ -123,6 +122,7 @@ public class RegistrationDAO {
                     LoginDAO loginDAO = new LoginDAO(context,activity);
                     JSONObject serverResp = new JSONObject(response.toString());
                     registerVO.setRegistrationStatusMessage(serverResp.getString("status"));
+                    System.out.println(registerVO.getRegistrationStatusMessage() + " aaaaaaaaaaaaaaa");
                     loginVO.setEmail(email);
                     loginVO.setPassword(registerVO.getPassword());
                     loginDAO.login(loginVO);

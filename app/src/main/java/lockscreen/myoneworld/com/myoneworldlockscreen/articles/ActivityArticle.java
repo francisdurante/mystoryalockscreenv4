@@ -77,6 +77,7 @@ public class ActivityArticle extends AppCompatActivity {
     String[] comicsPath;
     Animation rotate;
     private PopupWindow popWindow;
+    private int videoStopped = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -283,8 +284,11 @@ public class ActivityArticle extends AppCompatActivity {
                                         }
                                     });
                                     videoView.setOnErrorListener((mp, what, extra) -> {
+                                        videoStopped = mp.getCurrentPosition();
                                         videoView.pause();
                                         util.showLoading(mContext);
+                                        videoView.setVideoURI(uri);
+                                        videoView.seekTo(videoStopped);
                                         return true;
                                     });
                                 } else {

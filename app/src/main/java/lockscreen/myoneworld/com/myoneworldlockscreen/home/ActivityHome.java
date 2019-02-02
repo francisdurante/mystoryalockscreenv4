@@ -17,6 +17,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import lockscreen.myoneworld.com.myoneworldlockscreen.AppUpdateChecker;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
 
@@ -31,6 +33,7 @@ public class ActivityHome extends AppCompatActivity {
     Button serviceButton;
     private ViewPager viewPager;
     NetworkChangeReceiver ncr;
+    public static String updateStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +42,16 @@ public class ActivityHome extends AppCompatActivity {
         init();
     }
 
-    public void init(){
+    public void init() {
+        try {
+            switch (updateStatus) {
+                case "outdated":
+                    globalMessageBox(mContext, "New Version is now available in Google Play Store. Please update to continue using the lockscreen.", "Application Update", MSG_BOX_WARNING);
+                    break;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         iniDefaultSetting();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -82,10 +94,6 @@ public class ActivityHome extends AppCompatActivity {
         viewPager.setCurrentItem(0);
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_CONTACTS,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.CALL_PHONE,
                 Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         if (isNetworkAvailable(mContext)) {
             save("connection", "true",mContext);

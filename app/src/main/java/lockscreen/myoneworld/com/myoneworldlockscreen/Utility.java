@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.KeyguardManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -22,6 +23,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -439,7 +441,7 @@ public class Utility {
                 }else{
                     datePostedReturn =  diffDays + "d " + datePostedReturn;
                 }
-            }else{
+            }else if(diffMinutes <= 1){
                 datePostedReturn = "Just now";
             }
 
@@ -500,7 +502,7 @@ public class Utility {
         }
         return accepted;
     }
-    public static void globalMessageBox(Context context,String Message,String Title,String type){
+    public static void globalMessageBox(Context context, String Message, String Title, String type){
         AlertDialog.Builder ab = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
         switch (type){
             case "success":
@@ -512,11 +514,7 @@ public class Utility {
                 ab.setIcon(R.drawable.ic_cancel);
                 break;
         }
-        if(!Title.equalsIgnoreCase("Data Usage")) {
-            ab.setTitle(Title);
-            ab.setMessage(Message);
-            ab.show();
-        }else{
+        if(Title.equalsIgnoreCase("Data Usage")){
             final boolean[] checked = {false};
             if(!"1".equalsIgnoreCase(getValueString("SHOW_POP_UP_DATA_USAGE",context))) {
                 View checkBoxView = View.inflate(context, R.layout.checkbox_layout, null);
@@ -526,10 +524,9 @@ public class Utility {
                     checked[0] = isChecked;
                 });
                 checkBox.setText("Do not show again");
-                AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
-                builder.setTitle(Title);
-                builder.setIcon(R.drawable.ic_warning);
-                builder.setMessage(Message)
+//                AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
+                ab.setTitle(Title);
+                ab.setMessage(Message)
                         .setView(checkBoxView)
                         .setCancelable(false)
                         .setPositiveButton("OK", (dialog, which) -> {
@@ -540,8 +537,25 @@ public class Utility {
                     }
                 }).show();
             }
+        }else if(Title.equalsIgnoreCase("Application Update")){
+//            AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
+            ab.setTitle(Title);
+            ab.setMessage(Message)
+                    .setCancelable(false)
+                    .setPositiveButton("UPDATE NOW", (dialog, which) -> {
+                        try {
+                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.lockscreen.brown.brownlockscreen")));
+                        } catch (android.content.ActivityNotFoundException anfe) {
+                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.lockscreen.brown.brownlockscreen")));
+                        }
+                    })
+                    .setNegativeButton("NO THANKS", (dialog, which) -> {
+                        ((Activity)context).finish();
+                    }).show();
+        }else {
+            ab.setTitle(Title);
+            ab.setMessage(Message);
+            ab.show();
         }
-
-
     }
 }

@@ -100,6 +100,7 @@ public class ActivityLockscreen extends AppCompatActivity {
     String[] extension;
     Animation rotate;
     Typeface font ;
+    ViewPagerAdapter viewPagerAdapter;
 
     public ActivityLockscreen(String id) {
         this.id = id;
@@ -424,11 +425,12 @@ public class ActivityLockscreen extends AppCompatActivity {
             RelativeLayout layout = findViewById(R.id.lockscreen_touch);
             layout.setBackground(null);
             viewPager = findViewById(R.id.viewPager);
-            ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(mContext, imagesPath,
+            viewPagerAdapter = new ViewPagerAdapter(mContext, imagesPath,
                     listeningText, mIslistening, mSpeechRecognizer, mSpeechRecognizerIntent, this);
             viewPager.setAdapter(viewPagerAdapter);
 //            viewPager.addOnPageChangeListener(test);
             viewPager.setCurrentItem(ads_count);
+            viewPager.setOnPageChangeListener(viewPagerPageChangeListener);
 //                showTitle();
         } else {
             RelativeLayout layout = findViewById(R.id.lockscreen_touch);
@@ -465,4 +467,45 @@ public class ActivityLockscreen extends AppCompatActivity {
         setActivityRunning(true);
     }
 
+    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
+        boolean callHappened;
+        int selectedIndex;
+        boolean mPageEnd;
+        @Override
+        public void onPageSelected(int position) {
+            selectedIndex = position;
+        }
+
+        @Override
+        public void onPageScrolled(int arg0, float arg1, int arg2) {
+            // TODO Auto-generated method stub
+
+        }
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            // TODO Auto-generated method stub
+////            if (state == ViewPager.SCROLL_STATE_IDLE) {
+//                int curr = viewPager.getCurrentItem();
+//                int lastReal = viewPager.getAdapter().getCount() - 2;
+//            System.out.println(lastReal + " " + curr + " aaaaaaaaaa");
+////                if (curr == 0) {
+////                    if(state == ViewPager.SCROLL_STATE_DRAGGING) {
+////                        viewPager.setCurrentItem(lastReal + 1, false);
+////                    }
+////                } else if (curr > lastReal - 1) {
+////                    viewPager.setCurrentItem(0, false);
+////                }
+////            }
+//            if(curr == 0){
+//                if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+//                    viewPager.setCurrentItem(lastReal + 2, false);
+//                }
+//            }else if(curr > lastReal)
+//            {
+//                if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+//                    viewPager.setCurrentItem(0, false);
+//                }
+//            }
+        }
+    };
 }
