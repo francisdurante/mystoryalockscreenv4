@@ -18,6 +18,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -424,10 +425,12 @@ public class ActivityLockscreen extends AppCompatActivity {
         if (totalSize >= 0) {
             RelativeLayout layout = findViewById(R.id.lockscreen_touch);
             layout.setBackground(null);
+            PagerAdapter adapter = new InfinitePagerAdapter(new ViewPagerAdapter(mContext, imagesPath,
+                    listeningText, mIslistening, mSpeechRecognizer, mSpeechRecognizerIntent, this));
             viewPager = findViewById(R.id.viewPager);
-            viewPagerAdapter = new ViewPagerAdapter(mContext, imagesPath,
-                    listeningText, mIslistening, mSpeechRecognizer, mSpeechRecognizerIntent, this);
-            viewPager.setAdapter(viewPagerAdapter);
+//            viewPagerAdapter = new ViewPagerAdapter(mContext, imagesPath,
+//                    listeningText, mIslistening, mSpeechRecognizer, mSpeechRecognizerIntent, this);
+            viewPager.setAdapter(adapter);
             viewPager.setCurrentItem(ads_count);
 //                showTitle();
         } else {

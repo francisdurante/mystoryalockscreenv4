@@ -264,7 +264,7 @@ public class Utility {
     public static String fileMyStoryId(ViewPager viewPager) {
         String[] extension = null;
         try {
-            String fileName = imagesPath.get(viewPager.getCurrentItem());
+            String fileName = imagesPath.get(viewPager.getCurrentItem() == imagesPath.size() ? 0 : viewPager.getCurrentItem());
             extension = fileName.split("_");
         } catch (Exception e) {
             e.printStackTrace();
