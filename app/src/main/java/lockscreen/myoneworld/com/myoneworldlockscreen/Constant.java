@@ -3,7 +3,7 @@ package lockscreen.myoneworld.com.myoneworldlockscreen;
 import android.os.Environment;
 
 public class Constant {
-    public static final String G_VERSION_LOGIN_TEST = "http://192.168.1.149/myoneworld/public/oauth/token";
+    public static final String API_STATUS = "TEST";
     public static final String G_VERSION_LOGIN_LIVE = "https://api.myoneworld.tech/oauth/token";
     public static final String G_VERSION_LOGGED_IN_LIVE = "https://api.myoneworld.tech/api/user/info";
     public static final String G_VERSION_REGISTRATION_LIVE = "https://api.myoneworld.tech/api/mystory/registration";
@@ -61,5 +61,9 @@ public class Constant {
     public static final String MSG_BOX_WARNING = "warning";
     public static final String MSG_BOX_SUCCESS = "success";
     public static final String MSG_BOX_ERROR = "ERROR";
+
+    //--TEST API--///
+    public static final String SEND_LOCATION_TEST= "http://192.168.1.149/myoneworld/public/api/mystory/location";
+    public static final String G_VERSION_LOGIN_TEST = "http://192.168.1.149/myoneworld/public/oauth/token";
 
 }

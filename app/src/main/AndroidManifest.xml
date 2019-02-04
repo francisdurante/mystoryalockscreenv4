@@ -28,14 +28,27 @@
         android:name=".AnalyticsApplication"
         android:label="@string/app_name"
         android:icon="@drawable/m1w_logo_icon"
-        android:largeHeap="false"
         android:roundIcon="@drawable/m1w_logo_icon"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true"
+        android:fullBackupContent="false"
+        android:allowBackup="false">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+
+
+        <receiver
+            android:enabled="true"
+            android:name=".lockscreen.LockscreenReboot">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -64,7 +77,8 @@
             android:name=".lockscreen.LockscreenService"
             android:enabled="true"
             android:hardwareAccelerated="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+            android:permission="android.permission.BIND_JOB_SERVICE">
+        </service>
         <service
             android:name=".lockscreen.LockscreenJobService"
             android:enabled="true"

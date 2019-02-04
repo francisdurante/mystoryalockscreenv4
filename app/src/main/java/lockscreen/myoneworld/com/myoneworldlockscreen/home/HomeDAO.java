@@ -37,7 +37,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
 public class HomeDAO {
     Context context;
     Activity activity;
-    private static Location location;
+    public static Location location;
     private static int locationStatus = 0;
 
     public HomeDAO(Context context, Activity activity){
@@ -103,7 +103,7 @@ public class HomeDAO {
             rp.add("id", id);
             rp.add("location", getValueString("UNSENT_LOCATION", context));
 
-            asyncHttpClient.post(SEND_LOCATION_LIVE , rp, new JsonHttpResponseHandler() {
+            asyncHttpClient.post(API_STATUS.equals("LIVE") ? SEND_LOCATION_LIVE : SEND_LOCATION_TEST, rp, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     try {
@@ -164,9 +164,10 @@ public class HomeDAO {
     }
     public static void generateJSONForLocation(List<Address> addresses, Context context) {
         try {
+            System.out.println(addresses + " aaaaaaaaaaaaaa");
             Locations locationObj = new Locations(addresses.get(0).getAddressLine(0),
                     Double.toString(addresses.get(0).getLongitude()),
-                    Double.toString(addresses.get(0).getLatitude()));
+                    Double.toString(addresses.get(0).getLatitude()),addresses.get(0).getSubAdminArea());
             Gson parser = new Gson();
             String json = parser.toJson(locationObj);
 
@@ -188,10 +189,10 @@ public class HomeDAO {
                             break;
                         }
                     }
-
                 }
             }
             save("UNSENT_LOCATION", unSendLocation.toString(), context);
+            System.out.println(getValueString("UNSENT_LOCATION",context) + " aaaaaaaaaaaaaa");
         } catch (JSONException e1) {
             e1.printStackTrace();
         }

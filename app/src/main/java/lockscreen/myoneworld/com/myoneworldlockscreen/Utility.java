@@ -14,6 +14,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -552,10 +554,54 @@ public class Utility {
                     .setNegativeButton("NO THANKS", (dialog, which) -> {
                         ((Activity)context).finish();
                     }).show();
-        }else {
+        }else if(Title.equalsIgnoreCase("Autostart Application")) {
+            if("2".equalsIgnoreCase(getValueString("AUTO_START",context))) {
+                ImageView imageView = new ImageView(context);
+                imageView.setImageResource(R.drawable.autostart);
+                imageView.setPadding(15,-25,15,0);
+                ab.setView(imageView);
+                ab.setTitle(Title);
+                ab.setMessage(Message)
+                        .setPositiveButton("Go to settings", (dialog, which) -> {
+                            addAutoStartup(context);
+                            save("AUTO_START","1",context);
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> {
+                            dialog.dismiss();
+
+                        }).show();
+            }
+        }
+        else {
             ab.setTitle(Title);
             ab.setMessage(Message);
             ab.show();
+        }
+    }
+
+    public static void addAutoStartup(Context context) {
+
+        try {
+            Intent intent = new Intent();
+            String manufacturer = android.os.Build.MANUFACTURER;
+            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
+            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+            } else if ("Letv".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+            } else if ("Honor".equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+            }
+
+            List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            if  (list.size() > 0) {
+                context.startActivity(intent);
+            }
+        } catch (Exception e) {
+//            Log.e("exc" , String.valueOf(e));
         }
     }
 }

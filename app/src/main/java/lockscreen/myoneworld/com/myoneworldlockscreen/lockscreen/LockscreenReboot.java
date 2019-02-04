@@ -10,18 +10,20 @@ public class LockscreenReboot extends BroadcastReceiver {
     static SharedPreferences spf;
     public static String lastDataUsage;
     String mStatus;
-    Context mContext;
 
     @Override
     public void onReceive(Context context , Intent arg1) {
-        mContext = context;
-        lastDataUsage = getValueString("data_usage",mContext).equals("") ? "0.00" : getValueString("data_usage",mContext);
-        mStatus = getValueString("SERVICE",mContext);
-        if ("1".equals(mStatus)) {
-            Intent phoneStateService = new Intent(mContext, LockscreenService.class);
-            ContextCompat.startForegroundService(mContext, phoneStateService);
-            save("trigger_data_usage","",mContext);
-            save("first_boot","",mContext);
+        System.out.println("Completed Reboot");
+        lastDataUsage = getValueString("data_usage", context).equals("") ? "0.00" : getValueString("data_usage", context);
+        mStatus = getValueString("SERVICE", context);
+        if (Intent.ACTION_BOOT_COMPLETED.equals(arg1.getAction())) {
+            if ("1".equals(mStatus)) {
+                Intent lockscreenService = new Intent(context, LockscreenService.class);
+                ContextCompat.startForegroundService(context, lockscreenService);
+                save("trigger_data_usage", "", context);
+                save("first_boot", "", context);
+
+            }
         }
     }
 
