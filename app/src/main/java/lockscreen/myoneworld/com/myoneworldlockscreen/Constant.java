@@ -3,7 +3,7 @@ package lockscreen.myoneworld.com.myoneworldlockscreen;
 import android.os.Environment;
 
 public class Constant {
-    public static final String API_STATUS = "TEST";
+    public static final String API_STATUS = "LIVE";
     public static final String G_VERSION_LOGIN_LIVE = "https://api.myoneworld.tech/oauth/token";
     public static final String G_VERSION_LOGGED_IN_LIVE = "https://api.myoneworld.tech/api/user/info";
     public static final String G_VERSION_REGISTRATION_LIVE = "https://api.myoneworld.tech/api/mystory/registration";

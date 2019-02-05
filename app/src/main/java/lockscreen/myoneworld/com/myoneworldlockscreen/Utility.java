@@ -265,8 +265,25 @@ public class Utility {
     }
     public static String fileMyStoryId(ViewPager viewPager) {
         String[] extension = null;
+        int position = 0;
+        if(imagesPath.size()< viewPager.getCurrentItem()){
+            position =  viewPager.getCurrentItem() % imagesPath.size();
+        }else{
+            position = viewPager.getCurrentItem();
+        }
         try {
-            String fileName = imagesPath.get(viewPager.getCurrentItem() == imagesPath.size() ? 0 : viewPager.getCurrentItem());
+            String fileName = imagesPath.get(position);
+            extension = fileName.split("_");
+        } catch (Exception e) {
+            e.printStackTrace();
+            extension[1] = "0";
+        }
+        return extension[1];
+    }
+    public static String fileMyStoryId(int position) {
+        String[] extension = null;
+        try {
+            String fileName = imagesPath.get(position);
             extension = fileName.split("_");
         } catch (Exception e) {
             e.printStackTrace();

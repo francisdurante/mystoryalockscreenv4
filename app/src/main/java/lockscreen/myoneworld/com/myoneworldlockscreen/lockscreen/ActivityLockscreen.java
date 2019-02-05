@@ -101,6 +101,7 @@ public class ActivityLockscreen extends AppCompatActivity {
     String[] extension;
     Animation rotate;
     Typeface font ;
+    public static int fileID;
     ViewPagerAdapter viewPagerAdapter;
 
     public ActivityLockscreen(String id) {

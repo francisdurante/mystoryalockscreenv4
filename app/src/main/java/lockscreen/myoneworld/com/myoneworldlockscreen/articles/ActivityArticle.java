@@ -28,6 +28,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -103,7 +104,7 @@ public class ActivityArticle extends AppCompatActivity {
                 clickLikeButton(tempLikeStatus);
                 tempLikeStatus = !tempLikeStatus;
             });
-            commentThings.setVisibility(View.VISIBLE);
+//            commentThings.setVisibility(View.VISIBLE);
             textComment.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -440,7 +441,7 @@ public class ActivityArticle extends AppCompatActivity {
 
         // inflate the custom popup layout
         final View inflatedView = layoutInflater.inflate(R.layout.comment_box_layout, null, false);
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         ImageView loading = inflatedView.findViewById(R.id.loading_comment);
         ImageButton send = inflatedView.findViewById(R.id.send_comment);
         EditText comment = inflatedView.findViewById(R.id.writeComment);
@@ -459,7 +460,7 @@ public class ActivityArticle extends AppCompatActivity {
 
 
         // set height depends on the device size
-        popWindow = new PopupWindow(inflatedView, size.x - 50, size.y - 500, true);
+        popWindow = new PopupWindow(inflatedView, size.x - 50, size.y - 800, true);
         // set a background drawable with rounders corners
         popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.comment_box_bg));
         // make it focusable to show the keyboard to enter in `EditText`
