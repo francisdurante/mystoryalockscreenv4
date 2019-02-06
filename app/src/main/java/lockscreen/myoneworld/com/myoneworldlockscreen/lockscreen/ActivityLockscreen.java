@@ -406,7 +406,7 @@ public class ActivityLockscreen extends AppCompatActivity {
     }
     private void initialLoad() {
         rotate = AnimationUtils.loadAnimation(mContext, R.anim.rotate);
-        new CallReceiver(ActivityLockscreen.this);
+        new CallReceiver();
         LockscreenDAO lockscreenDAO = new LockscreenDAO(mContext);
         lockscreenDAO.getArchivedStory();
         lockscreenDAO.newApiMyStoryaContent();

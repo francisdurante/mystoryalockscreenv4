@@ -20,6 +20,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         offScreen = false;
         new ActivityLockscreen(article_id);
         if (null != context) {
+            System.out.println(CallReceiver.onCall + " aaaaaaaaaaaaaaa");
             if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) && !CallReceiver.onCall) {
                 offScreen = true;
                 TelephonyManager tManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);

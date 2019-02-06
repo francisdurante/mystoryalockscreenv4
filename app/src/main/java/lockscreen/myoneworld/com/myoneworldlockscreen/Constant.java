@@ -32,6 +32,7 @@ public class Constant {
     public static final long PERIODIC = 9000000; // 15mins total --> 15 mins minimum for jobScheduling
     public static final String CANT_PLAY_ERROR = "Cant Play Video";
     public static final String CANT_PLAY_ERROR_CLOUD = "Cant Load Video, Please Check Connection";
+    public static final String DO_NOT_SHOW_AGAIN = "Do not show again.";
 
 
     public static final String CONSUMER_KEY = "F64atV1oWBXFAKhwn6tyktWMA";

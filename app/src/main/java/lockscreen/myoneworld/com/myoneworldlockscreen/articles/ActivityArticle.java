@@ -104,7 +104,7 @@ public class ActivityArticle extends AppCompatActivity {
                 clickLikeButton(tempLikeStatus);
                 tempLikeStatus = !tempLikeStatus;
             });
-//            commentThings.setVisibility(View.VISIBLE);
+            commentThings.setVisibility(View.VISIBLE);
             textComment.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {

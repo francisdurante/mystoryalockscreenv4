@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,6 +32,7 @@ public class ActivityLogin extends AppCompatActivity {
     LinearLayout linearLogin;
     NetworkReceiver nr;
     TextView signUpLink;
+    TextView errorText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class ActivityLogin extends AppCompatActivity {
     }
 
     public void init(){
+
         userNameLogin = findViewById(R.id.email_address);
         passwordLogin = findViewById(R.id.password_login);
         loginButton = findViewById(R.id.login_button);
@@ -47,6 +51,7 @@ public class ActivityLogin extends AppCompatActivity {
         passwordLogin.addTextChangedListener(onTextChange);
         linearLogin = findViewById(R.id.linear_login);
         signUpLink = findViewById(R.id.signup_text);
+        errorText = findViewById(R.id.login_text);
 
         signUpLink.setOnClickListener(v -> {
             try {
@@ -64,20 +69,20 @@ public class ActivityLogin extends AppCompatActivity {
         nr = new NetworkReceiver(linearLogin,this,loginButton,2);
         registerReceiver(nr, intentFilter);
 
-        LoginDAO login = new LoginDAO(mContext,this);
+        LoginDAO login = new LoginDAO(mContext,this,errorText);
         loginButton.setOnClickListener(v ->{
             LoginVO vo = new LoginVO();
 
             if(!"".equals(userNameLogin.getText().toString()) && !userNameLogin.getText().toString().contains("@")){
-                Toast.makeText(mContext,"Invalid email address.",Toast.LENGTH_LONG).show();
+                showLoginError(mContext,errorText,"Invalid email address");
             }
-            else if(!"".equals(userNameLogin.getText().toString()) || !"".equals(passwordLogin.getText().toString())) {
+            else if(!"".equals(userNameLogin.getText().toString()) && !"".equals(passwordLogin.getText().toString())) {
                 vo.setEmail(userNameLogin.getText().toString());
                 vo.setPassword(passwordLogin.getText().toString());
                 login.login(vo);
             }
             else{
-                Toast.makeText(mContext,"Please Compete field required.",Toast.LENGTH_LONG).show();
+                showLoginError(mContext,errorText,"Please fill all the required fields");
             }
         });
     }

@@ -184,7 +184,7 @@ public class ArticleDAO {
                     loading.setVisibility(View.GONE);
                     ArrayList<Spanned> comment = new ArrayList<Spanned>();
                     if(_comments.length == 0){
-                        Toast.makeText(context,"No comment yet.",Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context,"No comment yet.",Toast.LENGTH_LONG).show();
                     }else {
                         for (int index = 0; index < _comments.length; index++) {
                             String commentContent = "<html><pre><b>" + _userCommented[index] + "</b> " +

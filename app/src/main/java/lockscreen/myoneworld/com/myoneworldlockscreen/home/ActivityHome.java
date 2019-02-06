@@ -45,12 +45,7 @@ public class ActivityHome extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            if (!Settings.canDrawOverlays(mContext)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getApplicationContext().getPackageName()));
-                startActivityForResult(intent, REQUEST_CODE);
-            }
-            globalMessageBox(mContext,"Please enable Autostart on my|ONEworld lockscreen app","Autostart Application",MSG_BOX_WARNING);
+            globalMessageBox(mContext,"Please enable autostart on my|ONEworld navigation app.","Autostart application",MSG_BOX_WARNING);
         }
 
         init();

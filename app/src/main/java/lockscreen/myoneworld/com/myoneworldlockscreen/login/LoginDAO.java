@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -55,14 +56,21 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.registration.RegistrationV
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showLoginError;
 
 public class LoginDAO {
     Context mContext;
     Activity activity;
+    TextView errorText;
 
     public LoginDAO(Context context, Activity activity) {
         mContext = context;
         this.activity = activity;
+    }
+    public LoginDAO(Context context, Activity activity,TextView errorText) {
+        mContext = context;
+        this.activity = activity;
+        this.errorText = errorText;
     }
 
     public void login(LoginVO vo) {
@@ -96,9 +104,9 @@ public class LoginDAO {
                         try {
                             JSONObject error = new JSONObject(errorResponse.toString());
                             if (error.has("message")) {
-                                Toast.makeText(mContext, error.getString("message"), Toast.LENGTH_LONG).show();
+                                showLoginError(mContext,errorText,error.getString("message"));
                             } else {
-                                Toast.makeText(mContext, error.getString("error"), Toast.LENGTH_LONG).show();
+                                showLoginError(mContext,errorText,error.getString("error"));
                             }
                             loading.hideLoading();
                         } catch (JSONException e) {

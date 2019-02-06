@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -38,6 +39,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -64,6 +66,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.Inflater;
 
 import cz.msebera.android.httpclient.Header;
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ArticleDAO;
@@ -522,6 +525,7 @@ public class Utility {
         return accepted;
     }
     public static void globalMessageBox(Context context, String Message, String Title, String type){
+        Typeface font = setFont(context,"font/Century_Gothic.ttf");
         AlertDialog.Builder ab = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
         switch (type){
             case "success":
@@ -536,28 +540,36 @@ public class Utility {
         if(Title.equalsIgnoreCase("Data Usage")){
             final boolean[] checked = {false};
             if(!"1".equalsIgnoreCase(getValueString("SHOW_POP_UP_DATA_USAGE",context))) {
-                View checkBoxView = View.inflate(context, R.layout.checkbox_layout, null);
-                CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.checkbox);
-                checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View inflatedView = layoutInflater.inflate(R.layout.pop_up_layout, null,false);
+                final TextView dataUsageMessage = inflatedView.findViewById(R.id.data_usage_message);
+                final CheckBox showDataUsage = inflatedView.findViewById(R.id.show_data_usage);
+                final Button cancel = inflatedView.findViewById(R.id.cancel_show_data);
+                final Button ok = inflatedView.findViewById(R.id.ok_show_data);
 
+                dataUsageMessage.setTypeface(font);
+                showDataUsage.setTypeface(font);
+                ok.setTypeface(font);
+                cancel.setTypeface(font);
+
+                showDataUsage.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     checked[0] = isChecked;
                 });
-                checkBox.setText("Do not show again");
-//                AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
-                ab.setTitle(Title);
-                ab.setMessage(Message)
-                        .setView(checkBoxView)
-                        .setCancelable(false)
-                        .setPositiveButton("OK", (dialog, which) -> {
-                    if(checked[0]){
-                        save("SHOW_POP_UP_DATA_USAGE","1",context);
-                    }else{
-                        save("SHOW_POP_UP_DATA_USAGE","0",context);
-                    }
-                }).show();
+
+                cancel.setOnClickListener(v -> {
+                    Activity activity = (Activity) context;
+                    activity.finish();
+                });
+                ok.setOnClickListener(v -> {
+                    if(checked[0])
+                        save("SHOW_POP_UP_DATA_USAGE", "1", context);
+                    else
+                        save("SHOW_POP_UP_DATA_USAGE", "0", context);
+                    mDialog.dismiss();
+                });
+                showMessageBox(false,context,inflatedView);
             }
         }else if(Title.equalsIgnoreCase("Application Update")){
-//            AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
             ab.setTitle(Title);
             ab.setMessage(Message)
                     .setCancelable(false)
@@ -572,32 +584,75 @@ public class Utility {
                         ((Activity)context).finish();
                     }).show();
         }else if(Title.equalsIgnoreCase("Autostart Application")) {
-            if("2".equalsIgnoreCase(getValueString("AUTO_START",context))) {
-                ImageView imageView = new ImageView(context);
-                imageView.setImageResource(R.drawable.autostart);
-                imageView.setPadding(15,-25,15,0);
-                ab.setView(imageView);
-                ab.setTitle(Title);
-                ab.setMessage(Message)
-                        .setPositiveButton("Go to settings", (dialog, which) -> {
-                            addAutoStartup(context);
-                            save("AUTO_START","1",context);
-                        })
-                        .setNegativeButton("Cancel", (dialog, which) -> {
-                            dialog.dismiss();
+            if("".equalsIgnoreCase(getValueString("AUTO_START",context))) {
+                LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null,false);
+                final TextView generalMessage = inflatedView.findViewById(R.id.message_box_message);
+                final LinearLayout linearButtons = inflatedView.findViewById(R.id.linear_buttons);
+                final Button cancelToSetting = inflatedView.findViewById(R.id.cancel_go_to_settings);
+                final Button goToSettings = inflatedView.findViewById(R.id.go_to_settings);
+                final ImageView autoStartImage = inflatedView.findViewById(R.id.image_auto_start);
+                final TextView title = inflatedView.findViewById(R.id.message_box_title);
+                Drawable img = null;
+                if(MSG_BOX_WARNING.equalsIgnoreCase(type)){
+                    img = context.getResources().getDrawable(R.drawable.ic_warning);
+                    title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+                }else if(MSG_BOX_ERROR.equalsIgnoreCase(type)){
+                   img = context.getResources().getDrawable(R.drawable.ic_cancel);
+                }
 
-                        }).show();
+                title.setText(Title);
+                title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+                title.setCompoundDrawablePadding(15);
+                autoStartImage.setVisibility(View.VISIBLE);
+                linearButtons.setVisibility(View.VISIBLE);
+                cancelToSetting.setOnClickListener(v -> mDialog.dismiss());
+                goToSettings.setOnClickListener(v -> {
+                    addAutoStartup(context);
+                    save("AUTO_START","1",context);
+                });
+                generalMessage.setTypeface(font);
+                generalMessage.setText(Message);
+
+                showMessageBox(false,context,inflatedView);
             }
         }
         else {
-            ab.setTitle(Title);
-            ab.setMessage(Message);
-            ab.show();
+            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null,false);
+            final TextView generalMessage = inflatedView.findViewById(R.id.message_box_message);
+            final TextView title = inflatedView.findViewById(R.id.message_box_title);
+
+            Drawable img = null;
+            if(MSG_BOX_WARNING.equalsIgnoreCase(type)){
+                img = context.getResources().getDrawable(R.drawable.ic_warning);
+                title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+            }else if(MSG_BOX_ERROR.equalsIgnoreCase(type)){
+                img = context.getResources().getDrawable(R.drawable.ic_cancel);
+            }
+
+            title.setText(Title);
+            title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+            title.setCompoundDrawablePadding(15);
+
+            generalMessage.setText(Message);
+            generalMessage.setTypeface(font);
+
+            showMessageBox(true,context,inflatedView);
+            new CountDownTimer(3000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                }
+
+                @Override
+                public void onFinish() {
+                    mDialog.dismiss();
+                }
+            }.start();
         }
     }
 
     public static void addAutoStartup(Context context) {
-
         try {
             Intent intent = new Intent();
             String manufacturer = android.os.Build.MANUFACTURER;
@@ -620,5 +675,32 @@ public class Utility {
         } catch (Exception e) {
 //            Log.e("exc" , String.valueOf(e));
         }
+    }
+    public static void showLoginError(Context context,TextView errorText,String message){
+        errorText.setVisibility(View.VISIBLE);
+        errorText.setText(message);
+        errorText.setTypeface(setFont(context,"font/Century_Gothic.ttf"));
+        errorText.setTextSize(15);
+        errorText.startAnimation(AnimationUtils.loadAnimation(context,R.anim.shake));
+        new CountDownTimer(3000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {}
+
+            @Override
+            public void onFinish() {
+                errorText.clearAnimation();
+                errorText.setVisibility(View.GONE);
+            }
+        }.start();
+
+    }
+
+    private static void showMessageBox(boolean cancelable, Context context, View view){
+        mDialog = new AlertDialog.Builder(context).create();
+        mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mDialog.setView(view);
+        mDialog.setCanceledOnTouchOutside(cancelable);
+        mDialog.setCancelable(cancelable);
+        mDialog.show();
     }
 }

@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:padding="10sp"
-            android:src="@drawable/ic_share_button" />
+            android:src="@drawable/ic_share" />
 
         <ImageButton
             android:id="@+id/like"

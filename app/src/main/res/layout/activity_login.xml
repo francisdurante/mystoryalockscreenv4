@@ -10,38 +10,42 @@
     android:gravity="center"
     android:layout_alignParentBottom="true"
     >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="10"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="10">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_weight="6"
             android:gravity="center"
-            android:layout_weight="6">
+            android:orientation="vertical">
+
             <LinearLayout
                 android:id="@+id/linear_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:background="#1db7fd"
-                >
+                android:orientation="horizontal">
+
                 <ImageView
-                    android:adjustViewBounds="true"
                     android:id="@+id/header_login"
                     android:layout_width="match_parent"
-                    android:src="@drawable/connection"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/connection" />
             </LinearLayout>
+
             <ImageView
-                android:paddingTop="20dp"
-                android:adjustViewBounds="true"
                 android:id="@+id/image_top_login"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:paddingTop="20dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/new_logo_top" />
         </LinearLayout>
@@ -49,10 +53,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_weight="4"
-            android:padding="15dp"
-            android:gravity="center|top">
+            android:gravity="center|top"
+            android:orientation="vertical"
+            android:padding="15dp">
 
             <TextView
                 android:id="@+id/login_text"
@@ -60,16 +64,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
+                android:background="#ffbc00"
+                android:drawableLeft="@drawable/ic_icon"
                 android:gravity="center"
-                android:textColor="#90fdfd65"
-                android:textSize="15sp" />
+                android:padding="12sp"
+                android:text="Invalid username or password"
+                android:textColor="#000"
+                android:visibility="gone"/>
+
             <EditText
                 android:id="@+id/email_address"
                 android:layout_width="match_parent"
                 android:layout_height="37dp"
                 android:layout_marginTop="10dp"
-                android:drawableStart="@drawable/ic_new_email_outline_white"
                 android:background="#60ffffff"
+                android:drawableStart="@drawable/ic_new_email_outline_white"
                 android:gravity="center"
                 android:hint="@string/email_address"
                 android:inputType="textEmailAddress"
@@ -99,14 +108,13 @@
                 android:id="@+id/login_button"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginEnd="70dp"
                 android:layout_marginStart="70dp"
                 android:layout_marginTop="10dp"
-                android:textSize="15sp"
+                android:layout_marginEnd="70dp"
+                android:background="@drawable/rounded_button_login"
                 android:text="LOGIN"
                 android:textColor="#ffffff"
-                android:background="@drawable/rounded_button_login"
-                />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/signup_text"

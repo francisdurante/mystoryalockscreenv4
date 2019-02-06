@@ -1,0 +1,89 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/transparent" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="57dp"
+        android:background="#dd4926"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:paddingTop="5sp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/data_usage_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50sp"
+                android:gravity="top|center"
+                android:text="@string/data_usage_message"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <CheckBox
+                android:id="@+id/show_data_usage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10sp"
+                android:buttonTint="#fff"
+                android:gravity="top|center"
+                android:paddingTop="7sp"
+                android:text="@string/dont_show_again"
+                android:textColor="#fff"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginTop="15sp"
+            android:layout_marginBottom="15sp"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="15sp"
+            >
+            <Button
+                android:id="@+id/cancel_show_data"
+                android:text="@string/cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="5sp"
+                android:gravity="center"
+                android:textColor="#FFF"
+                android:background="@drawable/rounded_button_orange"/>
+            <Button
+                android:id="@+id/ok_show_data"
+                android:text="@string/ok"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/rounded_button_white"
+                android:textColor="#f45a31"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/m1w_logo_icon" />
+
+</RelativeLayout>
