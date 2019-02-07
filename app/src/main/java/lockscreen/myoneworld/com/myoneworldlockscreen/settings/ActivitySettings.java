@@ -1,23 +1,19 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.settings;
 
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.TrafficStats;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -26,9 +22,28 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANCEL_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OK_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SETTING_TEXT;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ENABLE_WIFI_AND_DATA;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PACKAGE_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGOUT;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGOUT_MSG;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.YES_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLUS_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEGATIVE_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DISABLE_LOCKSCREEN_MSG;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DISABLE_LOCKSCREEN_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.stopJobService;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
@@ -46,12 +61,10 @@ public class ActivitySettings extends AppCompatActivity {
     LinearLayout generalSettingLinear;
     LinearLayout downloadSettingLinear;
     LinearLayout accountSettingLinear;
-    TextView generalSettingSign;
     TextView downloadSettingSign;
     TextView accountSettingSign;
     Animation slideDown;
     Animation slideUp;
-    boolean generalSettingShow = false;
     boolean downloadSettingShow = false;
     boolean accountSettingShow = false;
     TextView settingText;
@@ -98,7 +111,7 @@ public class ActivitySettings extends AppCompatActivity {
         logoutText.setTypeface(font);
         changePasswordText.setTypeface(font);
 
-        settingText.setText("Settings");
+        settingText.setText(SETTING_TEXT);
         settingText.setTextSize(12f);
 
         if(getValueString("WIFI_ONLY",mContext).equals("")){
@@ -153,7 +166,7 @@ public class ActivitySettings extends AppCompatActivity {
         });
         wifiAndData.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
-                showDialogBox("Enabling Wifi And Data may contain Data charges in downloading stories.\n",wifiAndData);
+                showDialogBox(ENABLE_WIFI_AND_DATA,wifiAndData);
             }else{
                 save("WIFI_OR_DATA","",mContext);
             }
@@ -204,7 +217,7 @@ public class ActivitySettings extends AppCompatActivity {
         layout.addView(et2);
         ab.setView(layout);
         ab.setCancelable(false);
-        ab.setPositiveButton("OK", (dialog, which) -> {
+        ab.setPositiveButton(OK_BUTTON, (dialog, which) -> {
             setting.setChecked(true);
             wifiOnly.setChecked(false);
             doNotDownload.setChecked(false);
@@ -212,7 +225,7 @@ public class ActivitySettings extends AppCompatActivity {
             save("DO_NOT_DOWNLOAD","",mContext);
             save("WIFI_ONLY","",mContext);
         });
-        ab.setNegativeButton("CANCEL", (dialog, which) -> {
+        ab.setNegativeButton(CANCEL_BUTTON, (dialog, which) -> {
             setting.setChecked(false);
             save("DO_NOT_DOWNLOAD","1",mContext);
             save("WIFI_OR_DATA","",mContext);
@@ -230,7 +243,7 @@ public class ActivitySettings extends AppCompatActivity {
             if(runningApps.size() > 0)
             {
                 for (ActivityManager.RunningAppProcessInfo runningApp : runningApps) {
-                    if (runningApp.processName.equals("com.lockscreen.brown.brownlockscreen")) {
+                    if (runningApp.processName.equals(PACKAGE_NAME)) {
                         int app = runningApp.uid;
                         float received = TrafficStats.getUidRxBytes(app);//received amount of each app
                         String totalMB = String.format("%.2f", received * 0.000001);
@@ -256,9 +269,9 @@ public class ActivitySettings extends AppCompatActivity {
 
             }
         }
-        ab.setTitle("Log out");
-        ab.setMessage("Do you want to logout my|storya?");
-        ab.setPositiveButton("YES", (dialog, which) -> {
+        ab.setTitle(LOGOUT);
+        ab.setMessage(LOGOUT_MSG);
+        ab.setPositiveButton(YES_BUTTON, (dialog, which) -> {
 //            save("SHOW_POP_UP_DATA_USAGE","0",mContext);
             save("USER_ID","",mContext);
             save("FULL_NAME","",mContext);
@@ -272,7 +285,7 @@ public class ActivitySettings extends AppCompatActivity {
             save("SERVICE", "0",mContext);
             finish();
         });
-        ab.setNegativeButton("NO", (dialog, which) -> {
+        ab.setNegativeButton(NO_BUTTON, (dialog, which) -> {
 
         });
         AlertDialog a = ab.create();
@@ -281,11 +294,11 @@ public class ActivitySettings extends AppCompatActivity {
     public void accountSettingClick(View v){
         if(accountSettingShow) {
             accountSettingLinear.setVisibility(View.GONE);
-            accountSettingSign.setText("+");
+            accountSettingSign.setText(PLUS_BUTTON);
             accountSettingSign.setTypeface(null,Typeface.BOLD);
         }else{
             accountSettingLinear.setVisibility(View.VISIBLE);
-            accountSettingSign.setText("-");
+            accountSettingSign.setText(NEGATIVE_BUTTON);
             accountSettingSign.setTypeface(null,Typeface.BOLD);
         }
         accountSettingShow = !accountSettingShow;
@@ -294,17 +307,17 @@ public class ActivitySettings extends AppCompatActivity {
         if(!isMyServiceRunning(LockscreenService.class,mContext)) {
             if (downloadSettingShow) {
                 downloadSettingLinear.setVisibility(View.GONE);
-                downloadSettingSign.setText("+");
+                downloadSettingSign.setText(PLUS_BUTTON);
                 downloadSettingSign.setTypeface(null, Typeface.BOLD);
             } else {
                 downloadSettingLinear.setVisibility(View.VISIBLE);
-                downloadSettingSign.setText("-");
+                downloadSettingSign.setText(NEGATIVE_BUTTON);
                 downloadSettingSign.setTypeface(null, Typeface.BOLD);
             }
             downloadSettingShow = !downloadSettingShow;
         }
         else{
-            globalMessageBox(mContext,"Please disable my|storya lockscreen","Download settings.",MSG_BOX_WARNING);
+            globalMessageBox(mContext,DISABLE_LOCKSCREEN_MSG,DISABLE_LOCKSCREEN_TITLE,MSG_BOX_WARNING);
         }
     }
 

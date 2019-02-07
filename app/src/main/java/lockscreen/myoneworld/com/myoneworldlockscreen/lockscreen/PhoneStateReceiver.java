@@ -1,6 +1,5 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen;
 
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,9 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.Activity
 import static lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.ActivityLockscreen.ads_count;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.ActivityLockscreen.totalSize;
 import android.telephony.TelephonyManager;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.freeMemory;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isActivityRunning;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.startJobService;
 
 public class PhoneStateReceiver extends BroadcastReceiver {
 
@@ -20,16 +21,18 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         offScreen = false;
         new ActivityLockscreen(article_id);
         if (null != context) {
-            System.out.println(CallReceiver.onCall + " aaaaaaaaaaaaaaa");
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) && !CallReceiver.onCall) {
-                offScreen = true;
-                TelephonyManager tManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-                boolean isPhoneIdle = tManager.getCallState() == TelephonyManager.CALL_STATE_IDLE;
-                if (isPhoneIdle) {
-                    offScreen = true;
-                }else {
-                    offScreen = false;
-                }
+            boolean onCallOrRinging = false;
+            TelephonyManager tManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            boolean onCall = tManager.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK ;
+            boolean onRinging = tManager.getCallState() == TelephonyManager.CALL_STATE_RINGING;
+            boolean isPhoneIdle = tManager.getCallState() == TelephonyManager.CALL_STATE_IDLE;
+
+            if(onCall || onRinging){
+                onCallOrRinging = true;
+            }
+            System.out.println("CALL STATUS IN CALL : " + onCallOrRinging);
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) && !onCallOrRinging) {
+                offScreen = isPhoneIdle;
                 if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
                     if(!isActivityRunning) {
                         Intent screenIdle = new Intent(context, ActivityLockscreen.class);

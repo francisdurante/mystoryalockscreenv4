@@ -7,7 +7,10 @@ import android.telephony.TelephonyManager;
 
 import java.util.Date;
 
-public class PhoneCallReceiver  extends BroadcastReceiver {
+public abstract class PhoneCallReceiver extends BroadcastReceiver {
+
+    //The receiver will be recreated whenever android feels like it.  We need a static variable to remember data between instantiations
+
     private static int lastState = TelephonyManager.CALL_STATE_IDLE;
     private static Date callStartTime;
     private static boolean isIncoming;
@@ -16,7 +19,6 @@ public class PhoneCallReceiver  extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println(" fuck you bitch gago k ba?");
         //We listen to two intents.  The new outgoing call only tells us of an outgoing call.  We use it to get the number.
         if (intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")) {
             savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");

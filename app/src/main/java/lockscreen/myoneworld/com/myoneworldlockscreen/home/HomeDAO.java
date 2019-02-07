@@ -31,8 +31,10 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGGED_IN_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_TEST;
 
 public class HomeDAO {
     Context context;
@@ -110,12 +112,10 @@ public class HomeDAO {
                         JSONObject serverResp = new JSONObject(response.toString());
                         String status = serverResp.getString("status");
                         if ("success".equals(status)) {
-                            Log.d("Send Location", "success");
                             save("UNSENT_LOCATION", "", context);
                         }
                         else if("existing".equals(status))
                         {
-                            Log.d("Send Location", status);
                             save("UNSENT_LOCATION", "", context);
                         }
                     } catch (JSONException e) {
@@ -152,7 +152,7 @@ public class HomeDAO {
                         != PackageManager.PERMISSION_DENIED) {
                     if(location != null){
                         try {
-                            sendLocation(getValueString("user_id",context),Utility.getCurrentLocation(context,location),context);
+                            sendLocation(getValueString("USER_ID",context),Utility.getCurrentLocation(context,location),context);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -164,7 +164,6 @@ public class HomeDAO {
     }
     public static void generateJSONForLocation(List<Address> addresses, Context context) {
         try {
-            System.out.println(addresses + " aaaaaaaaaaaaaa");
             Locations locationObj = new Locations(addresses.get(0).getAddressLine(0),
                     Double.toString(addresses.get(0).getLongitude()),
                     Double.toString(addresses.get(0).getLatitude()),addresses.get(0).getSubAdminArea());
@@ -192,7 +191,6 @@ public class HomeDAO {
                 }
             }
             save("UNSENT_LOCATION", unSendLocation.toString(), context);
-            System.out.println(getValueString("UNSENT_LOCATION",context) + " aaaaaaaaaaaaaa");
         } catch (JSONException e1) {
             e1.printStackTrace();
         }

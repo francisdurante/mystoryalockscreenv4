@@ -44,49 +44,121 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp" />
-
-    <LinearLayout
-        android:id="@+id/comment_things"
+    <RelativeLayout
+        android:id="@+id/after_video_layout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/view_pager_article"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/rounded_button_login"
-        android:layout_marginBottom="0dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="10sp"
+        android:layout_height="match_parent"
+        android:background="#0d1225"
         android:visibility="gone">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/linear_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|top"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_marginTop="30sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/m1w_logo_icon"
+                    android:maxHeight="120sp"
+                    android:maxWidth="120sp"
+                    android:adjustViewBounds="true"/>
 
-        <Button
-            android:id="@+id/text_comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#60ffffff"
-            android:hint="@string/write_a_comment"
-            android:padding="10sp"
-            android:paddingStart="20sp"
-            android:paddingEnd="20sp"
-            android:textColorHint="#ffffff" />
+                <TextView
+                    android:id="@+id/top_title_after_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="5sp"
+                    android:textSize="30sp"
+                    android:textColor="#FFF"
+                    android:text="@string/change_the_world_one_story_at_a_time"
+                    />
+                <TextView
+                    android:textColor="#FFF"
+                    android:layout_marginTop="10sp"
+                    android:id="@+id/mid_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:text="@string/mid_message"
+                    />
+                <TextView
+                    android:textColor="#FFF"
+                    android:layout_marginTop="10sp"
+                    android:id="@+id/bot_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:text="@string/bot_message"
+                    />
+                <LinearLayout
+                    android:id="@+id/comment_things_after_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_button_white"
+                    android:gravity="center"
+                    android:layout_marginStart="20sp"
+                    android:layout_marginEnd="20sp"
+                    android:orientation="horizontal"
+                    android:paddingStart="35sp"
+                    android:paddingEnd="35sp"
+                    android:paddingTop="5sp"
+                    android:paddingBottom="5sp"
+                    android:layout_marginTop="10sp">
 
-        <ImageButton
-            android:id="@+id/share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:padding="10sp"
-            android:src="@drawable/ic_share" />
+                    <ImageButton
+                        android:id="@+id/text_comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:hint="@string/write_a_comment"
+                        android:padding="10sp"
+                        android:src="@drawable/ic_comment_white_oval_bubble"/>
 
-        <ImageButton
-            android:id="@+id/like"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:padding="10sp"
-            android:src="@drawable/ic_like_no_color" />
-    </LinearLayout>
+                    <ImageButton
+                        android:id="@+id/share"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:padding="10sp"
+                        android:src="@drawable/ic_share" />
+
+                    <ImageButton
+                        android:id="@+id/like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:padding="10sp"
+                        android:adjustViewBounds="true"
+                        android:maxHeight="200sp"
+                        android:maxWidth="150sp"
+                        android:src="@drawable/ic_like_no_color" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linear_bot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|top"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/footer_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/footer_message"
+                        android:gravity="center"
+                        android:textColor="#FFF"
+                        android:textSize="12sp"
+                        android:layout_marginTop="5sp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
 </RelativeLayout>

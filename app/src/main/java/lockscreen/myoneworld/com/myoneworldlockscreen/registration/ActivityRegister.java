@@ -25,8 +25,20 @@ import java.util.Calendar;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.makeNotification;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isValidBirthday;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FIRST_NAME_REQUIRED;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LAST_NAME_REQUIRED;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PHONE_NUMBER_REQUIRED;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EMAIL_REQUIRED;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ATLEAST_8_CHARACTERS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INVALID_DATE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INVALID_EMAIL;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MISMATCH_PASSWORD;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_COUNTRY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_ADDRESS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_BIRTHDAY;
 
 public class ActivityRegister extends AppCompatActivity {
 

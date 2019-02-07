@@ -38,4 +38,13 @@
     <string name="ok">CONFIRM</string>
     <string name="go_to_settings">GO TO SETTINGS</string>
     <string name="cancel">CANCEL</string>
+    <string name="change_the_world_one_story_at_a_time">Change the World\nOne Story at a Time</string>
+    <string name="mid_message">Thank you for sharing my|storya’s\n
+    mission to provide an inspiring story\n
+    selection designed to motivate\n
+    the reader to improve themselves\n
+    and the world they live in.</string>
+    <string name="bot_message">Join us in changing the world by\n
+    sharing this with your friend.</string>
+    <string name="footer_message">If you have story ideas or suggestions\nplease message us at mystorya.com.ph.</string>
 </resources>

@@ -10,19 +10,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.registration.ActivityRegister;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FILL_REQUIRED;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INVALID_EMAIL;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showLoginError;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
 
 public class ActivityLogin extends AppCompatActivity {
     Context mContext = this;
@@ -74,7 +76,7 @@ public class ActivityLogin extends AppCompatActivity {
             LoginVO vo = new LoginVO();
 
             if(!"".equals(userNameLogin.getText().toString()) && !userNameLogin.getText().toString().contains("@")){
-                showLoginError(mContext,errorText,"Invalid email address");
+                showLoginError(mContext,errorText,INVALID_EMAIL);
             }
             else if(!"".equals(userNameLogin.getText().toString()) && !"".equals(passwordLogin.getText().toString())) {
                 vo.setEmail(userNameLogin.getText().toString());
@@ -82,7 +84,7 @@ public class ActivityLogin extends AppCompatActivity {
                 login.login(vo);
             }
             else{
-                showLoginError(mContext,errorText,"Please fill all the required fields");
+                showLoginError(mContext,errorText,FILL_REQUIRED);
             }
         });
     }

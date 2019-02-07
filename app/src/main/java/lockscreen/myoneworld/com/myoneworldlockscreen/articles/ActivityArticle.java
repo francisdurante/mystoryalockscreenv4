@@ -6,13 +6,11 @@ import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -38,6 +36,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 import com.google.android.gms.analytics.Tracker;
@@ -46,44 +46,57 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.filePath;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getConnectionType;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.sendAnalytics;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isNetworkAvailable;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.filePathComics;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLEASE_WAIT;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANT_PLAY_ERROR_CLOUD;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANT_PLAY_ERROR;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.AnalyticsApplication;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 
 public class ActivityArticle extends AppCompatActivity {
-    public static int[] property;
-    public static int imgCount = 0; //holder of number in folder
-    static SharedPreferences spf;
-    Context mContext = this;
+    private Context mContext = this;
     public static String article_id;
-    VideoView videoView;
-    Tracker mTracker;
-    ProgressDialog mDialog;
-    AlertDialog aDialog;
-    ImageView initial;
-    String[] imagesPath;
+    private VideoView videoView;
+    private Tracker mTracker;
+    private ProgressDialog mDialog;
+    private ImageView initial;
     static ArrayList<String> imageUrl;
     static ArrayList<String> comicsPathArrayList;
-    ViewPager viewPager;
-    Button textComment;
-    ImageButton shareButton;
-    ImageButton likeButton;
-    LinearLayout commentThings;
-    LinearLayout likeAnimation;
-    boolean tempLikeStatus = false;
-    String[] comicsPath;
-    Animation rotate;
+    private ViewPager viewPager;
+    private ImageButton textComment;
+    private ImageButton shareButton;
+    private ImageButton likeButton;
+    private LinearLayout commentThings;
+    private  LinearLayout likeAnimation;
+    private boolean tempLikeStatus = false;
+    private Animation rotate;
     private PopupWindow popWindow;
     private int videoStopped = 0;
     private int shared = 0;
+    private TextView topMessage;
+    private TextView midMessage;
+    private TextView botMessage;
+    private TextView footerMessage;
+    RelativeLayout afterVideoLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if(shared != 1) {
+
             setContentView(R.layout.activity_article);
             rotate = AnimationUtils.loadAnimation(mContext, R.anim.rotation_fast);
             initial = findViewById(R.id.initial_page);
@@ -93,43 +106,14 @@ public class ActivityArticle extends AppCompatActivity {
             textComment = findViewById(R.id.text_comment);
             likeButton = findViewById(R.id.like);
             shareButton = findViewById(R.id.share);
-            commentThings = findViewById(R.id.comment_things);
             likeAnimation = findViewById(R.id.heart_anim_linear);
-            textComment.setOnClickListener(v -> {
-                onShowPopup(v);
-                commentThings.setVisibility(View.GONE);
-            });
+            textComment.setOnClickListener(this::onShowPopup);
             shareButton.setOnClickListener(v -> dialogShare());
             likeButton.setOnClickListener(v -> {
                 clickLikeButton(tempLikeStatus);
                 tempLikeStatus = !tempLikeStatus;
             });
-            commentThings.setVisibility(View.VISIBLE);
-            textComment.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (!textComment.getText().toString().equals("")) {
-                        textComment.setBackgroundColor(Color.parseColor("#ffffff"));
-
-                    } else {
-                        textComment.setBackgroundColor(Color.parseColor("#60ffffff"));
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-            textComment.bringToFront();
-            likeButton.bringToFront();
-            shareButton.bringToFront();
-            likeAnimation.bringToFront();
+//            bringToFrontlayout();
             AnalyticsApplication application = (AnalyticsApplication) getApplication();
             mTracker = application.getDefaultTracker();
             videoView = findViewById(R.id.flipper);
@@ -199,7 +183,7 @@ public class ActivityArticle extends AppCompatActivity {
             Animation like = AnimationUtils.loadAnimation(this,R.anim.zoomin);
             likeAnimation.setAnimation(like);
             likeAnimation.setVisibility(View.VISIBLE);
-            commentThings.setVisibility(View.GONE);
+//            commentThings.setVisibility(View.GONE);
             new CountDownTimer(1000, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -210,7 +194,6 @@ public class ActivityArticle extends AppCompatActivity {
                 public void onFinish() {
                     likeAnimation.setVisibility(View.GONE);
                     likeAnimation.clearAnimation();
-                    commentThings.setVisibility(View.VISIBLE);
                 }
             }.start();
         }else{
@@ -221,10 +204,6 @@ public class ActivityArticle extends AppCompatActivity {
     private void chooseOptionArticle(String type) {
         Utility util = new Utility();
         if ("video".equals(type)) {
-            textComment.bringToFront();
-            likeButton.bringToFront();
-            shareButton.bringToFront();
-            likeAnimation.bringToFront();
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             android.widget.RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) videoView.getLayoutParams();
@@ -254,7 +233,7 @@ public class ActivityArticle extends AppCompatActivity {
                         mDialog.dismiss();
                         videoView.setOnCompletionListener(mp -> {
                             if (!getValueString("FULL_NAME",mContext).equals("")) {
-                                commentThings.setVisibility(View.VISIBLE);
+                                bringToFrontlayout();
                                 videoView.stopPlayback();
                                 sendAnalytics(mContext,article_id);
                             } else {
@@ -277,10 +256,9 @@ public class ActivityArticle extends AppCompatActivity {
                     else {
                         try { // cloud loading
                             String message = "";
+                            util.showLoading(mContext);
                             if (!"MOBILE".equalsIgnoreCase(getConnectionType(mContext))) {
-                                util.showLoading(mContext);
                             }else{
-                                util.showLoading(mContext);
                                 showPopUpShowDataUsage();
                             }
                             if (!videoView.isPlaying()) {
@@ -289,7 +267,7 @@ public class ActivityArticle extends AppCompatActivity {
                                     videoView.setVideoURI(uri);
                                     videoView.setOnCompletionListener(mp -> {
                                         if (!getValueString("FULL_NAME",mContext).equals("")) {
-                                            commentThings.setVisibility(View.VISIBLE);
+                                            bringToFrontlayout();
                                             sendAnalytics(mContext, article_id);
                                             videoView.stopPlayback();
                                         } else {
@@ -326,7 +304,7 @@ public class ActivityArticle extends AppCompatActivity {
                                         videoView.setOnCompletionListener(mp -> {
                                             if (!getValueString("FULL_NAME",mContext).equals("")) {
                                                 videoView.stopPlayback();
-                                                commentThings.setVisibility(View.VISIBLE);
+                                                bringToFrontlayout();
                                                 sendAnalytics(mContext,article_id);
                                             } else {
                                                 finish();
@@ -367,16 +345,12 @@ public class ActivityArticle extends AppCompatActivity {
                     ArticleDAO articleDAO = new ArticleDAO();
                     viewPager = findViewById(R.id.view_pager_article);
                     articleDAO.getComicsTypeImage(article_id, mContext,initial,textComment,likeButton,
-                            shareButton,likeAnimation,viewPager,this,commentThings);
+                            shareButton,likeAnimation,viewPager,this,commentThings,afterVideoLayout);
                 }else{ // downloaded comics
                     filePathComics(article_id,mContext);
                     if (!comicsPathArrayList.isEmpty()) {
                         util.hideLoading();
                         initial.setVisibility(View.GONE);
-                        textComment.bringToFront();
-                        likeButton.bringToFront();
-                        shareButton.bringToFront();
-                        likeAnimation.bringToFront();
                         viewPager = findViewById(R.id.view_pager_article);
                         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(mContext, comicsPathArrayList,2);
                         viewPager.setAdapter(viewPagerAdapter);
@@ -388,7 +362,8 @@ public class ActivityArticle extends AppCompatActivity {
                             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                                 int lastIdx = viewPagerAdapter.getCount() - 1;
                                 if (position == lastIdx) {
-                                    commentThings.setVisibility(View.VISIBLE);
+//                                    commentThings.setVisibility(View.VISIBLE);
+                                    bringToFrontlayout();
                                     sendAnalytics(mContext,article_id);
                                 }
                             }
@@ -471,7 +446,7 @@ public class ActivityArticle extends AppCompatActivity {
         // show the popup at bottom of the screen and set some margin at bottom ie,
         popWindow.showAtLocation(v, Gravity.BOTTOM, 0, 100);
 
-        popWindow.setOnDismissListener(() -> commentThings.setVisibility(View.VISIBLE));
+//        popWindow.setOnDismissListener(() -> commentThings.setVisibility(View.VISIBLE));
     }
     @SuppressLint("ClickableViewAccessibility")
     void setSimpleList(ListView listView, ImageView loading) {
@@ -515,4 +490,21 @@ public class ActivityArticle extends AppCompatActivity {
             }
         }
     }
+
+    public void bringToFrontlayout(){
+        afterVideoLayout = findViewById(R.id.after_video_layout);
+        topMessage = findViewById(R.id.top_title_after_video);
+        midMessage = findViewById(R.id.mid_message);
+        botMessage = findViewById(R.id.bot_message);
+        footerMessage = findViewById(R.id.footer_message);
+        Typeface font = setFont(mContext,"font/Century_Gothic.ttf");
+        Typeface bold = setFont(mContext,"font/Gothicbold.TTF");
+        afterVideoLayout.bringToFront();
+        afterVideoLayout.setVisibility(View.VISIBLE);
+        topMessage.setTypeface(bold);
+        midMessage.setTypeface(font);
+        botMessage.setTypeface(font);
+        footerMessage.setTypeface(font);
+    }
+
 }

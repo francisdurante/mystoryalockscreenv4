@@ -7,10 +7,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.facebook.login.widget.LoginButton;
@@ -18,8 +15,6 @@ import com.google.android.gms.common.SignInButton;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.util.Objects;
-
-import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 
 public class NetworkReceiver extends BroadcastReceiver {
     LinearLayout header;

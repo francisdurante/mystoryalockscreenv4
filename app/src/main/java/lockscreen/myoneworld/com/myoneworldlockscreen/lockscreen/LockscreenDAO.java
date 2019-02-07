@@ -16,8 +16,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 import cz.msebera.android.httpclient.Header;
 import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getConnectionType;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_STORYA_DELETED_CONTENT;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANDROID_PATH;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ARTICLE_ANALYTICS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_STORYA_API_CONTENT_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 
 public class LockscreenDAO {

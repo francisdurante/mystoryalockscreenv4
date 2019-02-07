@@ -8,9 +8,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -20,15 +18,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import lockscreen.myoneworld.com.myoneworldlockscreen.AppUpdateChecker;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
 
 import android.support.v4.view.ViewPager;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.stopJobService;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.createNotificationChannel;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isNetworkAvailable;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_MSG;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ENABLE_AUTO_START_MSG;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START_MSG_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.STOP;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.START;
+
+
 
 public class ActivityHome extends AppCompatActivity {
     Context mContext = this;
@@ -45,7 +55,7 @@ public class ActivityHome extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            globalMessageBox(mContext,"Please enable autostart on my|ONEworld navigation app.","Autostart application",MSG_BOX_WARNING);
+            globalMessageBox(mContext,ENABLE_AUTO_START_MSG,AUTO_START_MSG_TITLE,MSG_BOX_WARNING);
         }
 
         init();
@@ -55,7 +65,7 @@ public class ActivityHome extends AppCompatActivity {
         try {
             switch (updateStatus) {
                 case "outdated":
-                    globalMessageBox(mContext, "New Version is now available in Google Play Store. Please update to continue using the lockscreen.", "Application Update", MSG_BOX_WARNING);
+                    globalMessageBox(mContext, NEW_VERSION_MSG, NEW_VERSION_TITLE, MSG_BOX_WARNING);
                     break;
             }
         } catch (Exception e) {
@@ -139,7 +149,7 @@ public class ActivityHome extends AppCompatActivity {
 
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                 return;
             }

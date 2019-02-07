@@ -20,9 +20,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANDROID_PATH;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 
 public class ViewPagerAdapter extends PagerAdapter {

@@ -1,14 +1,11 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.login;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,13 +39,14 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import java.util.Arrays;
-import java.util.Objects;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
-import lockscreen.myoneworld.com.myoneworldlockscreen.home.HomeVO;
-
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_KEY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOOGLE_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYSTORYA_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 
 public class ActivityLoginOptions extends AppCompatActivity {
@@ -135,7 +133,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
             if (v instanceof TextView) {
                 TextView tv = (TextView) v;
                 tv.setTypeface(font);
-                tv.setText("Login with Google");
+                tv.setText(GOOGLE_BUTTON);
                 tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_google_button));
                 tv.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, null);
                 if (Build.VERSION.SDK_INT == 19) {
@@ -161,7 +159,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
 
     public void twitterInit(){
         twitterLoginButton = (TwitterLoginButton) findViewById(R.id.twitter);
-        twitterLoginButton.setText("Login with Twitter");
+        twitterLoginButton.setText(TWITTER_BUTTON);
         twitterLoginButton.setTypeface(font);
         twitterLoginButton.setTextSize(12f);
         twitterLoginButton.setBackground(getResources().getDrawable(R.drawable.ic_twitter_button));
@@ -196,7 +194,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
         signInMyStoryaButton.setTypeface(font);
         signInMyStoryaButton.setTextSize(12f);
         signInMyStoryaButton.setGravity(Gravity.CENTER|Gravity.CENTER_VERTICAL);
-        signInMyStoryaButton.setText("Login with My|OneWorld");
+        signInMyStoryaButton.setText(MYSTORYA_BUTTON);
         signInMyStoryaButton.setOnClickListener(v -> {
             startActivity(new Intent(mContext,ActivityLogin.class));
             finish();

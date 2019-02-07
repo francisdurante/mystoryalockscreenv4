@@ -10,6 +10,7 @@ import java.io.IOException;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.splashscreen.ActivitySplashScreen.currentVersion;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome.updateStatus;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_VERSION_CHECKER;
 
 public class AppUpdateChecker extends AsyncTask<Context, String, String> {
     private Context[] context;
@@ -19,7 +20,7 @@ public class AppUpdateChecker extends AsyncTask<Context, String, String> {
         String newVersion = null;
 
         try {
-            Document document = Jsoup.connect("https://play.google.com/store/apps/details?id=com.lockscreen.brown.brownlockscreen&hl=en")
+            Document document = Jsoup.connect(PLAY_STORE_URL_VERSION_CHECKER)
                     .timeout(30000)
                     .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
                     .referrer("http://www.google.com")

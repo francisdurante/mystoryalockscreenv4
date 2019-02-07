@@ -17,11 +17,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.deleteEditedContent;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.freeMemory;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 
 public class DownloadImageFromApi extends AsyncTask<String, Integer, String> {
@@ -29,14 +30,10 @@ public class DownloadImageFromApi extends AsyncTask<String, Integer, String> {
     private Bitmap bitmap;
     private BitmapDrawable bitmapDrawable;
     private int fileNameNumber = 0;
-    static SharedPreferences spf;
     private String filePath;
-    private SimpleDateFormat sdf_min;
-    private SimpleDateFormat sdf;
-    private SimpleDateFormat ms;
     private Calendar c = Calendar.getInstance();
     private String articleId;
-    Context mContext;
+    private Context mContext;
     private String pathCover;
     private String pathVideo;
     private String pathComics;
@@ -130,7 +127,6 @@ public class DownloadImageFromApi extends AsyncTask<String, Integer, String> {
                     if (!input_file.exists()) {
                         fileName = "video_" + articleId + "_" + ".mp4";
                         if (edited == 0) {
-                            Log.d("Video Downloading", "doInBackground: downloading video id " + articleId);
                             input_file = new File(new_article_folder, fileName);
                             OutputStream outputStream = new FileOutputStream(input_file);
                             byte data[] = new byte[2048];
@@ -144,7 +140,6 @@ public class DownloadImageFromApi extends AsyncTask<String, Integer, String> {
                             outputStream.close();
                             freeMemory();
                         } else if (edited == 1) {
-                            Log.d("Video Downloading", "doInBackground: downloading video id " + articleId);
                             deleteEditedContent(articleId, mContext, 1);
                             input_file = new File(new_article_folder, fileName);
                             OutputStream outputStream = new FileOutputStream(input_file);

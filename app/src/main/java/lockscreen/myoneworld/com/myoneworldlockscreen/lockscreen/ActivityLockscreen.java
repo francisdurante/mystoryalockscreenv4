@@ -10,11 +10,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Browser;
-import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.RequiresApi;
@@ -22,7 +20,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telecom.Call;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,11 +37,20 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Locale;
 
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.freeMemory;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.disableLocksScreen;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.stopListening;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.fileMyStoryId;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setActivityRunning;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getFileInFolder;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.WEB_VIEW_SETTING;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYPHONE_SHOP;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_LIFE;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ActivityArticle;
@@ -124,6 +130,7 @@ public class ActivityLockscreen extends AppCompatActivity {
     }
     private void init(){
         try {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             right = this.findViewById(R.id.right);
             left = this.findViewById(R.id.left);
             up = this.findViewById(R.id.up);
@@ -406,7 +413,6 @@ public class ActivityLockscreen extends AppCompatActivity {
     }
     private void initialLoad() {
         rotate = AnimationUtils.loadAnimation(mContext, R.anim.rotate);
-        new CallReceiver();
         LockscreenDAO lockscreenDAO = new LockscreenDAO(mContext);
         lockscreenDAO.getArchivedStory();
         lockscreenDAO.newApiMyStoryaContent();

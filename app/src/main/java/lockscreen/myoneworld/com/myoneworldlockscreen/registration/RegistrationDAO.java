@@ -4,23 +4,31 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
-import android.widget.Toast;
-
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import cz.msebera.android.httpclient.Header;
 import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLogin;
-import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.LoginDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.LoginVO;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_OCCURED_SIGN_IN;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FACEBOOK;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOOGLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_REGISTRATION_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_BIRTHDAY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_COUNTRY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_FIRST_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_LAST_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_ADDRESS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_CONTACT;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ERROR;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLEASE_CHECK_CONNECTION;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REGISTER_SUCCESS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.makeNotification;
 
 public class RegistrationDAO {
@@ -75,10 +83,10 @@ public class RegistrationDAO {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 if(null == errorResponse){
-                    makeNotification("error","Please check connection.",activity);
+                    makeNotification(MSG_BOX_ERROR,PLEASE_CHECK_CONNECTION,activity);
                     util.hideLoading();
                 }else{
-                    makeNotification("error","Error occured while signing in.",activity);
+                    makeNotification(MSG_BOX_ERROR,ERROR_OCCURED_SIGN_IN,activity);
                 }
             }
         });
@@ -87,13 +95,13 @@ public class RegistrationDAO {
         RequestParams rp = new RequestParams();
         ApiClass api = new ApiClass();
         switch (loginVO.getLoginPlatform()){
-            case "FACEBOOK":
+            case FACEBOOK:
                 rp.add("facebook_key",loginVO.getSocialId());
                 break;
-            case "GOOGLE":
+            case GOOGLE:
                 rp.add("google_key",loginVO.getSocialId());
                 break;
-            case "TWITTER":
+            case TWITTER:
                 rp.add("twitter_key",loginVO.getSocialId());
                 break;
         }
@@ -122,7 +130,6 @@ public class RegistrationDAO {
                     LoginDAO loginDAO = new LoginDAO(context,activity);
                     JSONObject serverResp = new JSONObject(response.toString());
                     registerVO.setRegistrationStatusMessage(serverResp.getString("status"));
-                    System.out.println(registerVO.getRegistrationStatusMessage() + " aaaaaaaaaaaaaaa");
                     loginVO.setEmail(email);
                     loginVO.setPassword(registerVO.getPassword());
                     loginDAO.login(loginVO);

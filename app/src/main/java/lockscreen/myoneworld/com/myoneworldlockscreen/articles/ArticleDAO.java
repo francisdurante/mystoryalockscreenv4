@@ -2,7 +2,6 @@ package lockscreen.myoneworld.com.myoneworldlockscreen.articles;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.CountDownTimer;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.Spanned;
@@ -13,42 +12,43 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
-
-import com.google.android.gms.analytics.HitBuilders;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_STORYA_SINGLE_CONTENT;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANALYTICS_STORIES_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_COMMENT_STORY_ID_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_COMMENT_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showProgressBar;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.hideProgressBar;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.parseDateToddMMyyyy;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getDatePostedComputations;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 
 public class ArticleDAO {
-
+    RelativeLayout afterVideo;
     public void getComicsTypeImage(String id, Context context,
                                    ImageView initial,
-                                   Button textComment,
+                                   ImageButton textComment,
                                    ImageButton likeButton,
                                    ImageButton shareButton,
                                    LinearLayout likeAnimation,
                                    final ViewPager viewPager,
                                    Activity activity,
-                                   LinearLayout commentThings
+                                   LinearLayout commentThings,
+                                   RelativeLayout afterArticleLayout
                                    ) {
+        afterVideo = afterArticleLayout;
         ApiClass api = new ApiClass();
         RequestParams rp = new RequestParams();
         showProgressBar(context);
@@ -69,10 +69,6 @@ public class ArticleDAO {
                 if(!ActivityArticle.imageUrl.isEmpty()) {
                     hideProgressBar();
                     initial.setVisibility(View.GONE);
-                    textComment.bringToFront();
-                    likeButton.bringToFront();
-                    shareButton.bringToFront();
-                    likeAnimation.bringToFront();
                     ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(context, ActivityArticle.imageUrl, 1);
                     viewPager.setAdapter(viewPagerAdapter);
                     viewPager.setCurrentItem(0);
@@ -83,7 +79,7 @@ public class ArticleDAO {
                         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                             int lastIdx = viewPagerAdapter.getCount() - 1;
                             if (position == lastIdx) {
-                                commentThings.setVisibility(View.VISIBLE);
+                                bringToFrontlayout();
                                 sendAnalytics(getValueString("USER_ID", context), ActivityArticle.article_id, context);
                             }
                         }
@@ -208,5 +204,9 @@ public class ArticleDAO {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
+    }
+    private void bringToFrontlayout(){
+        afterVideo.bringToFront();
+        afterVideo.setVisibility(View.VISIBLE);
     }
 }

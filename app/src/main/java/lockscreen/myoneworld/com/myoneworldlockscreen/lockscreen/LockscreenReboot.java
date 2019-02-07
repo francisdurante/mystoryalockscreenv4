@@ -13,7 +13,6 @@ public class LockscreenReboot extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context , Intent arg1) {
-        System.out.println("Completed Reboot");
         lastDataUsage = getValueString("data_usage", context).equals("") ? "0.00" : getValueString("data_usage", context);
         mStatus = getValueString("SERVICE", context);
         if (Intent.ACTION_BOOT_COMPLETED.equals(arg1.getAction())) {

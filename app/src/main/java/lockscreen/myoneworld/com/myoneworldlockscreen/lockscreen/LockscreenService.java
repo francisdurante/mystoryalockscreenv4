@@ -37,7 +37,7 @@ public class LockscreenService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainActivity, 0);
         notification = new NotificationCompat.Builder(this, "NOTIFICATION_CHANNEL")
                 .setSmallIcon(R.drawable.logo_all_white)
-                .setContentTitle("my|storya")
+                .setContentTitle("my|ONEworld")
                 .setContentIntent(pendingIntent)
                 .setSound(null);
         startForeground(1, notification.build());
@@ -50,9 +50,8 @@ public class LockscreenService extends Service {
         freeMemory();
         offScreen = false;
         stateReceiver(true);
-        Intent bundleIntet = intent;
         if(!isActivityRunning) {
-            if (null != bundleIntet) {
+            if (null != intent) {
                 Intent lockscreen = new Intent(this, ActivityLockscreen.class);
                 lockscreen.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(lockscreen);

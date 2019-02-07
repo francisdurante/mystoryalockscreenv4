@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.app.KeyguardManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,7 +11,6 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -41,23 +39,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,16 +53,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.zip.Inflater;
-
-import cz.msebera.android.httpclient.Header;
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ArticleDAO;
-import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.ActivityLockscreen;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenJobService;
-import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START_MSG_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_SUCCESS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_THANKS_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_GENERAL;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_MARKET;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.UPDATE_NOW_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANDROID_PATH;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ERROR;
 
 public class Utility {
     private static AlertDialog mDialog;
@@ -528,16 +520,16 @@ public class Utility {
         Typeface font = setFont(context,"font/Century_Gothic.ttf");
         AlertDialog.Builder ab = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
         switch (type){
-            case "success":
+            case MSG_BOX_SUCCESS:
                 break;
-            case "warning":
+            case MSG_BOX_WARNING:
                 ab.setIcon(R.drawable.ic_warning);
                 break;
-            case "error":
+            case MSG_BOX_ERROR:
                 ab.setIcon(R.drawable.ic_cancel);
                 break;
         }
-        if(Title.equalsIgnoreCase("Data Usage")){
+        if(Title.equalsIgnoreCase(DATA_USAGE_TITLE)){
             final boolean[] checked = {false};
             if(!"1".equalsIgnoreCase(getValueString("SHOW_POP_UP_DATA_USAGE",context))) {
                 LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -569,22 +561,22 @@ public class Utility {
                 });
                 showMessageBox(false,context,inflatedView);
             }
-        }else if(Title.equalsIgnoreCase("Application Update")){
+        }else if(Title.equalsIgnoreCase(NEW_VERSION_TITLE)){
             ab.setTitle(Title);
             ab.setMessage(Message)
                     .setCancelable(false)
-                    .setPositiveButton("UPDATE NOW", (dialog, which) -> {
+                    .setPositiveButton(UPDATE_NOW_BUTTON, (dialog, which) -> {
                         try {
-                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.lockscreen.brown.brownlockscreen")));
+                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL_MARKET)));
                         } catch (android.content.ActivityNotFoundException anfe) {
-                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.lockscreen.brown.brownlockscreen")));
+                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL_GENERAL)));
                         }
                     })
-                    .setNegativeButton("NO THANKS", (dialog, which) -> {
+                    .setNegativeButton(NO_THANKS_BUTTON, (dialog, which) -> {
                         ((Activity)context).finish();
                     }).show();
-        }else if(Title.equalsIgnoreCase("Autostart Application")) {
-            if("".equalsIgnoreCase(getValueString("AUTO_START",context))) {
+        }else if(Title.equalsIgnoreCase(AUTO_START_MSG_TITLE)) {
+            if("".equalsIgnoreCase(getValueString("AUTO_START",context)) && checkManufacturer()) {
                 LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null,false);
                 final TextView generalMessage = inflatedView.findViewById(R.id.message_box_message);
@@ -652,7 +644,7 @@ public class Utility {
         }
     }
 
-    public static void addAutoStartup(Context context) {
+    private static void addAutoStartup(Context context) {
         try {
             Intent intent = new Intent();
             String manufacturer = android.os.Build.MANUFACTURER;
@@ -702,5 +694,27 @@ public class Utility {
         mDialog.setCanceledOnTouchOutside(cancelable);
         mDialog.setCancelable(cancelable);
         mDialog.show();
+    }
+    private static boolean checkManufacturer(){
+        boolean autostartAvailable = false;
+        String manufacturer = android.os.Build.MANUFACTURER;
+        switch (manufacturer){
+            case "vivo":
+                autostartAvailable = true;
+                break;
+            case "xiaomi":
+                autostartAvailable = true;
+                break;
+            case "oppo":
+                autostartAvailable = true;
+                break;
+            case "letv":
+                autostartAvailable = true;
+                break;
+            case "Honor":
+                autostartAvailable = true;
+                break;
+        }
+        return autostartAvailable;
     }
 }

@@ -15,7 +15,11 @@ import java.util.Objects;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.settings.ActivitySettings;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_MSG;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MSG;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
@@ -40,11 +44,11 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                         activity.finish();
                     });
                     if(networkInfo.getType() == ConnectivityManager.TYPE_MOBILE && networkInfo.isConnected()){
-                        globalMessageBox(context,"Using Mobile Data Connection, may cause data charges","Data Usage",MSG_BOX_WARNING);
+                        globalMessageBox(context,DATA_USAGE_MSG,DATA_USAGE_TITLE,MSG_BOX_WARNING);
 
                     }
                     if("outdated".equalsIgnoreCase(getValueString("VERSION_ONLINE",context))){
-                        globalMessageBox(context,"New Version is now available in Google Play Store. Please update to continue using the lockscreen.","Application Update",MSG_BOX_WARNING);
+                        globalMessageBox(context,NEW_VERSION_MSG,NEW_VERSION_TITLE,MSG_BOX_WARNING);
                     }
                 }
                 else {
