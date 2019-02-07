@@ -362,7 +362,6 @@ public class ActivityArticle extends AppCompatActivity {
                             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                                 int lastIdx = viewPagerAdapter.getCount() - 1;
                                 if (position == lastIdx) {
-//                                    commentThings.setVisibility(View.VISIBLE);
                                     bringToFrontlayout();
                                     sendAnalytics(mContext,article_id);
                                 }

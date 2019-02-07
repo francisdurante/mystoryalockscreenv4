@@ -283,6 +283,7 @@ public class ActivitySettings extends AppCompatActivity {
             stopService(new Intent(mContext,LockscreenService.class));
             startActivity(new Intent(mContext,ActivityLoginOptions.class));
             save("SERVICE", "0",mContext);
+
             finish();
         });
         ab.setNegativeButton(NO_BUTTON, (dialog, which) -> {

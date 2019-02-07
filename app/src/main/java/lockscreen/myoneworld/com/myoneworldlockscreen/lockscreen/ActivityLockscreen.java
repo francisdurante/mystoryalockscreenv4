@@ -389,7 +389,6 @@ public class ActivityLockscreen extends AppCompatActivity {
             }
         };
     }
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onDestroy() {
         if (bmImg != null) {
@@ -409,8 +408,18 @@ public class ActivityLockscreen extends AppCompatActivity {
             textToSpeech.shutdown();
         }
         setActivityRunning(false);
+        finish();
         super.onDestroy();
     }
+
+    @Override
+    protected void onPause() {
+        setActivityRunning(false);
+        finish();
+
+        super.onPause();
+    }
+
     private void initialLoad() {
         rotate = AnimationUtils.loadAnimation(mContext, R.anim.rotate);
         LockscreenDAO lockscreenDAO = new LockscreenDAO(mContext);
@@ -474,4 +483,5 @@ public class ActivityLockscreen extends AppCompatActivity {
         super.onStart();
         setActivityRunning(true);
     }
+
 }
