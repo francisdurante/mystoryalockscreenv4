@@ -63,6 +63,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
     int registerBroadcast = 0;
     NetworkReceiver nr;
     Button signInMyStoryaButton;
+    TextView errorText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
             font = Typeface.createFromAsset(getAssets(), "font/Century_Gothic.ttf");
             setContentView(R.layout.activity_login_options);
             linearLayout = findViewById(R.id.linear_login_option);
+            errorText = findViewById(R.id.login_text);
             twitterInit();
             facebookInit();
             googleInit();
@@ -101,7 +103,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
     }
 
     private void facebookInit() {
-        LoginDAO loginDAO = new LoginDAO(mContext, this);
+        LoginDAO loginDAO = new LoginDAO(mContext, this,errorText);
         LoginVO vo = new LoginVO();
         LoginManager.getInstance().logOut();
         FacebookSdk.sdkInitialize(mContext);
@@ -173,7 +175,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
         twitterLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                LoginDAO loginDAO = new LoginDAO(mContext,ActivityLoginOptions.this);
+                LoginDAO loginDAO = new LoginDAO(mContext,ActivityLoginOptions.this,errorText);
                 TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
                 TwitterAuthToken authToken = session.getAuthToken();
                 String token = authToken.token;
@@ -206,7 +208,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
-            LoginDAO loginDAO = new LoginDAO(mContext, this);
+            LoginDAO loginDAO = new LoginDAO(mContext, this,errorText);
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             loginDAO.googleSignIn(task);
             mGoogleSignInClient.signOut();

@@ -50,13 +50,13 @@ public class Constant {
     public static final String DISABLE_LOCKSCREEN_MSG = "Please disable my|storya lockscreen";
     public static final String DISABLE_LOCKSCREEN_TITLE = "Download settings";
     public static final String ENABLE_WIFI_AND_DATA = "Enabling Wifi And Data may contain Data charges in downloading stories.\n";
-
+    public static final String ERROR_PLYAING_VIDEO = "Error in Playing Video";
 
     public static final String CONSUMER_KEY = "F64atV1oWBXFAKhwn6tyktWMA";
     public static final String CONSUMER_SECRET = "FgOylOPUnzV9g063MbvLlA6sTTaHxq0kpPDLUK2CtGuaNcnbyd";
 
 
-    public static final int JOB_SCHEDULE_ID = 11;
+    static final int JOB_SCHEDULE_ID = 11;
 
     public static final String STOP = "DISABLE LOCKSCREEN";
     public static final String START = "START LOCKSCREEN";
@@ -78,22 +78,25 @@ public class Constant {
     public static final String FILL_REQUIRED = "Please fill all the required fields.";
 
     public static final String MSG_BOX_WARNING = "warning";
-    public static final String MSG_BOX_SUCCESS = "success";
+    static final String MSG_BOX_SUCCESS = "success";
     public static final String MSG_BOX_ERROR = "error";
 
-    public static final String FACEBOOK = "facebook";
-    public static final String TWITTER = "twitter";
-    public static final String GOOGLE = "google";
+    public static final String FACEBOOK = "FACEBOOK";
+    public static final String TWITTER = "TWITTER";
+    public static final String GOOGLE = "GOOGLE";
 
     public static final String SETTING_TEXT = "Settings";
+    public static final String CLOUD = "cloud";
+    public static final String MOBILE = "MOBILE";
+    public static final String WIFI = "WIFI";
 
     //--TEST API--///
     public static final String SEND_LOCATION_TEST= "http://192.168.1.149/myoneworld/public/api/mystory/location";
     public static final String G_VERSION_LOGIN_TEST = "http://192.168.1.149/myoneworld/public/oauth/token";
 
 
-    public static final String UPDATE_NOW_BUTTON = "UPDATE NOW";
-    public static final String NO_THANKS_BUTTON = "NO THANKS";
+    static final String UPDATE_NOW_BUTTON = "UPDATE NOW";
+    static final String NO_THANKS_BUTTON = "NO THANKS";
     public static final String TWITTER_BUTTON = "Login with Twitter";
     public static final String MYSTORYA_BUTTON = "Login with My|OneWorld";
     public static final String GOOGLE_BUTTON = "Login with Google";
@@ -103,8 +106,41 @@ public class Constant {
     public static final String NEGATIVE_BUTTON = "-";
     public static final String OK_BUTTON = "OK";
     public static final String CANCEL_BUTTON = "CANCEL";
+    public static final String MYONEWORLD = "my|ONEworld";
+    public static final String INTENT_SHARE_TITLE = "Choose app to share";
+    public static final String NO_SHARING_APP = "No application applicable to share story.";
+    public static final String SHARING_INTENT_TITLE = "Sharing Content";
 
+    public static final String VIDEO_ARTICLE = "Video Article";
+    public static final String COMIC_ARTICLE = "Comic Article";
+    public static final String ARTICLE_POPUP_TITLE = "Choose Article Type";
 
     public static final String PACKAGE_NAME = "com.lockscreen.brown.brownlockscreen";
+    static final String XIAOMI_AUTO_START = "com.miui.securitycenter";
+    static final String OPPO_AUTO_START = "com.coloros.safecenter";
+    static final String VIVO_AUTO_START = "com.vivo.permissionmanager";
+    static final String LETV_AUTO_START = "com.letv.android.letvsafe";
+    static final String HONOR_AUTO_START = "com.huawei.systemmanager";
+
+    public static final String FACEBOOK_PACKAGE_NAME = "com.facebook.katana";
+    public static final String GOOGLE_PACKAGE_NAME = "com.google.android.apps.docs";
+    public static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
+    public static final String INSTAGRAM_PACKAGE_NAME = "com.instagram.android";
+    static final String XIAOMI_AUTO_START_CLASS_NAME = "com.miui.permcenter.autostart.AutoStartManagementActivity";
+    static final String OPPO_AUTO_START_CLASS_NAME = "com.coloros.safecenter.permission.startup.StartupAppListActivity";
+    static final String VIVO_AUTO_START_CLASS_NAME = "com.vivo.permissionmanager.activity.BgStartUpManagerActivity";
+    static final String LETV_AUTO_START_CLASS_NAME = "com.letv.android.letvsafe.AutobootManageActivity";
+    static final String HONOR_AUTO_START_CLASS_NAME = "com.huawei.systemmanager.optimize.process.ProtectActivity";
+
+    static final String XIAOMI = "xiaomi";
+    static final String OPPO = "oppo";
+    static final String VIVO = "vivo";
+    static final String LETV = "Letv";
+    static final String HONOR = "honor";
+    static final String HUAWEI = "HUAWEI";
+
+    public static final String GOTHIC_FONT_PATH = "font/Century_Gothic.ttf";
+    public static final String GOTHIC_BOLD_FONT_PATH = "font/Gothicbold.TTF";
+
 
 }

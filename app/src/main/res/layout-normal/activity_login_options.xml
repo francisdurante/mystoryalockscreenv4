@@ -59,6 +59,19 @@
             android:gravity="center|top"
             android:orientation="vertical"
             android:padding="15dp">
+            <TextView
+                android:id="@+id/login_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="#ffbc00"
+                android:drawableLeft="@drawable/ic_icon"
+                android:gravity="center"
+                android:padding="12sp"
+                android:text="Invalid username or password"
+                android:textColor="#000"
+                android:visibility="gone"/>
 
             <com.facebook.login.widget.LoginButton
                 android:id="@+id/facebook_login"

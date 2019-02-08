@@ -94,6 +94,7 @@ public class RegistrationDAO {
     public void registration(RegistrationVO registerVO, LoginVO loginVO,Context context,Activity activity){
         RequestParams rp = new RequestParams();
         ApiClass api = new ApiClass();
+        System.out.println(loginVO.getLoginPlatform() + " aaaaaaaaaaaaaaaa " + loginVO.getSocialId());
         switch (loginVO.getLoginPlatform()){
             case FACEBOOK:
                 rp.add("facebook_key",loginVO.getSocialId());
@@ -104,6 +105,7 @@ public class RegistrationDAO {
             case TWITTER:
                 rp.add("twitter_key",loginVO.getSocialId());
                 break;
+
         }
 
         String email = registerVO.getEmail();
@@ -130,13 +132,18 @@ public class RegistrationDAO {
                     LoginDAO loginDAO = new LoginDAO(context,activity);
                     JSONObject serverResp = new JSONObject(response.toString());
                     registerVO.setRegistrationStatusMessage(serverResp.getString("status"));
-                    loginVO.setEmail(email);
-                    loginVO.setPassword(registerVO.getPassword());
+                    System.out.println(registerVO.getRegistrationStatusMessage() + " aaaaaaaaaaaaaaa");
+                    if(null != loginVO.getLoginPlatform() || !"".equalsIgnoreCase(loginVO.getLoginPlatform())){
+                        loginVO.setEmail(loginVO.getSocialId());
+                        loginVO.setPassword("DEFAULT_PASSPORT");
+                    }else {
+                        loginVO.setEmail(email);
+                        loginVO.setPassword(registerVO.getPassword());
+                    }
                     loginDAO.login(loginVO);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override

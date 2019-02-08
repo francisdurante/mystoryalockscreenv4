@@ -389,6 +389,7 @@ public class ActivityLockscreen extends AppCompatActivity {
             }
         };
     }
+
     @Override
     protected void onDestroy() {
         if (bmImg != null) {
@@ -410,14 +411,6 @@ public class ActivityLockscreen extends AppCompatActivity {
         setActivityRunning(false);
         finish();
         super.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        setActivityRunning(false);
-        finish();
-
-        super.onPause();
     }
 
     private void initialLoad() {

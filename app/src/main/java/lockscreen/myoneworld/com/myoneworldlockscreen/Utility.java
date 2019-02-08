@@ -42,6 +42,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -58,16 +60,32 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenJobSe
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START_MSG_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.HONOR;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.HONOR_AUTO_START;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.HONOR_AUTO_START_CLASS_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV_AUTO_START;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV_AUTO_START_CLASS_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_THANKS_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START_CLASS_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_GENERAL;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_MARKET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.UPDATE_NOW_BUTTON;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIVO;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIVO_AUTO_START;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIVO_AUTO_START_CLASS_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.XIAOMI;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.XIAOMI_AUTO_START;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.XIAOMI_AUTO_START_CLASS_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANDROID_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ERROR;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 
 public class Utility {
     private static AlertDialog mDialog;
@@ -516,8 +534,51 @@ public class Utility {
         }
         return accepted;
     }
+    public static boolean globalMessageBox(Context context){
+        final boolean[] checked = {false};
+        final boolean[] response = {false};
+        Typeface font = setFont(context,GOTHIC_FONT_PATH);
+        if(!"1".equalsIgnoreCase(getValueString("SHOW_POP_UP_DATA_USAGE",context))) {
+            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.pop_up_layout, null,false);
+            final TextView dataUsageMessage = inflatedView.findViewById(R.id.data_usage_message);
+            final CheckBox showDataUsage = inflatedView.findViewById(R.id.show_data_usage);
+            final Button cancel = inflatedView.findViewById(R.id.cancel_show_data);
+            final Button ok = inflatedView.findViewById(R.id.ok_show_data);
+
+            dataUsageMessage.setTypeface(font);
+            showDataUsage.setTypeface(font);
+            ok.setTypeface(font);
+            cancel.setTypeface(font);
+
+            showDataUsage.setOnCheckedChangeListener((buttonView, isChecked) -> checked[0] = isChecked);
+
+            cancel.setOnClickListener(v -> {
+                Activity activity = (Activity) context;
+                activity.finish();
+                response[0] = false;
+            });
+            ok.setOnClickListener(v -> {
+                if(checked[0]) {
+                    save("SHOW_POP_UP_DATA_USAGE", "1", context);
+                }
+                else {
+                    save("SHOW_POP_UP_DATA_USAGE", "0", context);
+                }
+               response[0] = true;
+
+                mDialog.dismiss();
+
+            });
+            showMessageBox(false,context,inflatedView);
+        }else{
+           response[0] = true;
+        }
+        return response[0];
+    }
     public static void globalMessageBox(Context context, String Message, String Title, String type){
-        Typeface font = setFont(context,"font/Century_Gothic.ttf");
+
+        Typeface font = setFont(context,GOTHIC_FONT_PATH);
         AlertDialog.Builder ab = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
         switch (type){
             case MSG_BOX_SUCCESS:
@@ -562,19 +623,39 @@ public class Utility {
                 showMessageBox(false,context,inflatedView);
             }
         }else if(Title.equalsIgnoreCase(NEW_VERSION_TITLE)){
-            ab.setTitle(Title);
-            ab.setMessage(Message)
-                    .setCancelable(false)
-                    .setPositiveButton(UPDATE_NOW_BUTTON, (dialog, which) -> {
-                        try {
-                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL_MARKET)));
-                        } catch (android.content.ActivityNotFoundException anfe) {
-                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL_GENERAL)));
-                        }
-                    })
-                    .setNegativeButton(NO_THANKS_BUTTON, (dialog, which) -> {
-                        ((Activity)context).finish();
-                    }).show();
+            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null,false);
+            final TextView generalMessage = inflatedView.findViewById(R.id.message_box_message);
+            final LinearLayout linearButtons = inflatedView.findViewById(R.id.linear_buttons);
+            final Button cancelToSetting = inflatedView.findViewById(R.id.cancel_go_to_settings);
+            final Button goToSettings = inflatedView.findViewById(R.id.go_to_settings);
+            final TextView title = inflatedView.findViewById(R.id.message_box_title);
+            Drawable img = null;
+            if(MSG_BOX_WARNING.equalsIgnoreCase(type)){
+                img = context.getResources().getDrawable(R.drawable.ic_warning);
+                title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+            }else if(MSG_BOX_ERROR.equalsIgnoreCase(type)){
+                img = context.getResources().getDrawable(R.drawable.ic_cancel);
+            }
+            title.setText(Title);
+            title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+            title.setCompoundDrawablePadding(15);
+            linearButtons.setVisibility(View.VISIBLE);
+            goToSettings.setText(UPDATE_NOW_BUTTON);
+            cancelToSetting.setText(NO_THANKS_BUTTON);
+            cancelToSetting.setOnClickListener(v ->{ mDialog.dismiss(); ((Activity)context).finish();});
+            goToSettings.setOnClickListener(v -> {
+                try {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL_MARKET)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL_GENERAL)));
+                }
+            });
+            generalMessage.setTypeface(font);
+            generalMessage.setText(Message);
+
+            showMessageBox(false,context,inflatedView);
+
         }else if(Title.equalsIgnoreCase(AUTO_START_MSG_TITLE)) {
             if("".equalsIgnoreCase(getValueString("AUTO_START",context)) && checkManufacturer()) {
                 LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -648,16 +729,18 @@ public class Utility {
         try {
             Intent intent = new Intent();
             String manufacturer = android.os.Build.MANUFACTURER;
-            if ("xiaomi".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-            } else if ("oppo".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
-            } else if ("vivo".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-            } else if ("Letv".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
-            } else if ("Honor".equalsIgnoreCase(manufacturer)) {
-                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+            if (XIAOMI.equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName(XIAOMI_AUTO_START, XIAOMI_AUTO_START_CLASS_NAME));
+            } else if (OPPO.equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName(OPPO_AUTO_START, OPPO_AUTO_START_CLASS_NAME));
+            } else if (VIVO.equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName(VIVO_AUTO_START, VIVO_AUTO_START_CLASS_NAME));
+            } else if (LETV.equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName(LETV_AUTO_START, LETV_AUTO_START_CLASS_NAME));
+            } else if (HONOR.equalsIgnoreCase(manufacturer)) {
+                intent.setComponent(new ComponentName(HONOR_AUTO_START, HONOR_AUTO_START_CLASS_NAME));
+            }else if("HUAWEI".equalsIgnoreCase(manufacturer)){
+                intent.setComponent(new ComponentName(HONOR_AUTO_START, HONOR_AUTO_START_CLASS_NAME));
             }
 
             List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -665,13 +748,13 @@ public class Utility {
                 context.startActivity(intent);
             }
         } catch (Exception e) {
-//            Log.e("exc" , String.valueOf(e));
+            System.out.println(e.getMessage() + " aaaaaaaaaaaa");
         }
     }
     public static void showLoginError(Context context,TextView errorText,String message){
         errorText.setVisibility(View.VISIBLE);
         errorText.setText(message);
-        errorText.setTypeface(setFont(context,"font/Century_Gothic.ttf"));
+        errorText.setTypeface(setFont(context,GOTHIC_FONT_PATH));
         errorText.setTextSize(15);
         errorText.startAnimation(AnimationUtils.loadAnimation(context,R.anim.shake));
         new CountDownTimer(3000, 1000) {
@@ -698,20 +781,21 @@ public class Utility {
     private static boolean checkManufacturer(){
         boolean autostartAvailable = false;
         String manufacturer = android.os.Build.MANUFACTURER;
+        System.out.println(manufacturer + " aaaaaaaaaaaaaaaaaaaaaaaaa");
         switch (manufacturer){
-            case "vivo":
+            case VIVO:
                 autostartAvailable = true;
                 break;
-            case "xiaomi":
+            case XIAOMI:
                 autostartAvailable = true;
                 break;
-            case "oppo":
+            case OPPO:
                 autostartAvailable = true;
                 break;
-            case "letv":
+            case LETV:
                 autostartAvailable = true;
                 break;
-            case "Honor":
+            case HONOR:
                 autostartAvailable = true;
                 break;
         }

@@ -1,6 +1,7 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.articles;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -11,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -30,6 +32,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -47,7 +50,28 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ARTICLE_POPUP_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CLOUD;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.COMIC_ARTICLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MSG;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_PLYAING_VIDEO;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FACEBOOK_PACKAGE_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOOGLE_PACKAGE_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_BOLD_FONT_PATH;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INSTAGRAM_PACKAGE_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INTENT_SHARE_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MOBILE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYONEWORLD;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_SHARING_APP;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OK_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SHARING_INTENT_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER_PACKAGE_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIDEO_ARTICLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.WIFI;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.filePath;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.freeMemory;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getConnectionType;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.sendAnalytics;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isNetworkAvailable;
@@ -90,13 +114,13 @@ public class ActivityArticle extends AppCompatActivity {
     private TextView topMessage;
     private TextView midMessage;
     private TextView botMessage;
-    private TextView footerMessage;
     RelativeLayout afterVideoLayout;
+    public static boolean dataUsageConfirm = false;
+    private AlertDialog popUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if(shared != 1) {
-
             setContentView(R.layout.activity_article);
             rotate = AnimationUtils.loadAnimation(mContext, R.anim.rotation_fast);
             initial = findViewById(R.id.initial_page);
@@ -118,16 +142,16 @@ public class ActivityArticle extends AppCompatActivity {
             mTracker = application.getDefaultTracker();
             videoView = findViewById(R.id.flipper);
             if ("video_with_slide_show".equals(getValueString("article_kind_" + article_id, mContext))) {
-                String[] articleType = {"Video Article", "Comic Article"};
+                String[] articleType = {VIDEO_ARTICLE, COMIC_ARTICLE};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
-                builder.setTitle("Choose Article Type");
+                builder.setTitle(ARTICLE_POPUP_TITLE);
                 builder.setIcon(mContext.getResources().getDrawable(R.drawable.m1w_logo));
                 builder.setCancelable(false);
                 builder.setItems(articleType, (dialog, which) -> {
-                    if ("Video Article".equals(articleType[which])) {
+                    if (VIDEO_ARTICLE.equals(articleType[which])) {
                         chooseOptionArticle("video");
-                    } else if ("Comic Article".equals(articleType[which])) {
+                    } else if (COMIC_ARTICLE.equals(articleType[which])) {
                         chooseOptionArticle("slide_show");
                     }
                 });
@@ -152,26 +176,26 @@ public class ActivityArticle extends AppCompatActivity {
             for(ResolveInfo resInfo : resInfos){
                 String packageName=resInfo.activityInfo.packageName;
                 if(
-                        packageName.contains("com.google.android.apps.docs") ||
-                                packageName.contains("com.facebook.katana") ||
-                                packageName.contains("com.instagram.android") ||
-                                packageName.contains("com.twitter.android")){
+                        packageName.contains(GOOGLE_PACKAGE_NAME) ||
+                                packageName.contains(FACEBOOK_PACKAGE_NAME) ||
+                                packageName.contains(INSTAGRAM_PACKAGE_NAME) ||
+                                packageName.contains(TWITTER_PACKAGE_NAME)){
                     Intent intent = new Intent();
                     intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
                     intent.setAction(Intent.ACTION_SEND);
                     intent.setType("text/plain");
                     intent.putExtra(Intent.EXTRA_TEXT, message);
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "my|storya");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, MYONEWORLD);
                     intent.setPackage(packageName);
                     targetShareIntents.add(intent);
                 }
             }
             if(!targetShareIntents.isEmpty()){
-                Intent chooserIntent=Intent.createChooser(targetShareIntents.remove(0), "Choose app to share");
+                Intent chooserIntent=Intent.createChooser(targetShareIntents.remove(0), INTENT_SHARE_TITLE);
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetShareIntents.toArray(new Parcelable[]{}));
                 startActivityForResult(chooserIntent,1010);
             }else{
-                Toast.makeText(mContext,"No application applicable to share story.",Toast.LENGTH_LONG).show();
+                Utility.globalMessageBox(mContext,NO_SHARING_APP,SHARING_INTENT_TITLE,MSG_BOX_WARNING);
                 finish();
             }
         }
@@ -215,7 +239,7 @@ public class ActivityArticle extends AppCompatActivity {
                 if (!getValueString("DO_NOT_DOWNLOAD",mContext).equals("1")) { // downloaded video played
                     mDialog = new ProgressDialog(ActivityArticle.this, R.style.AppCompatAlertDialogStyle);
                     String message = "";
-                    if ("MOBILE".equalsIgnoreCase(getConnectionType(mContext))) {
+                    if (MOBILE.equalsIgnoreCase(getConnectionType(mContext))) {
                         message = DATA_USAGE + PLEASE_WAIT;
                     } else {
                         message = PLEASE_WAIT;
@@ -251,75 +275,17 @@ public class ActivityArticle extends AppCompatActivity {
                     }
                 } else {// cloud video played
                     if (!isNetworkAvailable(mContext)) { // error no connection
-                        errorOnPlayingVideo("cloud");
+                        errorOnPlayingVideo(CLOUD);
                     }
                     else {
                         try { // cloud loading
                             String message = "";
                             util.showLoading(mContext);
-                            if (!"MOBILE".equalsIgnoreCase(getConnectionType(mContext))) {
-                            }else{
-                                showPopUpShowDataUsage();
-                            }
                             if (!videoView.isPlaying()) {
-                                if ("".equals(getValueString("video_url_download_" + article_id,mContext))) {
-                                    Uri uri = Uri.parse(getValueString("video_url_" + article_id,mContext));
-                                    videoView.setVideoURI(uri);
-                                    videoView.setOnCompletionListener(mp -> {
-                                        if (!getValueString("FULL_NAME",mContext).equals("")) {
-                                            bringToFrontlayout();
-                                            sendAnalytics(mContext, article_id);
-                                            videoView.stopPlayback();
-                                        } else {
-                                            finish();
-                                        }
-                                    });
-                                    videoView.setOnErrorListener((mp, what, extra) -> {
-                                        videoStopped = mp.getCurrentPosition();
-                                        videoView.pause();
-                                        util.showLoading(mContext);
-                                        videoView.setVideoURI(uri);
-                                        videoView.seekTo(videoStopped);
-                                        return true;
-                                    });
-                                } else {
-                                    mDialog = new ProgressDialog(ActivityArticle.this, R.style.AppCompatAlertDialogStyle);
-                                    String message1 = "";
-                                    if ("MOBILE".equalsIgnoreCase(getConnectionType(mContext))) {
-                                        message1 = DATA_USAGE + PLEASE_WAIT;
-                                    } else {
-                                        message1 = PLEASE_WAIT;
-                                    }
-                                    String path;
-                                    mDialog.setMessage(message1);
-                                    mDialog.setCanceledOnTouchOutside(false);
-                                    mDialog.show();
-                                    if (!videoView.isPlaying()) {
-                                        path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
-                                        videoView.setVideoPath(path);
-                                        initial.setVisibility(View.GONE);
-                                        videoView.start();
-                                        util.hideLoading();
-                                        mDialog.dismiss();
-                                        videoView.setOnCompletionListener(mp -> {
-                                            if (!getValueString("FULL_NAME",mContext).equals("")) {
-                                                videoView.stopPlayback();
-                                                bringToFrontlayout();
-                                                sendAnalytics(mContext,article_id);
-                                            } else {
-                                                finish();
-                                            }
-                                        });
-                                        videoView.setOnErrorListener((mp, what, extra) -> {
-                                            videoStopped = mp.getCurrentPosition();
-                                            videoView.pause();
-                                            util.showLoading(mContext);
-                                            videoView.setVideoPath(path);
-                                            videoView.seekTo(videoStopped);
-                                            util.showLoading(mContext);
-                                            return true;
-                                        });
-                                    }
+                                if(!MOBILE.equalsIgnoreCase(getConnectionType(mContext))) {
+                                    initialLoadingVideo(util);
+                                }else{
+                                    globalMessageBox(mContext);
                                 }
                             } else {
                                 videoView.pause();
@@ -332,13 +298,6 @@ public class ActivityArticle extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            videoView.requestFocus();
-            videoView.setOnPreparedListener(mp -> {
-                initial.setVisibility(View.GONE);
-                mp.setLooping(false);
-                videoView.start();
-                util.hideLoading();
-            });
         } else if ("slide_show".equals(type)) {
             try {
                 if ("1".equals(getValueString("DO_NOT_DOWNLOAD", mContext))) {
@@ -399,12 +358,12 @@ public class ActivityArticle extends AppCompatActivity {
     private void errorOnPlayingVideo(final String setting) {
         videoView.setOnErrorListener((mp, what, extra) -> {
             String message = CANT_PLAY_ERROR;
-            if("cloud".equals(setting))message = CANT_PLAY_ERROR_CLOUD;
+            if(CLOUD.equals(setting))message = CANT_PLAY_ERROR_CLOUD;
             AlertDialog.Builder alertDialogBuilder =
                     new AlertDialog.Builder(ActivityArticle.this)
-                            .setTitle("Error in Playing Video")
+                            .setTitle(ERROR_PLYAING_VIDEO)
                             .setMessage(message)
-                            .setPositiveButton("OK", (dialog, which) -> finish());
+                            .setPositiveButton(OK_BUTTON, (dialog, which) -> finish());
             AlertDialog alertDialog = alertDialogBuilder.show();
             return true;
         });
@@ -434,7 +393,7 @@ public class ActivityArticle extends AppCompatActivity {
 
 
         // set height depends on the device size
-        popWindow = new PopupWindow(inflatedView, size.x - 50, size.y - 800, true);
+        popWindow = new PopupWindow(inflatedView, size.x - 50, mDeviceHeight > 1500 ? mDeviceHeight - 800 : mDeviceHeight - 600, true);
         // set a background drawable with rounders corners
         popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.comment_box_bg));
         // make it focusable to show the keyboard to enter in `EditText`
@@ -474,7 +433,7 @@ public class ActivityArticle extends AppCompatActivity {
 
     private void showPopUpShowDataUsage(){
         if("MOBILE".equalsIgnoreCase(getConnectionType(mContext))){
-            globalMessageBox(mContext,"Using Mobile Data Connection, may cause data charges","Data Usage",MSG_BOX_WARNING);
+            Utility.globalMessageBox(mContext,DATA_USAGE_MSG,DATA_USAGE_TITLE,MSG_BOX_WARNING);
         }
     }
     @Override
@@ -495,9 +454,9 @@ public class ActivityArticle extends AppCompatActivity {
         topMessage = findViewById(R.id.top_title_after_video);
         midMessage = findViewById(R.id.mid_message);
         botMessage = findViewById(R.id.bot_message);
-        footerMessage = findViewById(R.id.footer_message);
-        Typeface font = setFont(mContext,"font/Century_Gothic.ttf");
-        Typeface bold = setFont(mContext,"font/Gothicbold.TTF");
+        TextView footerMessage = findViewById(R.id.footer_message);
+        Typeface font = setFont(mContext,GOTHIC_FONT_PATH);
+        Typeface bold = setFont(mContext,GOTHIC_BOLD_FONT_PATH);
         afterVideoLayout.bringToFront();
         afterVideoLayout.setVisibility(View.VISIBLE);
         topMessage.setTypeface(bold);
@@ -506,4 +465,140 @@ public class ActivityArticle extends AppCompatActivity {
         footerMessage.setTypeface(font);
     }
 
+    @Override
+    protected void onDestroy() {
+        freeMemory();
+        videoView = null;
+        initial = null;
+        rotate = null;
+        textComment = null;
+        likeButton = null;
+        shareButton = null;
+        likeAnimation = null;
+        afterVideoLayout = null;
+        topMessage = null;
+        midMessage = null;
+        botMessage = null;
+        finish();
+        super.onDestroy();
+    }
+
+    private void initialLoadingVideo(Utility util){
+        if ("".equals(getValueString("video_url_download_" + article_id, mContext))) {
+            Uri uri = Uri.parse(getValueString("video_url_" + article_id, mContext));
+            videoView.setVideoURI(uri);
+            videoView.setOnCompletionListener(mp -> {
+                if (!getValueString("FULL_NAME", mContext).equals("")) {
+                    bringToFrontlayout();
+                    sendAnalytics(mContext, article_id);
+                    videoView.stopPlayback();
+                } else {
+                    finish();
+                }
+            });
+            videoView.setOnErrorListener((mp, what, extra) -> {
+                videoStopped = mp.getCurrentPosition();
+                videoView.pause();
+                util.showLoading(mContext);
+                videoView.setVideoURI(uri);
+                videoView.seekTo(videoStopped);
+                return true;
+            });
+        } else {
+            mDialog = new ProgressDialog(ActivityArticle.this, R.style.AppCompatAlertDialogStyle);
+            String message1 = "";
+            if ("MOBILE".equalsIgnoreCase(getConnectionType(mContext))) {
+                message1 = DATA_USAGE + PLEASE_WAIT;
+            } else {
+                message1 = PLEASE_WAIT;
+            }
+            String path;
+            mDialog.setMessage(message1);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.show();
+            if (!videoView.isPlaying()) {
+                path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
+                videoView.setVideoPath(path);
+                initial.setVisibility(View.GONE);
+                videoView.start();
+                util.hideLoading();
+                mDialog.dismiss();
+                videoView.setOnCompletionListener(mp -> {
+                    if (!getValueString("FULL_NAME", mContext).equals("")) {
+                        videoView.stopPlayback();
+                        bringToFrontlayout();
+                        sendAnalytics(mContext, article_id);
+                    } else {
+                        finish();
+                    }
+                });
+                videoView.setOnErrorListener((mp, what, extra) -> {
+                    videoStopped = mp.getCurrentPosition();
+                    videoView.pause();
+                    util.showLoading(mContext);
+                    videoView.setVideoPath(path);
+                    videoView.seekTo(videoStopped);
+                    util.showLoading(mContext);
+                    return true;
+                });
+            }
+        }
+        videoView.requestFocus();
+        videoView.setOnPreparedListener(mp -> {
+            initial.setVisibility(View.GONE);
+            mp.setLooping(false);
+            videoView.start();
+            util.hideLoading();
+        });
+    }
+    public boolean globalMessageBox(Context context){
+        final boolean[] checked = {false};
+        final boolean[] response = {false};
+        Typeface font = setFont(context,GOTHIC_FONT_PATH);
+        if(!"1".equalsIgnoreCase(getValueString("SHOW_POP_UP_DATA_USAGE",context))) {
+            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.pop_up_layout, null,false);
+            final TextView dataUsageMessage = inflatedView.findViewById(R.id.data_usage_message);
+            final CheckBox showDataUsage = inflatedView.findViewById(R.id.show_data_usage);
+            final Button cancel = inflatedView.findViewById(R.id.cancel_show_data);
+            final Button ok = inflatedView.findViewById(R.id.ok_show_data);
+
+            dataUsageMessage.setTypeface(font);
+            showDataUsage.setTypeface(font);
+            ok.setTypeface(font);
+            cancel.setTypeface(font);
+
+            showDataUsage.setOnCheckedChangeListener((buttonView, isChecked) -> checked[0] = isChecked);
+
+            cancel.setOnClickListener(v -> {
+                Activity activity = (Activity) context;
+                activity.finish();
+                response[0] = false;
+            });
+            ok.setOnClickListener(v -> {
+                initialLoadingVideo(new Utility());
+                if(checked[0]) {
+                    save("SHOW_POP_UP_DATA_USAGE", "1", context);
+                }
+                else {
+                    save("SHOW_POP_UP_DATA_USAGE", "0", context);
+                }
+                response[0] = true;
+                popUp.dismiss();
+
+            });
+            showMessageBox(false,context,inflatedView);
+        }else{
+            response[0] = true;
+        }
+        return response[0];
+    }
+    private void showMessageBox(boolean cancelable, Context context, View view){
+        popUp = new AlertDialog.Builder(context).create();
+        popUp.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        popUp.setView(view);
+        popUp.setCanceledOnTouchOutside(cancelable);
+        popUp.setCancelable(cancelable);
+        popUp.show();
+    }
 }

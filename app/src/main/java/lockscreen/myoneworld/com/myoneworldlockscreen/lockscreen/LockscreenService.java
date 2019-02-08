@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.IntentCompat;
 import android.widget.RelativeLayout;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYONEWORLD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.ActivityLockscreen.ads_count;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.ActivityLockscreen.totalSize;
@@ -34,10 +36,11 @@ public class LockscreenService extends Service {
         mLockscreenReceiver = new PhoneStateReceiver();
         nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Intent mainActivity = new Intent(getApplicationContext(), ActivityHome.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainActivity, 0);
+        mainActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainActivity, PendingIntent.FLAG_CANCEL_CURRENT);
         notification = new NotificationCompat.Builder(this, "NOTIFICATION_CHANNEL")
                 .setSmallIcon(R.drawable.logo_all_white)
-                .setContentTitle("my|ONEworld")
+                .setContentTitle(MYONEWORLD)
                 .setContentIntent(pendingIntent)
                 .setSound(null);
         startForeground(1, notification.build());

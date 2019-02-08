@@ -11,6 +11,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -33,6 +34,7 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
+import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.HomeVO;
@@ -92,10 +94,11 @@ public class LoginDAO {
                         try {
                             JSONObject error = new JSONObject(errorResponse.toString());
                             if (error.has("message")) {
-                                showLoginError(mContext,errorText,error.getString("message"));
+                                showLoginError(mContext,activity.findViewById(R.id.login_text),error.getString("message"));
                             } else {
-                                showLoginError(mContext,errorText,error.getString("error"));
+                                showLoginError(mContext,activity.findViewById(R.id.login_text),error.getString("error"));
                             }
+                            LoginManager.getInstance().logOut();
                             loading.hideLoading();
                         } catch (JSONException e) {
                             e.printStackTrace();
