@@ -13,7 +13,6 @@ public class ViewPagerAdapter extends PagerAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
     private int[] guideImages = new int[]{
-            R.drawable.tutorial_clock, // clock
             R.drawable.tutorial_unlock,//right
             R.drawable.tutorial_article, //left
             R.drawable.tutorial_mybarko,//up
