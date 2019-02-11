@@ -463,6 +463,8 @@ public class ActivityArticle extends AppCompatActivity {
         midMessage.setTypeface(font);
         botMessage.setTypeface(font);
         footerMessage.setTypeface(font);
+        videoView.stopPlayback();
+        videoView.suspend();
     }
 
     @Override
@@ -491,7 +493,6 @@ public class ActivityArticle extends AppCompatActivity {
                 if (!getValueString("FULL_NAME", mContext).equals("")) {
                     bringToFrontlayout();
                     sendAnalytics(mContext, article_id);
-                    videoView.stopPlayback();
                 } else {
                     finish();
                 }
@@ -525,7 +526,6 @@ public class ActivityArticle extends AppCompatActivity {
                 mDialog.dismiss();
                 videoView.setOnCompletionListener(mp -> {
                     if (!getValueString("FULL_NAME", mContext).equals("")) {
-                        videoView.stopPlayback();
                         bringToFrontlayout();
                         sendAnalytics(mContext, article_id);
                     } else {
