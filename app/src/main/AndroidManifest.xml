@@ -89,7 +89,7 @@
             android:configChanges="orientation"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
 
         <receiver android:name=".lockscreen.PhoneStateReceiver" />
 

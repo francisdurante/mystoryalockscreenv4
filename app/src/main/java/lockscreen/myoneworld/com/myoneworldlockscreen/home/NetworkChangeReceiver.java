@@ -45,7 +45,14 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                     });
                     if(networkInfo.getType() == ConnectivityManager.TYPE_MOBILE && networkInfo.isConnected()){
                         globalMessageBox(context,DATA_USAGE_MSG,DATA_USAGE_TITLE,MSG_BOX_WARNING);
+                        save("WIFI_ONLY","",context);
+                        save("WIFI_OR_DATA","",context);
+                        save("DO_NOT_DOWNLOAD","1",context);
 
+                    }else if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()){
+                        save("WIFI_ONLY","1",context);
+                        save("WIFI_OR_DATA","",context);
+                        save("DO_NOT_DOWNLOAD","",context);
                     }
                     if("outdated".equalsIgnoreCase(getValueString("VERSION_ONLINE",context))){
                         globalMessageBox(context,NEW_VERSION_MSG,NEW_VERSION_TITLE,MSG_BOX_WARNING);

@@ -13,7 +13,7 @@
     <string name="wifi_mobile"><b>MOBILE DATA OR WIFI</b>\n<font size='10'><i>Data charges may apply</i></font></string>
     <string name="wifi_only"><b>WIFI ONLY</b></string>
     <string name="do_not_download"><b>DO NOT DOWNLOAD</b></string>
-    <string name="account_setting"><i>Account Settings</i></string>
+    <string name="account_setting">Account Settings</string>
     <string name="change_password"><b>CHANGE PASSWORD</b></string>
     <string name="logout_login"><b>LOG OUT</b></string>
     <string name="time_hour">00</string>

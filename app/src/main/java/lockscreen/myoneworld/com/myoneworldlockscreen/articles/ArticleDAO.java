@@ -131,7 +131,7 @@ public class ArticleDAO {
         });
     }
 
-    public void sendComment(String storyId, String userId, String comment, Context context){
+    public void sendComment(String storyId, String userId, String comment, Context context, ListView lv,ImageView iv,Activity activity){
         ApiClass api = new ApiClass();
         RequestParams rp = new RequestParams();
         rp.add("story_id",storyId);
@@ -144,7 +144,8 @@ public class ArticleDAO {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     JSONObject responseStatus = new JSONObject(response.toString());
-                    Toast.makeText(context,responseStatus.getString("message"),Toast.LENGTH_LONG).show();
+//                    Toast.makeText(context,responseStatus.getString("message"),Toast.LENGTH_LONG).show();
+                    getCommentByStoryId(storyId,context,lv,iv,activity);
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }

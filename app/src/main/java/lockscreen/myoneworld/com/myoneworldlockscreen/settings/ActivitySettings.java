@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import java.io.Writer;
 import java.util.List;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANCEL_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MAY_APPLY_SETTING_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OK_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SETTING_TEXT;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ENABLE_WIFI_AND_DATA;
@@ -39,7 +41,9 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DISABLE_LO
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DISABLE_LOCKSCREEN_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.dataChargesSettingMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getDataConsumption;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.stopJobService;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
@@ -166,7 +170,7 @@ public class ActivitySettings extends AppCompatActivity {
         });
         wifiAndData.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
-                showDialogBox(ENABLE_WIFI_AND_DATA,wifiAndData);
+                showDialogBox();
             }else{
                 save("WIFI_OR_DATA","",mContext);
             }
@@ -196,70 +200,49 @@ public class ActivitySettings extends AppCompatActivity {
             }
         });
     }
-    private void showDialogBox(String Message, Switch setting){
-        LinearLayout layout = new LinearLayout(mContext);
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        AlertDialog.Builder ab = new AlertDialog.Builder(mContext);
-        ab.setIcon(mContext.getResources().getDrawable(R.drawable.new_logo_top));
-        ab.setTitle(DATA_USAGE);
-        final TextView et = new TextView(mContext);
-        final TextView et2 = new TextView(mContext);
-        et.setGravity(Gravity.LEFT);
-        et.setPadding(35,0,0,10);
-        et.setText(Message);
-        String concat = "Estimate data usage of my|storya app\n" + getDataConsumption() + "\nDo you want to continue?";
-        et2.setPadding(35,0,0,10);
-        et.setGravity(Gravity.LEFT);
-        et2.setTypeface(null,Typeface.BOLD);
-        et2.setText(concat);
-        layout.addView(et);
-        layout.addView(et2);
-        ab.setView(layout);
-        ab.setCancelable(false);
-        ab.setPositiveButton(OK_BUTTON, (dialog, which) -> {
-            setting.setChecked(true);
-            wifiOnly.setChecked(false);
-            doNotDownload.setChecked(false);
-            save("WIFI_OR_DATA","1",mContext);
-            save("DO_NOT_DOWNLOAD","",mContext);
-            save("WIFI_ONLY","",mContext);
-        });
-        ab.setNegativeButton(CANCEL_BUTTON, (dialog, which) -> {
-            setting.setChecked(false);
-            save("DO_NOT_DOWNLOAD","1",mContext);
-            save("WIFI_OR_DATA","",mContext);
-            save("WIFI_ONLY","",mContext);
-        });
-        AlertDialog a = ab.create();
-        a.show();
+    private void showDialogBox(){
+//        LinearLayout layout = new LinearLayout(mContext);
+//        layout.setOrientation(LinearLayout.VERTICAL);
+//
+//        AlertDialog.Builder ab = new AlertDialog.Builder(mContext);
+//        ab.setIcon(mContext.getResources().getDrawable(R.drawable.new_logo_top));
+//        ab.setTitle(DATA_USAGE);
+//        final TextView et = new TextView(mContext);
+//        final TextView et2 = new TextView(mContext);
+//        et.setGravity(Gravity.LEFT);
+//        et.setPadding(35,0,0,10);
+//        et.setText(Message);
+//        String concat = "Estimate data usage of my|storya app\n" + getDataConsumption() + "\nDo you want to continue?";
+//        et2.setPadding(35,0,0,10);
+//        et.setGravity(Gravity.LEFT);
+//        et2.setTypeface(null,Typeface.BOLD);
+//        et2.setText(concat);
+//        layout.addView(et);
+//        layout.addView(et2);
+//        ab.setView(layout);
+//        ab.setCancelable(false);
+//        ab.setPositiveButton(OK_BUTTON, (dialog, which) -> {
+//            setting.setChecked(true);
+//            wifiOnly.setChecked(false);
+//            doNotDownload.setChecked(false);
+//            save("WIFI_OR_DATA","1",mContext);
+//            save("DO_NOT_DOWNLOAD","",mContext);
+//            save("WIFI_ONLY","",mContext);
+//        });
+//        ab.setNegativeButton(CANCEL_BUTTON, (dialog, which) -> {
+//            setting.setChecked(false);
+//            save("DO_NOT_DOWNLOAD","1",mContext);
+//            save("WIFI_OR_DATA","",mContext);
+//            save("WIFI_ONLY","",mContext);
+//        });
+//        AlertDialog a = ab.create();
+//        a.show();
+//        String message = "Estimate data usage of my|storya app\n" + getDataConsumption(mContext) + "\nDo you want to continue?";
+        Switch[] switches = {wifiAndData,wifiOnly,doNotDownload};
+        dataChargesSettingMessageBox(mContext,ENABLE_WIFI_AND_DATA,DATA_USAGE_MAY_APPLY_SETTING_TITLE,switches,MSG_BOX_WARNING);
     }
 
-    public String getDataConsumption(){
-        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> runningApps = manager.getRunningAppProcesses();
-        String total="";
-        try {
-            if(runningApps.size() > 0)
-            {
-                for (ActivityManager.RunningAppProcessInfo runningApp : runningApps) {
-                    if (runningApp.processName.equals(PACKAGE_NAME)) {
-                        int app = runningApp.uid;
-                        float received = TrafficStats.getUidRxBytes(app);//received amount of each app
-                        String totalMB = String.format("%.2f", received * 0.000001);
-                        double totalGB = Double.parseDouble(totalMB ) / 1024;
-                        total = String.format("%.2f",totalGB) + "GB";
-                    }
-                }
-            }
-        }catch (Exception e){
-            Writer writer = new StringWriter();
-            e.printStackTrace(new PrintWriter(writer));
-            String s = writer.toString();
-            generateErrorLog(mContext,"err_log_" + getCurrentTime(),s);
-        }
-        return total;
-    }
+
     public void logout(View v){
         AlertDialog.Builder ab = new AlertDialog.Builder(mContext,R.style.AppCompatAlertDialogStyle);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

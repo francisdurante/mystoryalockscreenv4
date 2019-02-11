@@ -24,6 +24,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.TrafficStats;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -41,12 +42,16 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,6 +64,8 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ArticleDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenJobService;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START_MSG_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANCEL_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MAY_APPLY_SETTING_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.HONOR;
@@ -70,9 +77,11 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV_AUTO_
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_THANKS_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OK_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START_CLASS_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_GENERAL;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_MARKET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.UPDATE_NOW_BUTTON;
@@ -683,6 +692,7 @@ public class Utility {
                 goToSettings.setOnClickListener(v -> {
                     addAutoStartup(context);
                     save("AUTO_START","1",context);
+                    mDialog.dismiss();
                 });
                 generalMessage.setTypeface(font);
                 generalMessage.setText(Message);
@@ -748,7 +758,6 @@ public class Utility {
                 context.startActivity(intent);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage() + " aaaaaaaaaaaa");
         }
     }
     public static void showLoginError(Context context,TextView errorText,String message){
@@ -781,7 +790,6 @@ public class Utility {
     private static boolean checkManufacturer(){
         boolean autostartAvailable = false;
         String manufacturer = android.os.Build.MANUFACTURER;
-        System.out.println(manufacturer + " aaaaaaaaaaaaaaaaaaaaaaaaa");
         switch (manufacturer){
             case VIVO:
                 autostartAvailable = true;
@@ -800,5 +808,79 @@ public class Utility {
                 break;
         }
         return autostartAvailable;
+    }
+
+    public static void dataChargesSettingMessageBox(Context context, String message, String Title, Switch[] sw, String type){
+        Typeface font = setFont(context,GOTHIC_FONT_PATH);
+        if(Title.equalsIgnoreCase(DATA_USAGE_MAY_APPLY_SETTING_TITLE)){
+            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null,false);
+            final TextView generalMessage = inflatedView.findViewById(R.id.message_box_message);
+            final LinearLayout linearButtons = inflatedView.findViewById(R.id.linear_buttons);
+            final Button cancelButton = inflatedView.findViewById(R.id.cancel_go_to_settings);
+            final Button okayButton = inflatedView.findViewById(R.id.go_to_settings);
+            final ImageView autoStartImage = inflatedView.findViewById(R.id.image_auto_start);
+            final TextView title = inflatedView.findViewById(R.id.message_box_title);
+            cancelButton.setText(CANCEL_BUTTON);
+            okayButton.setText(OK_BUTTON);
+            Drawable img = null;
+            if(MSG_BOX_WARNING.equalsIgnoreCase(type)){
+                img = context.getResources().getDrawable(R.drawable.ic_warning);
+                title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+            }else if(MSG_BOX_ERROR.equalsIgnoreCase(type)){
+                img = context.getResources().getDrawable(R.drawable.ic_cancel);
+            }
+
+            title.setText(Title);
+            title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+            title.setCompoundDrawablePadding(15);
+            linearButtons.setVisibility(View.VISIBLE);
+            cancelButton.setOnClickListener(v -> {
+                sw[0].setChecked(false);
+                save("DO_NOT_DOWNLOAD", "1", context);
+                save("WIFI_OR_DATA", "", context);
+                save("WIFI_ONLY", "", context);
+                mDialog.dismiss();
+            });
+            okayButton.setOnClickListener(v -> {
+                sw[0].setChecked(true);
+                sw[1].setChecked(false);
+                sw[2].setChecked(false);
+                save("WIFI_OR_DATA","1",context);
+                save("DO_NOT_DOWNLOAD","",context);
+                save("WIFI_ONLY","",context);
+                mDialog.dismiss();
+            });
+            generalMessage.setTypeface(font);
+            generalMessage.setText(message);
+
+            showMessageBox(false,context,inflatedView);
+        }
+    }
+
+    public static String getDataConsumption(Context context){
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = manager.getRunningAppProcesses();
+        String total="";
+        try {
+            if(runningApps.size() > 0)
+            {
+                for (ActivityManager.RunningAppProcessInfo runningApp : runningApps) {
+                    if (runningApp.processName.equals(PACKAGE_NAME)) {
+                        int app = runningApp.uid;
+                        float received = TrafficStats.getUidRxBytes(app);//received amount of each app
+                        String totalMB = String.format("%.2f", received * 0.000001);
+                        double totalGB = Double.parseDouble(totalMB ) / 1024;
+                        total = String.format("%.2f",totalGB) + "GB";
+                    }
+                }
+            }
+        }catch (Exception e){
+            Writer writer = new StringWriter();
+            e.printStackTrace(new PrintWriter(writer));
+            String s = writer.toString();
+            generateErrorLog(context,"err_log_" + getCurrentTime(),s);
+        }
+        return total;
     }
 }
