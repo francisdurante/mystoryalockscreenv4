@@ -15,16 +15,11 @@ public class LockscreenReboot extends BroadcastReceiver {
     public void onReceive(Context context , Intent arg1) {
         lastDataUsage = getValueString("data_usage", context).equals("") ? "0.00" : getValueString("data_usage", context);
         mStatus = getValueString("SERVICE", context);
-        if (Intent.ACTION_BOOT_COMPLETED.equals(arg1.getAction())) {
-            if ("1".equals(mStatus)) {
-                Intent lockscreenService = new Intent(context, LockscreenService.class);
-                ContextCompat.startForegroundService(context, lockscreenService);
-                save("trigger_data_usage", "", context);
-                save("first_boot", "", context);
-
-            }
+        if ("1".equals(mStatus)) {
+            Intent lockscreenService = new Intent(context, LockscreenService.class);
+            ContextCompat.startForegroundService(context, lockscreenService);
+            save("trigger_data_usage", "", context);
+            save("first_boot", "", context);
         }
     }
-
-
 }

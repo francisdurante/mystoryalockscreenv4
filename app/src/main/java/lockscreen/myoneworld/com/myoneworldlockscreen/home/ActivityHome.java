@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
+import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
 
 import android.support.v4.view.ViewPager;
@@ -52,6 +53,9 @@ public class ActivityHome extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utility utility = new Utility();
+        utility.scheduledNotification(mContext,"2019-02-12 15:44",1);
+        utility.immediateNotification(mContext,2);
         setContentView(R.layout.activity_home);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {

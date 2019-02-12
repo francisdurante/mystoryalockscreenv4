@@ -3,10 +3,12 @@ package lockscreen.myoneworld.com.myoneworldlockscreen;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -57,6 +59,7 @@ import java.util.List;
 import java.util.Locale;
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ArticleDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenJobService;
+import lockscreen.myoneworld.com.myoneworldlockscreen.notification.service.NotificationAlarmService;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START_MSG_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
@@ -781,7 +784,6 @@ public class Utility {
     private static boolean checkManufacturer(){
         boolean autostartAvailable = false;
         String manufacturer = android.os.Build.MANUFACTURER;
-        System.out.println(manufacturer + " aaaaaaaaaaaaaaaaaaaaaaaaa");
         switch (manufacturer){
             case VIVO:
                 autostartAvailable = true;
@@ -800,5 +802,48 @@ public class Utility {
                 break;
         }
         return autostartAvailable;
+    }
+
+    public void scheduledNotification(Context context, String date, int id){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date fullDate = null;
+        try {
+            fullDate = format.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        int year = fullDate.getYear() + 1900;
+        int month = fullDate.getMonth();
+        int day = fullDate.getDate();
+        int hour = fullDate.getHours();
+        int minute = fullDate.getMinutes();
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent notificationIntent = new Intent(context, NotificationAlarmService.class);
+        notificationIntent.putExtra("NOTIF_ID",id);
+        PendingIntent broadcast = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        cal.set(Calendar.MINUTE, minute);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+    }
+    public void immediateNotification(Context context, int id){
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent notificationIntent = new Intent(context, NotificationAlarmService.class);
+        notificationIntent.putExtra("NOTIF_ID",id);
+        PendingIntent broadcast = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.SECOND, 5);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
     }
 }
