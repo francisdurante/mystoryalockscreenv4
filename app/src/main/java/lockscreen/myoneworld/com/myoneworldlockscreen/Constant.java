@@ -96,6 +96,7 @@ public class Constant {
     //--TEST API--///
     public static final String SEND_LOCATION_TEST= "http://192.168.1.149/myoneworld/public/api/mystory/location";
     public static final String G_VERSION_LOGIN_TEST = "http://192.168.1.149/myoneworld/public/oauth/token";
+    public static final String ANALYTICS_STORIES_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/analytics";
 
 
     static final String UPDATE_NOW_BUTTON = "UPDATE NOW";
@@ -144,5 +145,8 @@ public class Constant {
 
     public static final String GOTHIC_FONT_PATH = "font/Century_Gothic.ttf";
     public static final String GOTHIC_BOLD_FONT_PATH = "font/Gothicbold.TTF";
+
+    public static final String DONE_VIEWED_ARTICLE = "DONE_VIEWED_ARTICLE";
+    public static final String SWIPE = "SWIPE";
 
 }

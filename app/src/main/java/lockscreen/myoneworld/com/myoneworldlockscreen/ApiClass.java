@@ -5,7 +5,7 @@ import android.content.Context;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.SyncHttpClient;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -14,7 +14,6 @@ public class ApiClass {
 
     public void getByUrl(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(url, params, responseHandler);
-
     }
     public void postByUrl(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.post(url, params, responseHandler);

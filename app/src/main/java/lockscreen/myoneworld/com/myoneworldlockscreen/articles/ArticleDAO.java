@@ -24,6 +24,9 @@ import cz.msebera.android.httpclient.Header;
 import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANALYTICS_STORIES_TEST;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DONE_VIEWED_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_STORYA_SINGLE_CONTENT;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANALYTICS_STORIES_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_COMMENT_STORY_ID_LIVE;
@@ -70,7 +73,12 @@ public class ArticleDAO {
                     initial.setVisibility(View.GONE);
                     ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(context, ActivityArticle.imageUrl, 1);
                     viewPager.setAdapter(viewPagerAdapter);
-                    viewPager.setCurrentItem(0);
+                    int bookmark = Integer.parseInt("".equals(getValueString("bookmark_article_"+id,context)) ? "0" : getValueString("bookmark_article_"+id,context));
+                    if(bookmark != 0)
+                        viewPager.setCurrentItem(bookmark);
+                    else
+                        viewPager.setCurrentItem(0);
+
                     viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                         boolean lastPageChange = false;
 
@@ -78,8 +86,9 @@ public class ArticleDAO {
                         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                             int lastIdx = viewPagerAdapter.getCount() - 1;
                             if (position == lastIdx) {
+                                save("bookmark_article_done_"+id,"DONE",context);
                                 bringToFrontlayout();
-                                sendAnalytics(getValueString("USER_ID", context), ActivityArticle.article_id, context);
+                                sendAnalytics(getValueString("USER_ID", context),DONE_VIEWED_ARTICLE, ActivityArticle.article_id, context);
                             }
                         }
 
@@ -109,24 +118,32 @@ public class ArticleDAO {
         });
     }
 
-    public void sendAnalytics(String user_id,String article_id,Context context){
+    public void sendAnalytics(String user_id,String article_id,String action,Context context){
         ApiClass api = new ApiClass();
         RequestParams rp = new RequestParams();
         rp.add("id", user_id);
         rp.add("mystorya_id", article_id);
-        api.getByUrl(ANALYTICS_STORIES_LIVE, rp, new JsonHttpResponseHandler() {
+        rp.add("action",action);
+
+        api.getByUrl("LIVE".equals(API_STATUS) ? ANALYTICS_STORIES_LIVE : ANALYTICS_STORIES_TEST, rp, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     JSONObject serverResp = new JSONObject(response.toString());
                     if ("success".equals(serverResp.getString("status"))) {
-                        Toast.makeText(context,serverResp.getString("message"),Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context,serverResp.getString("message"),Toast.LENGTH_LONG).show();
+
                     } else if ("fail".equals(serverResp.getString("status")) && serverResp.has("message")) {
-                        Toast.makeText(context,serverResp.getString("message"),Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context,serverResp.getString("message"),Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
     }
@@ -144,7 +161,6 @@ public class ArticleDAO {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     JSONObject responseStatus = new JSONObject(response.toString());
-//                    Toast.makeText(context,responseStatus.getString("message"),Toast.LENGTH_LONG).show();
                     getCommentByStoryId(storyId,context,lv,iv,activity);
                 }catch (JSONException e) {
                     e.printStackTrace();

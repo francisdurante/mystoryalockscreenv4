@@ -56,6 +56,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CLOUD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.COMIC_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MSG;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DONE_VIEWED_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_PLYAING_VIDEO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FACEBOOK_PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOOGLE_PACKAGE_NAME;
@@ -68,6 +69,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYONEWORLD
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_SHARING_APP;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OK_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SHARING_INTENT_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SWIPE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER_PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIDEO_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.WIFI;
@@ -118,6 +120,7 @@ public class ActivityArticle extends AppCompatActivity {
     RelativeLayout afterVideoLayout;
     public static boolean dataUsageConfirm = false;
     private AlertDialog popUp;
+    private String articleType = "video";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +141,10 @@ public class ActivityArticle extends AppCompatActivity {
                 clickLikeButton(tempLikeStatus);
                 tempLikeStatus = !tempLikeStatus;
             });
+            afterVideoLayout = findViewById(R.id.after_video_layout);
+            topMessage = findViewById(R.id.top_title_after_video);
+            midMessage = findViewById(R.id.mid_message);
+            botMessage = findViewById(R.id.bot_message);
 //            bringToFrontLayout();
             AnalyticsApplication application = (AnalyticsApplication) getApplication();
             mTracker = application.getDefaultTracker();
@@ -164,6 +171,8 @@ public class ActivityArticle extends AppCompatActivity {
         }else{
             videoView.stopPlayback();
         }
+
+        sendAnalytics(mContext,SWIPE, article_id);
     }
 
     private void dialogShare(){
@@ -227,6 +236,7 @@ public class ActivityArticle extends AppCompatActivity {
     }
 
     private void chooseOptionArticle(String type) {
+        articleType = type;
         Utility util = new Utility();
         if ("video".equals(type)) {
             DisplayMetrics metrics = new DisplayMetrics();
@@ -251,7 +261,7 @@ public class ActivityArticle extends AppCompatActivity {
                     videoView.setOnCompletionListener(mp -> {
                         if (!getValueString("FULL_NAME",mContext).equals("")) {
                             bringToFrontLayout();
-                            sendAnalytics(mContext,article_id);
+                            sendAnalytics(mContext,DONE_VIEWED_ARTICLE,article_id);
                         } else {
                             finish();
                         }
@@ -307,7 +317,12 @@ public class ActivityArticle extends AppCompatActivity {
                         viewPager = findViewById(R.id.view_pager_article);
                         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(mContext, comicsPathArrayList,2);
                         viewPager.setAdapter(viewPagerAdapter);
-                        viewPager.setCurrentItem(0);
+                        int bookmark = Integer.parseInt("".equals(getValueString("bookmark_article_"+article_id,mContext)) ? "0" : getValueString("bookmark_article_"+article_id,mContext));
+                        if(bookmark != 0)
+                            viewPager.setCurrentItem(bookmark);
+                        else
+                            viewPager.setCurrentItem(0);
+
                         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                             boolean lastPageChange = false;
 
@@ -316,7 +331,7 @@ public class ActivityArticle extends AppCompatActivity {
                                 int lastIdx = viewPagerAdapter.getCount() - 1;
                                 if (position == lastIdx) {
                                     bringToFrontLayout();
-                                    sendAnalytics(mContext,article_id);
+                                    sendAnalytics(mContext,DONE_VIEWED_ARTICLE,article_id);
                                 }
                             }
 
@@ -443,10 +458,6 @@ public class ActivityArticle extends AppCompatActivity {
     }
 
     public void bringToFrontLayout(){
-        afterVideoLayout = findViewById(R.id.after_video_layout);
-        topMessage = findViewById(R.id.top_title_after_video);
-        midMessage = findViewById(R.id.mid_message);
-        botMessage = findViewById(R.id.bot_message);
         TextView footerMessage = findViewById(R.id.footer_message);
         Typeface font = setFont(mContext,GOTHIC_FONT_PATH);
         Typeface bold = setFont(mContext,GOTHIC_BOLD_FONT_PATH);
@@ -465,6 +476,14 @@ public class ActivityArticle extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         freeMemory();
+        if(!"video".equalsIgnoreCase(articleType)) {
+            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + article_id, mContext))) {
+                save("bookmark_article_" + article_id, Integer.toString(viewPager.getCurrentItem()), mContext);
+            } else {
+                save("bookmark_article_" + article_id, "", mContext);
+                save("bookmark_article_done_" + article_id,"",mContext);
+            }
+        }
         videoView = null;
         initial = null;
         rotate = null;
@@ -480,6 +499,32 @@ public class ActivityArticle extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onPause() {
+        if(!"video".equalsIgnoreCase(articleType)) {
+            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + article_id, mContext))) {
+                save("bookmark_article_" + article_id, Integer.toString(viewPager.getCurrentItem()), mContext);
+            } else {
+                save("bookmark_article_" + article_id, "", mContext);
+                save("bookmark_article_done_" + article_id,"",mContext);
+            }
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!"video".equalsIgnoreCase(articleType)) {
+            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + article_id, mContext))) {
+                save("bookmark_article_" + article_id, Integer.toString(viewPager.getCurrentItem()), mContext);
+            } else {
+                save("bookmark_article_" + article_id, "", mContext);
+                save("bookmark_article_done_" + article_id,"",mContext);
+            }
+        }
+        super.onBackPressed();
+    }
+
     private void initialLoadingVideo(Utility util){
         if ("".equals(getValueString("video_url_download_" + article_id, mContext))) {
             Uri uri = Uri.parse(getValueString("video_url_" + article_id, mContext));
@@ -487,7 +532,7 @@ public class ActivityArticle extends AppCompatActivity {
             videoView.setOnCompletionListener(mp -> {
                 if (!getValueString("FULL_NAME", mContext).equals("")) {
                     bringToFrontLayout();
-                    sendAnalytics(mContext, article_id);
+                    sendAnalytics(mContext,DONE_VIEWED_ARTICLE, article_id);
                 } else {
                     finish();
                 }
@@ -514,7 +559,7 @@ public class ActivityArticle extends AppCompatActivity {
                 videoView.setOnCompletionListener(mp -> {
                     if (!getValueString("FULL_NAME", mContext).equals("")) {
                         bringToFrontLayout();
-                        sendAnalytics(mContext, article_id);
+                        sendAnalytics(mContext,DONE_VIEWED_ARTICLE, article_id);
                     } else {
                         finish();
                     }

@@ -122,7 +122,7 @@
                 android:background="@drawable/gradient_login_button"
                 android:drawableStart="@drawable/ic_my_one_world"
                 android:gravity="center"
-                android:paddingStart="17sp"
+                android:paddingStart="15sp"
                 android:paddingEnd="30sp"
                 android:textColor="#ffffff"
                 android:textSize="12sp" />

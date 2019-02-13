@@ -34,6 +34,7 @@ import android.provider.ContactsContract;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -44,7 +45,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.VideoView;
+import android.widget.Toast;
+
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
+
+import com.facebook.share.model.ShareLinkContent;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -65,6 +81,8 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenJobSe
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START_MSG_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANCEL_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_KEY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MAY_APPLY_SETTING_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
@@ -491,9 +509,9 @@ public class Utility {
         }
         return datePostedReturn;
     }
-    public static void sendAnalytics(Context co, String articleId){
+    public static void sendAnalytics(Context co,String action, String articleId){
        ArticleDAO articleDAO = new ArticleDAO();
-       articleDAO.sendAnalytics(getValueString("USER_ID",co),articleId,co);
+       articleDAO.sendAnalytics(getValueString("USER_ID",co),articleId,action,co);
     }
     public static boolean isActivityRunning() {
         return isActivityRunning;
@@ -750,7 +768,7 @@ public class Utility {
             } else if (HONOR.equalsIgnoreCase(manufacturer)) {
                 intent.setComponent(new ComponentName(HONOR_AUTO_START, HONOR_AUTO_START_CLASS_NAME));
             }else if("HUAWEI".equalsIgnoreCase(manufacturer)){
-                intent.setComponent(new ComponentName(HONOR_AUTO_START, HONOR_AUTO_START_CLASS_NAME));
+                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
             }
 
             List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -882,5 +900,44 @@ public class Utility {
             generateErrorLog(context,"err_log_" + getCurrentTime(),s);
         }
         return total;
+    }
+
+    public ShareLinkContent facebookShare(String linkToShare){
+       return  new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse(linkToShare))
+                .build();
+    }
+    public void twitterShare(String linkToShare, Context context, TwitterSession session){
+        if(null == session){
+//            System.out.println("test 12312344444");
+//            TweetComposer.Builder builder = new TweetComposer.Builder(context)
+//                    .text(linkToShare);
+//            builder.show();
+            authenticateUser(context,linkToShare);
+        }else {
+            System.out.println("test 123123");
+            final Intent intent = new ComposerActivity.Builder(context)
+                    .session(session)
+                    .text(linkToShare)
+                    .createIntent();
+            context.startActivity(intent);
+        }
+    }
+    private void authenticateUser(Context context,String linkToShare) {
+        TwitterAuthClient client = new TwitterAuthClient();//init twitter auth client
+        client.authorize(((Activity)context), new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> twitterSessionResult) {
+                //if user is successfully authorized start sharing image
+                Toast.makeText(context, "Login successful.", Toast.LENGTH_SHORT).show();
+                new Utility().twitterShare(linkToShare,context,twitterSessionResult.data);
+            }
+
+            @Override
+            public void failure(TwitterException e) {
+                //if user failed to authorize then show toast
+                Toast.makeText(context, "Failed to authenticate by Twitter. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
