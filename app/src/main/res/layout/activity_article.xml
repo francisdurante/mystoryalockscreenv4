@@ -140,7 +140,7 @@
                         android:adjustViewBounds="true"
                         android:maxHeight="200sp"
                         android:maxWidth="150sp"
-                        android:src="@drawable/ic_like_no_color" />
+                        android:src="@drawable/ic_heart" />
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/linear_bot"

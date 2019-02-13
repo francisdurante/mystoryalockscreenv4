@@ -26,6 +26,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.TrafficStats;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -35,6 +36,7 @@ import android.provider.ContactsContract;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -43,12 +45,31 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.VideoView;
+import android.widget.Toast;
+
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
+
+import com.facebook.share.model.ShareLinkContent;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,6 +83,10 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenJobSe
 import lockscreen.myoneworld.com.myoneworldlockscreen.notification.service.NotificationAlarmService;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START_MSG_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANCEL_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_KEY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MAY_APPLY_SETTING_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.HONOR;
@@ -73,9 +98,11 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV_AUTO_
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_THANKS_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OK_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START_CLASS_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_GENERAL;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_MARKET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.UPDATE_NOW_BUTTON;
@@ -485,9 +512,9 @@ public class Utility {
         }
         return datePostedReturn;
     }
-    public static void sendAnalytics(Context co, String articleId){
+    public static void sendAnalytics(Context co,String action, String articleId){
        ArticleDAO articleDAO = new ArticleDAO();
-       articleDAO.sendAnalytics(getValueString("USER_ID",co),articleId,co);
+       articleDAO.sendAnalytics(getValueString("USER_ID",co),articleId,action,co);
     }
     public static boolean isActivityRunning() {
         return isActivityRunning;
@@ -686,6 +713,7 @@ public class Utility {
                 goToSettings.setOnClickListener(v -> {
                     addAutoStartup(context);
                     save("AUTO_START","1",context);
+                    mDialog.dismiss();
                 });
                 generalMessage.setTypeface(font);
                 generalMessage.setText(Message);
@@ -743,7 +771,7 @@ public class Utility {
             } else if (HONOR.equalsIgnoreCase(manufacturer)) {
                 intent.setComponent(new ComponentName(HONOR_AUTO_START, HONOR_AUTO_START_CLASS_NAME));
             }else if("HUAWEI".equalsIgnoreCase(manufacturer)){
-                intent.setComponent(new ComponentName(HONOR_AUTO_START, HONOR_AUTO_START_CLASS_NAME));
+                intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
             }
 
             List<ResolveInfo> list = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -751,7 +779,6 @@ public class Utility {
                 context.startActivity(intent);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage() + " aaaaaaaaaaaa");
         }
     }
     public static void showLoginError(Context context,TextView errorText,String message){
@@ -833,17 +860,130 @@ public class Utility {
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
     }
-    public void immediateNotification(Context context, int id){
+    public void immediateNotification(Context context, int id) {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent notificationIntent = new Intent(context, NotificationAlarmService.class);
-        notificationIntent.putExtra("NOTIF_ID",id);
+        notificationIntent.putExtra("NOTIF_ID", id);
         PendingIntent broadcast = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.SECOND, 5);
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+    }
+
+    public static void dataChargesSettingMessageBox(Context context, String message, String Title, Switch[] sw, String type){
+        Typeface font = setFont(context,GOTHIC_FONT_PATH);
+        if(Title.equalsIgnoreCase(DATA_USAGE_MAY_APPLY_SETTING_TITLE)){
+            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null,false);
+            final TextView generalMessage = inflatedView.findViewById(R.id.message_box_message);
+            final LinearLayout linearButtons = inflatedView.findViewById(R.id.linear_buttons);
+            final Button cancelButton = inflatedView.findViewById(R.id.cancel_go_to_settings);
+            final Button okayButton = inflatedView.findViewById(R.id.go_to_settings);
+            final ImageView autoStartImage = inflatedView.findViewById(R.id.image_auto_start);
+            final TextView title = inflatedView.findViewById(R.id.message_box_title);
+            cancelButton.setText(CANCEL_BUTTON);
+            okayButton.setText(OK_BUTTON);
+            Drawable img = null;
+            if(MSG_BOX_WARNING.equalsIgnoreCase(type)){
+                img = context.getResources().getDrawable(R.drawable.ic_warning);
+                title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+            }else if(MSG_BOX_ERROR.equalsIgnoreCase(type)){
+                img = context.getResources().getDrawable(R.drawable.ic_cancel);
+            }
+
+            title.setText(Title);
+            title.setCompoundDrawablesWithIntrinsicBounds(img,null,null,null);
+            title.setCompoundDrawablePadding(15);
+            linearButtons.setVisibility(View.VISIBLE);
+            cancelButton.setOnClickListener(v -> {
+                sw[0].setChecked(false);
+                save("DO_NOT_DOWNLOAD", "1", context);
+                save("WIFI_OR_DATA", "", context);
+                save("WIFI_ONLY", "", context);
+                mDialog.dismiss();
+            });
+            okayButton.setOnClickListener(v -> {
+                sw[0].setChecked(true);
+                sw[1].setChecked(false);
+                sw[2].setChecked(false);
+                save("WIFI_OR_DATA","1",context);
+                save("DO_NOT_DOWNLOAD","",context);
+                save("WIFI_ONLY","",context);
+                mDialog.dismiss();
+            });
+            generalMessage.setTypeface(font);
+            generalMessage.setText(message);
+
+            showMessageBox(false,context,inflatedView);
+        }
+    }
+
+    public static String getDataConsumption(Context context){
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = manager.getRunningAppProcesses();
+        String total="";
+        try {
+            if(runningApps.size() > 0)
+            {
+                for (ActivityManager.RunningAppProcessInfo runningApp : runningApps) {
+                    if (runningApp.processName.equals(PACKAGE_NAME)) {
+                        int app = runningApp.uid;
+                        float received = TrafficStats.getUidRxBytes(app);//received amount of each app
+                        String totalMB = String.format("%.2f", received * 0.000001);
+                        double totalGB = Double.parseDouble(totalMB ) / 1024;
+                        total = String.format("%.2f",totalGB) + "GB";
+                    }
+                }
+            }
+        }catch (Exception e){
+            Writer writer = new StringWriter();
+            e.printStackTrace(new PrintWriter(writer));
+            String s = writer.toString();
+            generateErrorLog(context,"err_log_" + getCurrentTime(),s);
+        }
+        return total;
+    }
+
+    public ShareLinkContent facebookShare(String linkToShare){
+       return  new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse(linkToShare))
+                .build();
+    }
+    public void twitterShare(String linkToShare, Context context, TwitterSession session){
+        if(null == session){
+//            System.out.println("test 12312344444");
+//            TweetComposer.Builder builder = new TweetComposer.Builder(context)
+//                    .text(linkToShare);
+//            builder.show();
+            authenticateUser(context,linkToShare);
+        }else {
+            System.out.println("test 123123");
+            final Intent intent = new ComposerActivity.Builder(context)
+                    .session(session)
+                    .text(linkToShare)
+                    .createIntent();
+            context.startActivity(intent);
+        }
+    }
+    private void authenticateUser(Context context,String linkToShare) {
+        TwitterAuthClient client = new TwitterAuthClient();//init twitter auth client
+        client.authorize(((Activity)context), new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> twitterSessionResult) {
+                //if user is successfully authorized start sharing image
+                Toast.makeText(context, "Login successful.", Toast.LENGTH_SHORT).show();
+                new Utility().twitterShare(linkToShare,context,twitterSessionResult.data);
+            }
+
+            @Override
+            public void failure(TwitterException e) {
+                //if user failed to authorize then show toast
+                Toast.makeText(context, "Failed to authenticate by Twitter. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

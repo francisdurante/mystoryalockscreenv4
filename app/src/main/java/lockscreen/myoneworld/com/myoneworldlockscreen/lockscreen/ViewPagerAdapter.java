@@ -69,6 +69,7 @@ public class ViewPagerAdapter extends PagerAdapter {
             if(path.exists())
                 Picasso.with(context)
                         .load(path)
+                        .centerCrop()
                         .fit()
                         .into(imageView);
             ViewPager vp = (ViewPager) container;

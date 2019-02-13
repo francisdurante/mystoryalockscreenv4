@@ -119,6 +119,15 @@ public class LockscreenDAO {
                         String title = data.getJSONObject(x).getString("title");
                         save("my_storya_title_" + idForSetting, title, mContext);
                         if (!"1".equals(getValueString("DO_NOT_DOWNLOAD", mContext))) {
+                            String video = data.getJSONObject(x).getString("video_url");
+                            String id = data.getJSONObject(x).getString("id");
+                            String imageUrl = data.getJSONObject(x).getString("image_url");
+                            if (!"".equals(video) && !"null".equals(video) && kindDownload.equals("slide_show")) {
+                                save("article_kind_" + id, "video_with_slide_show", mContext);
+                            } else {
+                                save("article_kind_" + id, kindDownload, mContext);
+                            }
+                            downloadArticle = new DownloadImageFromApi(1, id, mContext, 0).execute(imageUrl);
                             if ("video".equals(kindDownload)) {
                                 if (getValueString("WIFI_ONLY", mContext).equals("1") &&
                                         getConnectionType(mContext).equalsIgnoreCase("WIFI")) {

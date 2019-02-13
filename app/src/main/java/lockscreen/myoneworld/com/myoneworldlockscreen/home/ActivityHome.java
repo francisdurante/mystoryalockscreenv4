@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,9 +22,28 @@ import android.widget.ImageView;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
-
 import android.support.v4.view.ViewPager;
+import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_KEY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
@@ -39,8 +59,6 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WA
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.STOP;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.START;
 
-
-
 public class ActivityHome extends AppCompatActivity {
     Context mContext = this;
     ImageView header;
@@ -49,13 +67,24 @@ public class ActivityHome extends AppCompatActivity {
     NetworkChangeReceiver ncr;
     public static String updateStatus;
     public final static int REQUEST_CODE = 1010;
-
+    CallbackManager callbackManager;
+    private TwitterAuthClient client;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utility utility = new Utility();
-        utility.scheduledNotification(mContext,"2019-02-12 15:44",1);
-        utility.immediateNotification(mContext,2);
+//        Utility utility = new Utility();
+//        utility.scheduledNotification(mContext,"2019-02-12 15:44",1);
+//        utility.immediateNotification(mContext,2);
+//        TwitterConfig config = new TwitterConfig.Builder(mContext)
+//                .logger(new DefaultLogger(Log.DEBUG))
+//                .twitterAuthConfig(new TwitterAuthConfig(CONSUMER_KEY, CONSUMER_SECRET))
+//                .debug(true)
+//                .build();
+//        Twitter.initialize(config);
+//        final TwitterSession session = TwitterCore.getInstance().getSessionManager()
+//                .getActiveSession();
+//
+//        shareWithTwitter(session);
         setContentView(R.layout.activity_home);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -176,4 +205,42 @@ public class ActivityHome extends AppCompatActivity {
             save("DO_NOT_DOWNLOAD","1",mContext);
         }
     }
+
+//    private void shareWithFacebook(){
+//        callbackManager = CallbackManager.Factory.create();
+//        ShareDialog shareDialog = new ShareDialog(this);
+//
+//        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+//            @Override
+//            public void onSuccess(Sharer.Result result) {
+//                System.out.println("success share!");
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//                System.out.println("cancel share!");
+//            }
+//
+//            @Override
+//            public void onError(FacebookException error) {
+//                System.out.println(error.toString());
+//            }
+//        });
+//
+//        if(ShareDialog.canShow(ShareLinkContent.class)){
+//            shareDialog.show(new Utility().facebookShare("https://google.com"));
+//        }
+//    }
+//    @Override
+//    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        callbackManager.onActivityResult(requestCode, resultCode, data);
+//        if (client != null)
+//            client.onActivityResult(requestCode, resultCode, data);
+//    }
+
+//    private void shareWithTwitter(TwitterSession session){
+//       new Utility().twitterShare("https://google.com",mContext,session);
+//    }
+
 }

@@ -32,12 +32,21 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver
+            android:name=".twittershareReceiver.TwitterReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_SUCCESS"/>
+                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_FAILURE"/>
+                <action android:name="com.twitter.sdk.android.tweetcomposer.TWEET_COMPOSE_CANCEL"/>
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <receiver
-            android:name=".lockscreen.LockscreenReboot"
+        <receiver android:name=".lockscreen.LockscreenReboot"
+            android:hardwareAccelerated="true"
             android:enabled="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
@@ -50,6 +59,9 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+        <provider android:authorities="com.facebook.app.FacebookContentProvider2020717174654511"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
         <activity
             android:name=".login.ActivityLogin"
             android:screenOrientation="portrait"
@@ -88,7 +100,7 @@
             android:configChanges="orientation"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
 
         <receiver android:name=".lockscreen.PhoneStateReceiver" />
 
@@ -103,7 +115,7 @@
             android:configChanges="orientation"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"  />
         <activity
             android:name=".registration.ActivityRegister"
             android:screenOrientation="portrait"

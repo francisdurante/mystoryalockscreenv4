@@ -3,6 +3,8 @@ package lockscreen.myoneworld.com.myoneworldlockscreen;
 import android.os.Environment;
 
 public class Constant {
+
+
     public static final String API_STATUS = "LIVE";
     public static final String G_VERSION_LOGIN_LIVE = "https://api.myoneworld.tech/oauth/token";
     public static final String G_VERSION_LOGGED_IN_LIVE = "https://api.myoneworld.tech/api/user/info";
@@ -49,8 +51,9 @@ public class Constant {
     public static final String LOGOUT_MSG = "Do you want to logout my|storya?";
     public static final String DISABLE_LOCKSCREEN_MSG = "Please disable my|storya lockscreen";
     public static final String DISABLE_LOCKSCREEN_TITLE = "Download settings";
-    public static final String ENABLE_WIFI_AND_DATA = "Enabling Wifi And Data may contain Data charges in downloading stories.\n";
+    public static final String ENABLE_WIFI_AND_DATA = "Enabling Mobile data or Wifi setting may apply data charges.\n";
     public static final String ERROR_PLYAING_VIDEO = "Error in Playing Video";
+    public static final String DATA_USAGE_MAY_APPLY_SETTING_TITLE = "Data Charges May Apply";
 
     public static final String CONSUMER_KEY = "F64atV1oWBXFAKhwn6tyktWMA";
     public static final String CONSUMER_SECRET = "FgOylOPUnzV9g063MbvLlA6sTTaHxq0kpPDLUK2CtGuaNcnbyd";
@@ -93,6 +96,7 @@ public class Constant {
     //--TEST API--///
     public static final String SEND_LOCATION_TEST= "http://192.168.1.149/myoneworld/public/api/mystory/location";
     public static final String G_VERSION_LOGIN_TEST = "http://192.168.1.149/myoneworld/public/oauth/token";
+    public static final String ANALYTICS_STORIES_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/analytics";
 
 
     static final String UPDATE_NOW_BUTTON = "UPDATE NOW";
@@ -142,5 +146,7 @@ public class Constant {
     public static final String GOTHIC_FONT_PATH = "font/Century_Gothic.ttf";
     public static final String GOTHIC_BOLD_FONT_PATH = "font/Gothicbold.TTF";
 
+    public static final String DONE_VIEWED_ARTICLE = "DONE_VIEWED_ARTICLE";
+    public static final String SWIPE = "SWIPE";
 
 }

@@ -38,7 +38,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SWIPE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.freeMemory;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.sendAnalytics;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
@@ -55,6 +57,7 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ActivityArticle;
 import lockscreen.myoneworld.com.myoneworldlockscreen.webviews.ActivityWebView;
+import okhttp3.internal.Util;
 
 public class ActivityLockscreen extends AppCompatActivity {
     String id;

@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -55,6 +56,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CLOUD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.COMIC_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MSG;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DONE_VIEWED_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_PLYAING_VIDEO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FACEBOOK_PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOOGLE_PACKAGE_NAME;
@@ -67,6 +69,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYONEWORLD
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_SHARING_APP;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OK_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SHARING_INTENT_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SWIPE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER_PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIDEO_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.WIFI;
@@ -117,6 +120,7 @@ public class ActivityArticle extends AppCompatActivity {
     RelativeLayout afterVideoLayout;
     public static boolean dataUsageConfirm = false;
     private AlertDialog popUp;
+    private String articleType = "video";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +141,11 @@ public class ActivityArticle extends AppCompatActivity {
                 clickLikeButton(tempLikeStatus);
                 tempLikeStatus = !tempLikeStatus;
             });
-//            bringToFrontlayout();
+            afterVideoLayout = findViewById(R.id.after_video_layout);
+            topMessage = findViewById(R.id.top_title_after_video);
+            midMessage = findViewById(R.id.mid_message);
+            botMessage = findViewById(R.id.bot_message);
+//            bringToFrontLayout();
             AnalyticsApplication application = (AnalyticsApplication) getApplication();
             mTracker = application.getDefaultTracker();
             videoView = findViewById(R.id.flipper);
@@ -163,6 +171,8 @@ public class ActivityArticle extends AppCompatActivity {
         }else{
             videoView.stopPlayback();
         }
+
+        sendAnalytics(mContext,SWIPE, article_id);
     }
 
     private void dialogShare(){
@@ -202,7 +212,7 @@ public class ActivityArticle extends AppCompatActivity {
     }
     private void clickLikeButton(boolean liked){
         //api for like
-        if(liked){
+        if(!liked){
             likeButton.setImageResource(R.drawable.ic_like___colored);
             Animation like = AnimationUtils.loadAnimation(this,R.anim.zoomin);
             likeAnimation.setAnimation(like);
@@ -221,11 +231,12 @@ public class ActivityArticle extends AppCompatActivity {
                 }
             }.start();
         }else{
-            likeButton.setImageResource(R.drawable.ic_like_no_color);
+            likeButton.setImageResource(R.drawable.ic_heart);
         }
     }
 
     private void chooseOptionArticle(String type) {
+        articleType = type;
         Utility util = new Utility();
         if ("video".equals(type)) {
             DisplayMetrics metrics = new DisplayMetrics();
@@ -236,50 +247,43 @@ public class ActivityArticle extends AppCompatActivity {
             params.leftMargin = 0;
             videoView.setLayoutParams(params);
             try {
+               String path = "";
                 if (!getValueString("DO_NOT_DOWNLOAD",mContext).equals("1")) { // downloaded video played
-                    mDialog = new ProgressDialog(ActivityArticle.this, R.style.AppCompatAlertDialogStyle);
-                    String message = "";
-                    if (MOBILE.equalsIgnoreCase(getConnectionType(mContext))) {
-                        message = DATA_USAGE + PLEASE_WAIT;
-                    } else {
-                        message = PLEASE_WAIT;
-                    }
-                    String path;
-                    mDialog.setMessage(message);
-                    mDialog.setCanceledOnTouchOutside(false);
-                    mDialog.show();
+                    String finalPath = path;
+                    videoView.setOnErrorListener((mp, what, extra) -> {
+                        videoStopped = mp.getCurrentPosition();
+                        videoView.pause();
+                        util.showLoading(mContext);
+                        videoView.setVideoPath(finalPath);
+                        videoView.seekTo(videoStopped);
+                        return true;
+                    });
+                    videoView.setOnCompletionListener(mp -> {
+                        if (!getValueString("FULL_NAME",mContext).equals("")) {
+                            bringToFrontLayout();
+                            sendAnalytics(mContext,DONE_VIEWED_ARTICLE,article_id);
+                        } else {
+                            finish();
+                        }
+                    });
                     if (!videoView.isPlaying()) {
                         path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
                         videoView.setVideoPath(path);
                         initial.setVisibility(View.GONE);
                         videoView.start();
                         util.hideLoading();
-                        mDialog.dismiss();
-                        videoView.setOnCompletionListener(mp -> {
-                            if (!getValueString("FULL_NAME",mContext).equals("")) {
-                                bringToFrontlayout();
-                                videoView.stopPlayback();
-                                sendAnalytics(mContext,article_id);
-                            } else {
-                                finish();
-                            }
-                        });
-                        videoView.setOnErrorListener((mp, what, extra) -> {
-                            videoStopped = mp.getCurrentPosition();
-                            videoView.pause();
-                            util.showLoading(mContext);
-                            videoView.setVideoPath(path);
-                            videoView.seekTo(videoStopped);
-                            return true;
-                        });
                     }
+                    videoView.requestFocus();
+                    videoView.setOnPreparedListener(mp -> {
+                        mp.setLooping(false);
+                        mp.start();
+                    });
                 } else {// cloud video played
                     if (!isNetworkAvailable(mContext)) { // error no connection
                         errorOnPlayingVideo(CLOUD);
                     }
                     else {
                         try { // cloud loading
-                            String message = "";
                             util.showLoading(mContext);
                             if (!videoView.isPlaying()) {
                                 if(!MOBILE.equalsIgnoreCase(getConnectionType(mContext))) {
@@ -313,7 +317,12 @@ public class ActivityArticle extends AppCompatActivity {
                         viewPager = findViewById(R.id.view_pager_article);
                         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(mContext, comicsPathArrayList,2);
                         viewPager.setAdapter(viewPagerAdapter);
-                        viewPager.setCurrentItem(0);
+                        int bookmark = Integer.parseInt("".equals(getValueString("bookmark_article_"+article_id,mContext)) ? "0" : getValueString("bookmark_article_"+article_id,mContext));
+                        if(bookmark != 0)
+                            viewPager.setCurrentItem(bookmark);
+                        else
+                            viewPager.setCurrentItem(0);
+
                         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                             boolean lastPageChange = false;
 
@@ -321,8 +330,8 @@ public class ActivityArticle extends AppCompatActivity {
                             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                                 int lastIdx = viewPagerAdapter.getCount() - 1;
                                 if (position == lastIdx) {
-                                    bringToFrontlayout();
-                                    sendAnalytics(mContext,article_id);
+                                    bringToFrontLayout();
+                                    sendAnalytics(mContext,DONE_VIEWED_ARTICLE,article_id);
                                 }
                             }
 
@@ -374,17 +383,21 @@ public class ActivityArticle extends AppCompatActivity {
 
         // inflate the custom popup layout
         final View inflatedView = layoutInflater.inflate(R.layout.comment_box_layout, null, false);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         ImageView loading = inflatedView.findViewById(R.id.loading_comment);
         ImageButton send = inflatedView.findViewById(R.id.send_comment);
         EditText comment = inflatedView.findViewById(R.id.writeComment);
         loading.startAnimation(rotate);
+        ListView listView = (ListView) inflatedView.findViewById(R.id.commentsListView);
         send.setOnClickListener(v1 -> {
             ArticleDAO articleDAO = new ArticleDAO();
-            popWindow.dismiss();
-            articleDAO.sendComment(article_id, getValueString("USER_ID", mContext), comment.getText().toString(), mContext);
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+            articleDAO.sendComment(article_id, getValueString("USER_ID", mContext), comment.getText().toString(), mContext,listView,loading,this);
+            comment.setText("");
         });
-        ListView listView = (ListView) inflatedView.findViewById(R.id.commentsListView);
         Display display = getWindowManager().getDefaultDisplay();
         final Point size = new Point();
         display.getSize(size);
@@ -431,29 +444,20 @@ public class ActivityArticle extends AppCompatActivity {
         });
     }
 
-    private void showPopUpShowDataUsage(){
-        if("MOBILE".equalsIgnoreCase(getConnectionType(mContext))){
-            Utility.globalMessageBox(mContext,DATA_USAGE_MSG,DATA_USAGE_TITLE,MSG_BOX_WARNING);
-        }
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == 1010) {
             videoView.stopPlayback();
             if (resultCode == RESULT_OK) {
-                finish();
+//                finish();
             }else if (resultCode == RESULT_CANCELED){
                shared = 1;
             }
         }
     }
 
-    public void bringToFrontlayout(){
-        afterVideoLayout = findViewById(R.id.after_video_layout);
-        topMessage = findViewById(R.id.top_title_after_video);
-        midMessage = findViewById(R.id.mid_message);
-        botMessage = findViewById(R.id.bot_message);
+    public void bringToFrontLayout(){
         TextView footerMessage = findViewById(R.id.footer_message);
         Typeface font = setFont(mContext,GOTHIC_FONT_PATH);
         Typeface bold = setFont(mContext,GOTHIC_BOLD_FONT_PATH);
@@ -463,13 +467,23 @@ public class ActivityArticle extends AppCompatActivity {
         midMessage.setTypeface(font);
         botMessage.setTypeface(font);
         footerMessage.setTypeface(font);
-        videoView.stopPlayback();
-        videoView.suspend();
+        if(null != videoView) {
+            videoView.stopPlayback();
+            videoView.suspend();
+        }
     }
 
     @Override
     protected void onDestroy() {
         freeMemory();
+        if(!"video".equalsIgnoreCase(articleType)) {
+            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + article_id, mContext))) {
+                save("bookmark_article_" + article_id, Integer.toString(viewPager.getCurrentItem()), mContext);
+            } else {
+                save("bookmark_article_" + article_id, "", mContext);
+                save("bookmark_article_done_" + article_id,"",mContext);
+            }
+        }
         videoView = null;
         initial = null;
         rotate = null;
@@ -485,14 +499,40 @@ public class ActivityArticle extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onPause() {
+        if(!"video".equalsIgnoreCase(articleType)) {
+            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + article_id, mContext))) {
+                save("bookmark_article_" + article_id, Integer.toString(viewPager.getCurrentItem()), mContext);
+            } else {
+                save("bookmark_article_" + article_id, "", mContext);
+                save("bookmark_article_done_" + article_id,"",mContext);
+            }
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!"video".equalsIgnoreCase(articleType)) {
+            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + article_id, mContext))) {
+                save("bookmark_article_" + article_id, Integer.toString(viewPager.getCurrentItem()), mContext);
+            } else {
+                save("bookmark_article_" + article_id, "", mContext);
+                save("bookmark_article_done_" + article_id,"",mContext);
+            }
+        }
+        super.onBackPressed();
+    }
+
     private void initialLoadingVideo(Utility util){
         if ("".equals(getValueString("video_url_download_" + article_id, mContext))) {
             Uri uri = Uri.parse(getValueString("video_url_" + article_id, mContext));
             videoView.setVideoURI(uri);
             videoView.setOnCompletionListener(mp -> {
                 if (!getValueString("FULL_NAME", mContext).equals("")) {
-                    bringToFrontlayout();
-                    sendAnalytics(mContext, article_id);
+                    bringToFrontLayout();
+                    sendAnalytics(mContext,DONE_VIEWED_ARTICLE, article_id);
                 } else {
                     finish();
                 }
@@ -508,15 +548,7 @@ public class ActivityArticle extends AppCompatActivity {
         } else {
             mDialog = new ProgressDialog(ActivityArticle.this, R.style.AppCompatAlertDialogStyle);
             String message1 = "";
-            if ("MOBILE".equalsIgnoreCase(getConnectionType(mContext))) {
-                message1 = DATA_USAGE + PLEASE_WAIT;
-            } else {
-                message1 = PLEASE_WAIT;
-            }
             String path;
-            mDialog.setMessage(message1);
-            mDialog.setCanceledOnTouchOutside(false);
-            mDialog.show();
             if (!videoView.isPlaying()) {
                 path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
                 videoView.setVideoPath(path);
@@ -526,8 +558,8 @@ public class ActivityArticle extends AppCompatActivity {
                 mDialog.dismiss();
                 videoView.setOnCompletionListener(mp -> {
                     if (!getValueString("FULL_NAME", mContext).equals("")) {
-                        bringToFrontlayout();
-                        sendAnalytics(mContext, article_id);
+                        bringToFrontLayout();
+                        sendAnalytics(mContext,DONE_VIEWED_ARTICLE, article_id);
                     } else {
                         finish();
                     }
