@@ -1,10 +1,9 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen;
 
+import android.content.Context;
 import android.os.Environment;
 
 public class Constant {
-
-
     public static final String API_STATUS = "LIVE";
     public static final String G_VERSION_LOGIN_LIVE = "https://api.myoneworld.tech/oauth/token";
     public static final String G_VERSION_LOGGED_IN_LIVE = "https://api.myoneworld.tech/api/user/info";
@@ -12,7 +11,8 @@ public class Constant {
     public static final String SEND_LOCATION_LIVE = "https://api.myoneworld.tech/api/mystory/location";
     public static final String MY_STORYA_DELETED_CONTENT = "https://api.myoneworld.tech/api/front/story?archived=1&showAll=1";
     public static final String MYPHONE_SHOP = "https://shop.myphone.com.ph";
-    public static final String MY_LIFE = "http://mylifestyle.tech";
+    public static final String MY_LIFE_URL = "https://mylifestyle.tech";
+    public static final String MY_STORYA_URL = "https://mystorya.tech";
     public static final String SEND_COMMENT_LIVE = "https://api.myoneworld.tech/api/mystory/send_comment";
     public static final String GET_COMMENT_STORY_ID_LIVE = "https://api.myoneworld.tech/api/mystory/get_comment";
     public static final String ARTICLE_ANALYTICS = "https://brown.com.ph/api/analytics";

@@ -52,7 +52,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getFileInFo
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.WEB_VIEW_SETTING;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYPHONE_SHOP;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_LIFE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_LIFE_URL;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ActivityArticle;
@@ -337,13 +337,13 @@ public class ActivityLockscreen extends AppCompatActivity {
                                 disableLocksScreen(mContext);
                                 if (WEB_VIEW_SETTING.equals("FALSE")) {
                                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    intent.setData(Uri.parse(MY_LIFE));
+                                    intent.setData(Uri.parse(MY_LIFE_URL));
                                     intent.putExtra(Browser.EXTRA_APPLICATION_ID, getPackageName());
                                     startActivity(intent);
                                     finish();
                                     stopListening(mSpeechRecognizer,listeningText);
                                 } else {
-                                    ActivityWebView.url = MY_LIFE;
+                                    ActivityWebView.url = MY_LIFE_URL;
                                     startActivity(new Intent(mContext, ActivityWebView.class));
                                     finish();
                                     stopListening(mSpeechRecognizer,listeningText);

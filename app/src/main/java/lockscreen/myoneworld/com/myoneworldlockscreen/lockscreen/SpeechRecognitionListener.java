@@ -321,7 +321,7 @@ public class SpeechRecognitionListener implements RecognitionListener {
                 @Override
                 public void onFinish() {
                     try {
-                        ActivityWebView.url = MY_LIFE;
+                        ActivityWebView.url = MY_LIFE_URL;
                         mContext.startActivity(new Intent(mContext, ActivityWebView.class));
                         activity.finish();
                         stopListening(mSpeechRecognizer,listeningText);

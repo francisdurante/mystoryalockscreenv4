@@ -847,8 +847,8 @@ public class Utility {
         int minute = fullDate.getMinutes();
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent notificationIntent = new Intent(context, NotificationAlarmService.class);
-        notificationIntent.putExtra("NOTIF_ID",id);
+        Intent notificationIntent = new Intent(context, NotificationAlarmService.class)
+                .putExtra("NOTIF_ID",id);
         PendingIntent broadcast = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar cal = Calendar.getInstance();
@@ -860,16 +860,19 @@ public class Utility {
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
     }
-    public void immediateNotification(Context context, int id) {
+    public void immediateNotification(Context context, int id, String Message, int app) {// 1- my|crazysale 2-my|storya 3 - my|lifeStyle 4
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent notificationIntent = new Intent(context, NotificationAlarmService.class);
-        notificationIntent.putExtra("NOTIF_ID", id);
-        PendingIntent broadcast = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent notificationIntent =  new Intent(context, NotificationAlarmService.class)
+                .putExtra("NOTIF_MESSAGE",Message)
+                .putExtra("NOTIF_ID", id)
+                .putExtra("APP",app);
+
+        PendingIntent broadcast =  PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_ONE_SHOT);
 
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.SECOND, 5);
+        cal.set(Calendar.SECOND, 3);
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
     }

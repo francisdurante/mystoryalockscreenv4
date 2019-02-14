@@ -139,7 +139,7 @@ public class ArticleDAO {
                     }
 
                     Utility utility = new Utility();
-                    utility.immediateNotification(context,Integer.parseInt(article_id));
+                    utility.immediateNotification(context,Integer.parseInt(article_id),"You receive 10 points!",1);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
