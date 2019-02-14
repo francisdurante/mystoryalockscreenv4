@@ -54,49 +54,53 @@ public class ViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         try {
-            ActivityLockscreen.fileID = position;
-            layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = layoutInflater.inflate(R.layout.lockscreen_background, null);
-
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 1;
-            Bitmap bmImg = BitmapFactory.decodeFile(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position), options);
-            BitmapDrawable background = new BitmapDrawable(bmImg);
-
-            ImageView imageView = view.findViewById(R.id.imageView);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            File path = new File(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position));
-            if(path.exists())
-                Picasso.with(context)
-                        .load(path)
-                        .centerCrop()
-                        .fit()
-                        .into(imageView);
-            ViewPager vp = (ViewPager) container;
-            vp.addView(view, 0);
+//            ActivityLockscreen.fileID = position;
+//            layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            View view = layoutInflater.inflate(R.layout.lockscreen_background, null);
+//
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inSampleSize = 1;
+//            Bitmap bmImg = BitmapFactory.decodeFile(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position), options);
+//            BitmapDrawable background = new BitmapDrawable(bmImg);
+//
+//            ImageView imageView = view.findViewById(R.id.imageView);
+//            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//            File path = new File(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position));
+//            if(path.exists())
+//                Picasso.with(context)
+//                        .load(path)
+//                        .centerCrop()
+//                        .placeholder(R.drawable.image_loader)
+//                        .fit()
+//                        .into(imageView);
+//            ViewPager vp = (ViewPager) container;
+//            vp.addView(view, 0);
 
 //            imageView.setOnClickListener(v -> startListening(context,mSpeechRecognizer,listeningText,mIslistening,mSpeechRecognizerIntent));
-            return view;
+            return initLockscreenView(position,container);
         }catch (Exception e){
-            layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = layoutInflater.inflate(R.layout.lockscreen_background, null);
-
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 1;
-            Bitmap bmImg = BitmapFactory.decodeFile(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position), options);
-            BitmapDrawable background = new BitmapDrawable(bmImg);
-
-            ImageView imageView = view.findViewById(R.id.imageView);
-            File path = new File(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position));
-            if(path.exists())
-                Picasso.with(context)
-                        .load(path)
-                        .fit()
-                        .into(imageView);
-
-            ViewPager vp = (ViewPager) container;
-            vp.addView(view, 0);
-            return view;
+//            layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            View view = layoutInflater.inflate(R.layout.lockscreen_background, null);
+//
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inSampleSize = 1;
+//            Bitmap bmImg = BitmapFactory.decodeFile(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position), options);
+//            BitmapDrawable background = new BitmapDrawable(bmImg);
+//
+//            ImageView imageView = view.findViewById(R.id.imageView);
+//            File path = new File(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position));
+//            if(path.exists())
+//                Picasso.with(context)
+//                        .load(path)
+//                        .centerCrop()
+//                        .placeholder(R.drawable.image_loader)
+//                        .fit()
+//                        .into(imageView);
+//
+//            ViewPager vp = (ViewPager) container;
+//            vp.addView(view, 0);
+//            return view;
+            return initLockscreenView(position,container);
         }
     }
     @Override
@@ -104,5 +108,30 @@ public class ViewPagerAdapter extends PagerAdapter {
         ViewPager vp = (ViewPager) container;
         View view = (View) object;
         vp.removeView(view);
+    }
+
+    private View initLockscreenView(int position, ViewGroup container){
+        ActivityLockscreen.fileID = position;
+        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.lockscreen_background, null);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 1;
+        Bitmap bmImg = BitmapFactory.decodeFile(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position), options);
+        BitmapDrawable background = new BitmapDrawable(bmImg);
+
+        ImageView imageView = view.findViewById(R.id.imageView);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        File path = new File(ANDROID_PATH + context.getPackageName() + "/mystory/" + imagesPath.get(position));
+        if(path.exists())
+            Picasso.with(context)
+                    .load(path)
+                    .fit()
+                    .noFade()
+                    .placeholder(R.drawable.image_loading_layout)
+                    .into(imageView);
+        ViewPager vp = (ViewPager) container;
+        vp.addView(view, 0);
+        return view;
     }
 }

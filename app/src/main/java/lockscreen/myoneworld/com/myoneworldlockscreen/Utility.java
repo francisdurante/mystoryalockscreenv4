@@ -989,4 +989,15 @@ public class Utility {
             }
         });
     }
+    public static void bookmarkComics(String articleId,String articleType,ViewPager viewPager, Context context){
+        if(!"video".equalsIgnoreCase(articleType)) {
+            System.out.println(getValueString("bookmark_article_done_" + articleId, context)+ " aaaaaaaaaaaaaaa");
+            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + articleId, context))) {
+                save("bookmark_article_" + articleId, Integer.toString(viewPager.getCurrentItem()), context);
+            }else if("DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + articleId, context))){
+                save("bookmark_article_" + articleId, "", context);
+                save("bookmark_article_done_" + articleId, "", context);
+            }
+        }
+    }
 }
