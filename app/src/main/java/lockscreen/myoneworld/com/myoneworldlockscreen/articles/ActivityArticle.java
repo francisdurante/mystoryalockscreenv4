@@ -73,6 +73,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SWIPE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER_PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIDEO_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.WIFI;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.bookmarkComics;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.filePath;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.freeMemory;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getConnectionType;
@@ -476,14 +477,7 @@ public class ActivityArticle extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         freeMemory();
-        if(!"video".equalsIgnoreCase(articleType)) {
-            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + article_id, mContext))) {
-                save("bookmark_article_" + article_id, Integer.toString(viewPager.getCurrentItem()), mContext);
-            } else {
-                save("bookmark_article_" + article_id, "", mContext);
-                save("bookmark_article_done_" + article_id,"",mContext);
-            }
-        }
+        bookmarkComics(article_id,articleType,viewPager,mContext);
         videoView = null;
         initial = null;
         rotate = null;
@@ -499,31 +493,17 @@ public class ActivityArticle extends AppCompatActivity {
         super.onDestroy();
     }
 
-    @Override
-    protected void onPause() {
-        if(!"video".equalsIgnoreCase(articleType)) {
-            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + article_id, mContext))) {
-                save("bookmark_article_" + article_id, Integer.toString(viewPager.getCurrentItem()), mContext);
-            } else {
-                save("bookmark_article_" + article_id, "", mContext);
-                save("bookmark_article_done_" + article_id,"",mContext);
-            }
-        }
-        super.onPause();
-    }
+//    @Override
+//    protected void onPause() {
+//        bookmarkComics(article_id,articleType,viewPager,mContext);
+//        super.onPause();
+//    }
 
-    @Override
-    public void onBackPressed() {
-        if(!"video".equalsIgnoreCase(articleType)) {
-            if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + article_id, mContext))) {
-                save("bookmark_article_" + article_id, Integer.toString(viewPager.getCurrentItem()), mContext);
-            } else {
-                save("bookmark_article_" + article_id, "", mContext);
-                save("bookmark_article_done_" + article_id,"",mContext);
-            }
-        }
-        super.onBackPressed();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        bookmarkComics(article_id,articleType,viewPager,mContext);
+//        super.onBackPressed();
+//    }
 
     private void initialLoadingVideo(Utility util){
         if ("".equals(getValueString("video_url_download_" + article_id, mContext))) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:width="5000sp" android:height="10000sp">
+    <shape
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:shape="rectangle">
+        <solid
+            android:color="#0c1325"
+            />
+    </shape>
+</item>
+<item>
+    <bitmap
+        android:src="@drawable/m1w_logo_icon"
+        android:gravity="center"
+        />
+</item>
+</layer-list>
