@@ -146,7 +146,7 @@ public class ActivityArticle extends AppCompatActivity {
             topMessage = findViewById(R.id.top_title_after_video);
             midMessage = findViewById(R.id.mid_message);
             botMessage = findViewById(R.id.bot_message);
-//            bringToFrontLayout();
+            bringToFrontLayout();
             AnalyticsApplication application = (AnalyticsApplication) getApplication();
             mTracker = application.getDefaultTracker();
             videoView = findViewById(R.id.flipper);
@@ -396,7 +396,7 @@ public class ActivityArticle extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-            articleDAO.sendComment(article_id, getValueString("USER_ID", mContext), comment.getText().toString(), mContext,listView,loading,this);
+            articleDAO.sendComment(article_id, getValueString("USER_ID", mContext), comment.getText().toString(), mContext,listView,loading,this,getValueString("ACCESS_TOKEN",mContext));
             comment.setText("");
         });
         Display display = getWindowManager().getDefaultDisplay();
@@ -423,7 +423,7 @@ public class ActivityArticle extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     void setSimpleList(ListView listView, ImageView loading) {
         ArticleDAO articleDAO = new ArticleDAO();
-        articleDAO.getCommentByStoryId(article_id,mContext,listView,loading,this);
+        articleDAO.getCommentByStoryId(article_id,mContext,listView,loading,this,getValueString("ACCESS_TOKEN",mContext));
         listView.setOnTouchListener(new View.OnTouchListener() {
             float height;
 

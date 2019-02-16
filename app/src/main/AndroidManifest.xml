@@ -36,21 +36,24 @@
             android:name=".twittershareReceiver.TwitterReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_SUCCESS"/>
-                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_FAILURE"/>
-                <action android:name="com.twitter.sdk.android.tweetcomposer.TWEET_COMPOSE_CANCEL"/>
+                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_SUCCESS" />
+                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_FAILURE" />
+                <action android:name="com.twitter.sdk.android.tweetcomposer.TWEET_COMPOSE_CANCEL" />
             </intent-filter>
         </receiver>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <receiver android:name=".lockscreen.LockscreenReboot"
-            android:hardwareAccelerated="true"
+        <receiver
+            android:name=".lockscreen.LockscreenReboot"
             android:enabled="true"
+            android:hardwareAccelerated="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
@@ -59,9 +62,12 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-        <provider android:authorities="com.facebook.app.FacebookContentProvider2020717174654511"
+
+        <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:exported="true"/>
+            android:authorities="com.facebook.app.FacebookContentProvider2020717174654511"
+            android:exported="true" />
+
         <activity
             android:name=".login.ActivityLogin"
             android:screenOrientation="portrait"
@@ -87,7 +93,7 @@
             android:name=".lockscreen.LockscreenService"
             android:enabled="true"
             android:hardwareAccelerated="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"></service>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".lockscreen.LockscreenJobService"
             android:enabled="true"
@@ -115,7 +121,7 @@
             android:configChanges="orientation"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"  />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
             android:name=".registration.ActivityRegister"
             android:screenOrientation="portrait"
@@ -134,11 +140,14 @@
             android:name=".briefing.ActivityBriefing"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".notification.ActivityNotificationDetails"
-            android:theme="@style/Theme.Design.NoActionBar"/>
-        
-        <receiver android:name=".notification.service.NotificationAlarmService"/>
+        <activity
+            android:name=".notification.ActivityNotificationDetails"
+            android:theme="@style/Theme.Design.NoActionBar" />
 
+        <receiver android:name=".notification.service.NotificationAlarmService" />
+
+        <activity android:name=".editprofile.ActivityEditProfile"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
     </application>
 
 </manifest>

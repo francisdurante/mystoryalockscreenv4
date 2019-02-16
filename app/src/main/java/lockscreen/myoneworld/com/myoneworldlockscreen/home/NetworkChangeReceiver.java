@@ -5,11 +5,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.widget.DrawerLayout;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.Objects;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
@@ -25,9 +28,21 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*
 public class NetworkChangeReceiver extends BroadcastReceiver {
     ImageView header;
     Activity activity;
+    DrawerLayout drawerLayout;
+    TextView fullName;
+    TextView email;
+    ImageView profilePic;
     public NetworkChangeReceiver(ImageView header, Activity activity){
         this.header = header;
         this.activity = activity;
+    }
+    public NetworkChangeReceiver(ImageView header, Activity activity,DrawerLayout drawerLayout,TextView fullName, TextView email,ImageView profilePic){
+        this.header = header;
+        this.activity = activity;
+        this.drawerLayout = drawerLayout;
+        this.fullName = fullName;
+        this.email = email;
+        this.profilePic = profilePic;
     }
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -57,6 +72,8 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                     if("outdated".equalsIgnoreCase(getValueString("VERSION_ONLINE",context))){
                         globalMessageBox(context,NEW_VERSION_MSG,NEW_VERSION_TITLE,MSG_BOX_WARNING);
                     }
+                    HomeDAO dao = new HomeDAO(context,((Activity)context));
+                    dao.checkIfValidLogin(getValueString("ACCESS_TOKEN",context),drawerLayout,fullName,email,profilePic);
                 }
                 else {
                     header.startAnimation(myanim);

@@ -41,10 +41,13 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.home.HomeVO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.registration.RegistrationDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.registration.RegistrationVO;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_API_KEY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGGED_IN_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGIN_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGGED_IN_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_EMAIL_ADDRESS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGIN_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showLoginError;
 
@@ -74,7 +77,7 @@ public class LoginDAO {
         param.put("client_id", 1);
         param.put("grant_type", "password");
         try {
-            api.postByUrl(G_VERSION_LOGIN_LIVE, param, new JsonHttpResponseHandler() {
+            api.postByUrl("LIVE".equalsIgnoreCase(API_STATUS) ? G_VERSION_LOGIN_LIVE : G_VERSION_LOGIN_TEST, param, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     HomeVO vo = new HomeVO();
@@ -119,7 +122,7 @@ public class LoginDAO {
         rp.put("Authorization", accessToken);
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Authorization", accessToken));
-        api.getByUrlHeader(mContext, G_VERSION_LOGGED_IN_LIVE, headers.toArray(new Header[headers.size()])
+        api.getByUrlHeader(mContext, "LIVE".equalsIgnoreCase(API_STATUS) ? G_VERSION_LOGGED_IN_LIVE : G_VERSION_LOGGED_IN_TEST, headers.toArray(new Header[headers.size()])
                 , rp,
                 new JsonHttpResponseHandler() {
                     @Override

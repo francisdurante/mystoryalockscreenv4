@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/accountsetting"
+        android:menuCategory="container">
+        <item android:id="@+id/setting_drawer"
+            android:title="SETTINGS"/>
+        <item android:id="@+id/about"
+            android:title="ABOUT US"/>
+        <item android:id="@+id/logout_side"
+            android:title="LOGOUT"/>
+    </group>
+</menu>

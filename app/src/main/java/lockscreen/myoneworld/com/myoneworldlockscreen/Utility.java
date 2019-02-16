@@ -34,6 +34,7 @@ import android.os.Environment;
 import android.os.PersistableBundle;
 import android.provider.ContactsContract;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -79,7 +80,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ArticleDAO;
+import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenJobService;
+import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
+import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
 import lockscreen.myoneworld.com.myoneworldlockscreen.notification.service.NotificationAlarmService;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START_MSG_TITLE;
@@ -88,6 +92,8 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_K
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MAY_APPLY_SETTING_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_MESSAGE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EXPIRED_LOG_IN;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.HONOR;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.HONOR_AUTO_START;
@@ -95,6 +101,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.HONOR_AUTO
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV_AUTO_START;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV_AUTO_START_CLASS_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGGING_OUT_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_THANKS_BUTTON;
@@ -105,6 +112,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_GENERAL;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_MARKET;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.UPDATE_NOW_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIVO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIVO_AUTO_START;
@@ -514,7 +522,7 @@ public class Utility {
     }
     public static void sendAnalytics(Context co,String action, String articleId){
        ArticleDAO articleDAO = new ArticleDAO();
-       articleDAO.sendAnalytics(getValueString("USER_ID",co),articleId,action,co);
+       articleDAO.sendAnalytics(getValueString("USER_ID",co),articleId,action,co,getValueString("ACCESS_TOKEN",co));
     }
     public static boolean isActivityRunning() {
         return isActivityRunning;
@@ -606,12 +614,13 @@ public class Utility {
         }
         return response[0];
     }
-    public static void globalMessageBox(Context context, String Message, String Title, String type){
+    public static void globalMessageBox(Context context, String Message, String Title, @Nullable String type){
 
         Typeface font = setFont(context,GOTHIC_FONT_PATH);
         AlertDialog.Builder ab = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
         switch (type){
             case MSG_BOX_SUCCESS:
+                ab.setIcon(R.drawable.ic_checked);
                 break;
             case MSG_BOX_WARNING:
                 ab.setIcon(R.drawable.ic_warning);
@@ -720,6 +729,121 @@ public class Utility {
 
                 showMessageBox(false,context,inflatedView);
             }
+        }else if(Title.equalsIgnoreCase(EXPIRED_LOG_IN)) {
+            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null, false);
+            final TextView generalMessage = inflatedView.findViewById(R.id.message_box_message);
+            final LinearLayout linearButtons = inflatedView.findViewById(R.id.linear_buttons);
+            final Button cancelToSetting = inflatedView.findViewById(R.id.cancel_go_to_settings);
+            final Button ok = inflatedView.findViewById(R.id.go_to_settings);
+            final ImageView autoStartImage = inflatedView.findViewById(R.id.image_auto_start);
+            final TextView title = inflatedView.findViewById(R.id.message_box_title);
+            Drawable img = null;
+            if (MSG_BOX_WARNING.equalsIgnoreCase(type)) {
+                img = context.getResources().getDrawable(R.drawable.ic_warning);
+                title.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
+            } else if (MSG_BOX_ERROR.equalsIgnoreCase(type)) {
+                img = context.getResources().getDrawable(R.drawable.ic_cancel);
+            }
+
+            title.setText(Title);
+            title.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
+            title.setCompoundDrawablePadding(15);
+            autoStartImage.setVisibility(View.GONE);
+            ok.setText(OK_BUTTON);
+            cancelToSetting.setVisibility(View.GONE);
+            linearButtons.setVisibility(View.VISIBLE);
+            ok.setOnClickListener(v -> {
+                save("USER_ID","",context);
+                save("FULL_NAME","",context);
+                save("EMAIL","",context);
+                save("ACCESS_TOKEN","",context);
+                if(isMyServiceRunning(LockscreenService.class,context)){
+                    context.stopService(new Intent(context,LockscreenService.class));
+                    save("SERVICE", "0",context);
+                }
+                context.startActivity(new Intent(context,ActivityLoginOptions.class));
+                ((Activity) context).finish();
+            });
+            generalMessage.setTypeface(font);
+            generalMessage.setText(Message);
+
+            showMessageBox(false, context, inflatedView);
+        }
+        else if(Title.equalsIgnoreCase(LOGGING_OUT_TITLE)) {
+            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null, false);
+            final TextView generalMessage = inflatedView.findViewById(R.id.message_box_message);
+            final LinearLayout linearButtons = inflatedView.findViewById(R.id.linear_buttons);
+            final Button cancelToSetting = inflatedView.findViewById(R.id.cancel_go_to_settings);
+            final Button ok = inflatedView.findViewById(R.id.go_to_settings);
+            final ImageView autoStartImage = inflatedView.findViewById(R.id.image_auto_start);
+            final TextView title = inflatedView.findViewById(R.id.message_box_title);
+            Drawable img = null;
+            if (MSG_BOX_WARNING.equalsIgnoreCase(type)) {
+                img = context.getResources().getDrawable(R.drawable.ic_warning);
+                title.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
+            } else if (MSG_BOX_ERROR.equalsIgnoreCase(type)) {
+                img = context.getResources().getDrawable(R.drawable.ic_cancel);
+            }
+
+            title.setText(Title);
+            title.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
+            title.setCompoundDrawablePadding(15);
+            autoStartImage.setVisibility(View.GONE);
+            ok.setText(OK_BUTTON);
+            linearButtons.setVisibility(View.VISIBLE);
+            ok.setOnClickListener(v -> {
+                save("USER_ID", "", context);
+                save("FULL_NAME", "", context);
+                save("EMAIL", "", context);
+                save("ACCESS_TOKEN", "", context);
+                if (isMyServiceRunning(LockscreenService.class, context)) {
+                    context.stopService(new Intent(context, LockscreenService.class));
+                    save("SERVICE", "0", context);
+                }
+                context.startActivity(new Intent(context, ActivityLoginOptions.class));
+                mDialog.dismiss();
+                ((Activity) context).finish();
+            });
+            cancelToSetting.setOnClickListener(v -> mDialog.dismiss());
+            generalMessage.setTypeface(font);
+            generalMessage.setText(Message);
+
+            showMessageBox(false, context, inflatedView);
+        }else if(Title.equalsIgnoreCase(EDIT_PROFILE_TITLE)) {
+            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null, false);
+            final TextView generalMessage = inflatedView.findViewById(R.id.message_box_message);
+            final LinearLayout linearButtons = inflatedView.findViewById(R.id.linear_buttons);
+            final Button cancelToSetting = inflatedView.findViewById(R.id.cancel_go_to_settings);
+            final Button ok = inflatedView.findViewById(R.id.go_to_settings);
+            final ImageView autoStartImage = inflatedView.findViewById(R.id.image_auto_start);
+            final TextView title = inflatedView.findViewById(R.id.message_box_title);
+            Drawable img = null;
+            if (MSG_BOX_WARNING.equalsIgnoreCase(type)) {
+                img = context.getResources().getDrawable(R.drawable.ic_warning);
+                title.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
+            } else if (MSG_BOX_ERROR.equalsIgnoreCase(type)) {
+                img = context.getResources().getDrawable(R.drawable.ic_cancel);
+            } else if(MSG_BOX_SUCCESS.equals(type)){
+                img = context.getResources().getDrawable(R.drawable.ic_checked);
+            }
+
+            title.setText(Title);
+            title.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
+            title.setCompoundDrawablePadding(15);
+            cancelToSetting.setVisibility(View.GONE);
+            ok.setText(OK_BUTTON);
+            linearButtons.setVisibility(View.VISIBLE);
+            ok.setOnClickListener(v -> {
+                context.startActivity(new Intent(context,ActivityHome.class));
+                ((Activity) context).finish();
+            });
+            generalMessage.setTypeface(font);
+            generalMessage.setText(Message);
+
+            showMessageBox(false, context, inflatedView);
         }
         else {
             LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -991,7 +1115,6 @@ public class Utility {
     }
     public static void bookmarkComics(String articleId,String articleType,ViewPager viewPager, Context context){
         if(!"video".equalsIgnoreCase(articleType)) {
-            System.out.println(getValueString("bookmark_article_done_" + articleId, context)+ " aaaaaaaaaaaaaaa");
             if (!"DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + articleId, context))) {
                 save("bookmark_article_" + articleId, Integer.toString(viewPager.getCurrentItem()), context);
             }else if("DONE".equalsIgnoreCase(getValueString("bookmark_article_done_" + articleId, context))){
@@ -1000,4 +1123,27 @@ public class Utility {
             }
         }
     }
-}
+    public static void editProfilePopUp(Context context){
+        Typeface font = setFont(context,GOTHIC_FONT_PATH);
+            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.pop_up_layout, null,false);
+            final TextView message = inflatedView.findViewById(R.id.data_usage_message);
+            final Button cancel = inflatedView.findViewById(R.id.cancel_show_data);
+            final Button ok = inflatedView.findViewById(R.id.ok_show_data);
+            final CheckBox showDataUsage = inflatedView.findViewById(R.id.show_data_usage);
+
+            showDataUsage.setVisibility(View.GONE);
+            message.setTypeface(font);
+            message.setText(EDIT_PROFILE_MESSAGE);
+            ok.setTypeface(font);
+            cancel.setTypeface(font);
+
+            cancel.setOnClickListener(v -> {
+                mDialog.dismiss();
+                Activity activity = (Activity) context;
+                activity.finish();
+            });
+            ok.setOnClickListener(v -> mDialog.dismiss());
+            showMessageBox(false,context,inflatedView);
+        }
+    }

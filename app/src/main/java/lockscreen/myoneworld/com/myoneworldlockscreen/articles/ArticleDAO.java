@@ -19,8 +19,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.message.BasicHeader;
 import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
@@ -28,10 +30,12 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANALYTICS_STORIES_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DONE_VIEWED_ARTICLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_COMMENT_STORY_ID_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_STORYA_SINGLE_CONTENT;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANALYTICS_STORIES_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_COMMENT_STORY_ID_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_COMMENT_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_COMMENT_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showProgressBar;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.hideProgressBar;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.parseDateToddMMyyyy;
@@ -89,7 +93,7 @@ public class ArticleDAO {
                             if (position == lastIdx) {
                                 save("bookmark_article_done_"+id,"DONE",context);
                                 bringToFrontlayout();
-                                sendAnalytics(getValueString("USER_ID", context),DONE_VIEWED_ARTICLE, ActivityArticle.article_id, context);
+                                sendAnalytics(getValueString("USER_ID", context),DONE_VIEWED_ARTICLE, ActivityArticle.article_id, context,getValueString("ACCESS_TOKEN",context));
                             }
                         }
 
@@ -119,14 +123,17 @@ public class ArticleDAO {
         });
     }
 
-    public void sendAnalytics(String user_id,String article_id,String action,Context context){
+    public void sendAnalytics(String user_id,String article_id,String action,Context context,String accessToken){
         ApiClass api = new ApiClass();
         RequestParams rp = new RequestParams();
         rp.add("id", user_id);
         rp.add("mystorya_id", article_id);
         rp.add("action",action);
+        rp.add("Authorization", accessToken);
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Authorization", accessToken));
 
-        api.getByUrl("LIVE".equals(API_STATUS) ? ANALYTICS_STORIES_LIVE : ANALYTICS_STORIES_TEST, rp, new JsonHttpResponseHandler() {
+        api.getByUrlHeader(context,"LIVE".equals(API_STATUS) ? ANALYTICS_STORIES_LIVE : ANALYTICS_STORIES_TEST,headers.toArray(new Header[headers.size()]), rp, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
@@ -152,20 +159,22 @@ public class ArticleDAO {
         });
     }
 
-    public void sendComment(String storyId, String userId, String comment, Context context, ListView lv,ImageView iv,Activity activity){
+    public void sendComment(String storyId, String userId, String comment, Context context, ListView lv,ImageView iv,Activity activity,String accessToken){
         ApiClass api = new ApiClass();
         RequestParams rp = new RequestParams();
         rp.add("story_id",storyId);
         rp.add("user_id",userId);
         rp.add("comment",comment);
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Authorization", accessToken));
 
-        api.getByUrl(SEND_COMMENT_LIVE,rp,new JsonHttpResponseHandler(){
+        api.getByUrlHeader(context,"LIVE".equalsIgnoreCase(API_STATUS) ? SEND_COMMENT_LIVE : SEND_COMMENT_TEST,headers.toArray(new Header[headers.size()]),rp,new JsonHttpResponseHandler(){
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     JSONObject responseStatus = new JSONObject(response.toString());
-                    getCommentByStoryId(storyId,context,lv,iv,activity);
+                    getCommentByStoryId(storyId,context,lv,iv,activity,accessToken);
                 }catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -177,11 +186,13 @@ public class ArticleDAO {
             }
         });
     }
-    public void getCommentByStoryId(String storyId, Context context, ListView listView,ImageView loading,Activity activity){
+    public void getCommentByStoryId(String storyId, Context context, ListView listView,ImageView loading,Activity activity,String accessToken){
         ApiClass api = new ApiClass();
         RequestParams rp = new RequestParams();
         rp.add("story_id",storyId);
-        api.getByUrl(GET_COMMENT_STORY_ID_LIVE,rp,new JsonHttpResponseHandler(){
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Authorization", accessToken));
+        api.getByUrlHeader(context,"LIVE".equalsIgnoreCase(API_STATUS) ? GET_COMMENT_STORY_ID_LIVE : GET_COMMENT_STORY_ID_TEST,headers.toArray(new Header[headers.size()]) ,rp,new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {

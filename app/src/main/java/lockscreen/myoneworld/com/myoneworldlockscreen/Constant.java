@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 
 public class Constant {
-    public static final String API_STATUS = "LIVE";
+    public static final String API_STATUS = "TEST";
     public static final String G_VERSION_LOGIN_LIVE = "https://api.myoneworld.tech/oauth/token";
     public static final String G_VERSION_LOGGED_IN_LIVE = "https://api.myoneworld.tech/api/user/info";
     public static final String G_VERSION_REGISTRATION_LIVE = "https://api.myoneworld.tech/api/mystory/registration";
@@ -23,10 +23,11 @@ public class Constant {
     public static final String MY_STORYA_API_CONTENT_LIVE = "https://api.myoneworld.tech/api/front/story?current_batch=true&showAll=1";
     public static final String MY_STORYA_SINGLE_CONTENT = "https://api.myoneworld.tech/api/front/story/";
     public static final String ANALYTICS_STORIES_LIVE = "https://api.myoneworld.tech/api/mystory/analytics";
+    public static final String EDIT_USER_PROFILE_LIVE = "https://api.myoneworld.tech/api/user/";
 
 
     public static final String ANDROID_PATH = Environment.getExternalStorageDirectory().toString() + "/Android/data/";
-    public static final String DEFAULT_BIRTHDAY = "1890-04-11";
+    public static final String DEFAULT_BIRTHDAY = "1890/04/11";
     public static final String DEFAULT_COUNTRY = "Philippines";
     public static final String DEFAULT_CONTACT = "DEFAULT_CONTACT_ANDROID";
     public static final String DEFAULT_ADDRESS = "DEFAULT_ADDRESS_ANDROID";
@@ -41,6 +42,13 @@ public class Constant {
     public static final String DO_NOT_SHOW_AGAIN = "Do not show again.";
     public static final String ENABLE_AUTO_START_MSG = "Please enable autostart on my|ONEworld navigation app.";
     public static final String AUTO_START_MSG_TITLE = "Autostart application";
+    public static final String EDIT_PROFILE_TITLE = "Edit Profile";
+    public static final String SUCCESS_EDIT_PROFILE_MSG = "Your profile was successfully updated.";
+    public static final String ERROR_EDIT_PROFILE_MSG = "Something went wrong in updating profile.";
+    public static final String EXPIRED_LOG_IN = "Expired Login";
+    public static final String LOGGING_OUT_TITLE = "Logging Out";
+    public static final String LOGGING_OUT_MESSAGE = "Do you want to logout my|storya?";
+    public static final String LOGIN_EXPIRED_MSG = "Your session is invalid or expired.\nPlease log in again";
     public static final String NEW_VERSION_MSG = "New Version is now available in Google Play Store. Please update to continue using the lockscreen.";
     public static final String NEW_VERSION_TITLE = "Application Update";
     public static final String DATA_USAGE_MSG = "Using Mobile Data Connection, may cause data charges";
@@ -54,6 +62,7 @@ public class Constant {
     public static final String ENABLE_WIFI_AND_DATA = "Enabling Mobile data or Wifi setting may apply data charges.\n";
     public static final String ERROR_PLYAING_VIDEO = "Error in Playing Video";
     public static final String DATA_USAGE_MAY_APPLY_SETTING_TITLE = "Data Charges May Apply";
+    public static final String EDIT_PROFILE_MESSAGE = "Please fill in the required information.";
 
     public static final String CONSUMER_KEY = "F64atV1oWBXFAKhwn6tyktWMA";
     public static final String CONSUMER_SECRET = "FgOylOPUnzV9g063MbvLlA6sTTaHxq0kpPDLUK2CtGuaNcnbyd";
@@ -81,7 +90,7 @@ public class Constant {
     public static final String FILL_REQUIRED = "Please fill all the required fields.";
 
     public static final String MSG_BOX_WARNING = "warning";
-    static final String MSG_BOX_SUCCESS = "success";
+    public static final String MSG_BOX_SUCCESS = "success";
     public static final String MSG_BOX_ERROR = "error";
 
     public static final String FACEBOOK = "FACEBOOK";
@@ -97,6 +106,10 @@ public class Constant {
     public static final String SEND_LOCATION_TEST= "http://192.168.1.149/myoneworld/public/api/mystory/location";
     public static final String G_VERSION_LOGIN_TEST = "http://192.168.1.149/myoneworld/public/oauth/token";
     public static final String ANALYTICS_STORIES_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/analytics";
+    public static final String GET_COMMENT_STORY_ID_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/get_comment";
+    public static final String SEND_COMMENT_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/send_comment";
+    public static final String EDIT_USER_PROFILE_TEST = "http://192.168.1.149/myoneworld/public/api/user/";
+    public static final String G_VERSION_LOGGED_IN_TEST = "http://192.168.1.149/myoneworld/public/api/user/info";
 
 
     static final String UPDATE_NOW_BUTTON = "UPDATE NOW";

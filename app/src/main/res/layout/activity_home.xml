@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -88,15 +89,14 @@
                 android:textColor="#FFFFFF" />
         </LinearLayout>
     </RelativeLayout>
-    <!--<android.support.design.widget.NavigationView-->
-    <!--app:headerLayout="@layout/drawer_header"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:background="#fff"-->
-    <!--app:itemTextColor="#6c6c6c"-->
-    <!--app:menu="@menu/drawer_menu"-->
-    <!--android:layout_gravity="end"-->
-    <!--&gt;-->
-
-    <!--</android.support.design.widget.NavigationView>-->
+       <android.support.design.widget.NavigationView
+           android:id="@+id/navigation_details"
+            app:headerLayout="@layout/drawer_header"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:background="#fff"
+            app:itemTextColor="#6c6c6c"
+            app:menu="@menu/drawer_menu"
+            android:layout_gravity="start"
+        />
 </android.support.v4.widget.DrawerLayout>

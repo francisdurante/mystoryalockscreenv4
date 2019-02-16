@@ -31,6 +31,7 @@
     <string name="address">Address</string>
     <string name="submit">SUBMIT</string>
     <string name="create_account">CREATE ACCOUNT</string>
+    <string name="edit_profile">EDIT PROFILE</string>
     <string name="briefing_text"><font color='#FFFFFFFF'>\nSharing uplifting stories\nto influence the people,\nas they inspire us.\n\n</font><font color='#FFD800'><b>WRITE. INSPIRE. CHANGE</b></font>
     </string>
     <string name="dont_show_again">Don\'t show this again</string>
@@ -47,4 +48,10 @@
     <string name="bot_message">Join us in changing the world by\n
     sharing this with your friend.</string>
     <string name="footer_message">If you have story ideas or suggestions\nplease message us at mystorya.com.ph.</string>
+    <string name="required_first_name"><font color='#FFFFFFFF'>First Name </font><font color="#e40b0b">*</font></string>
+    <string name="required_last_name"><font color='#FFFFFFFF'>Last Name </font><font color="#e40b0b">*</font></string>
+    <string name="required_birthday"><font color='#FFFFFFFF'>Birthday </font><font color="#e40b0b">*</font></string>
+    <string name="required_email"><font color='#FFFFFFFF'>Email Address </font><font color="#e40b0b">*</font></string>
+    <string name="required_phone_number"><font color='#FFFFFFFF'>Phone Number </font><font color="#e40b0b">*</font></string>
+    <string name="required_address"><font color='#FFFFFFFF'>Address </font><font color="#e40b0b">*</font></string>
 </resources>
