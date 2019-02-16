@@ -37,13 +37,16 @@ import android.speech.SpeechRecognizer;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -51,23 +54,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterConfig;
-import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
-import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import com.facebook.share.model.ShareLinkContent;
+
+import org.json.JSONArray;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -80,6 +80,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ArticleDAO;
+import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
+import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileVO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenJobService;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
@@ -88,8 +90,6 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.notification.service.Notif
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START_MSG_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANCEL_BUTTON;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_KEY;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MAY_APPLY_SETTING_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_MESSAGE;
@@ -102,10 +102,12 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV_AUTO_START;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LETV_AUTO_START_CLASS_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGGING_OUT_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MISMATCH_PASSWORD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEW_VERSION_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_THANKS_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OK_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OLD_PASSWORD_NOT_MATCH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START_CLASS_NAME;
@@ -905,7 +907,7 @@ public class Utility {
         } catch (Exception e) {
         }
     }
-    public static void showLoginError(Context context,TextView errorText,String message){
+    public static void showNotifError(Context context, TextView errorText, String message){
         errorText.setVisibility(View.VISIBLE);
         errorText.setText(message);
         errorText.setTypeface(setFont(context,GOTHIC_FONT_PATH));
@@ -1145,5 +1147,142 @@ public class Utility {
             });
             ok.setOnClickListener(v -> mDialog.dismiss());
             showMessageBox(false,context,inflatedView);
+        }
+
+        public static void showChangePasswordPopUp(Context context, EditProfileVO vo){
+            LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View inflatedView = layoutInflater.inflate(R.layout.change_password_layout, null,false);
+            Typeface font = setFont(context,"font/Century_Gothic.ttf");
+            EditText oldPassword = inflatedView.findViewById(R.id.old_password);
+            EditText newPassword = inflatedView.findViewById(R.id.new_password);
+            EditText confirmPassword = inflatedView.findViewById(R.id.re_password);
+            TextView notifMessage = inflatedView.findViewById(R.id.message_notif);
+            Button cancel = inflatedView.findViewById(R.id.cancel_change_password);
+            Button submit = inflatedView.findViewById(R.id.change_password_submit);
+            oldPassword.setTypeface(font);
+            newPassword.setTypeface(font);
+            confirmPassword.setTypeface(font);
+            cancel.setTypeface(font);
+            submit.setTypeface(font);
+
+            if(vo.getOldPassword().contains(vo.getTwitterKey())
+                    || vo.getOldPassword().contains(vo.getFacebookKey())
+                    || vo.getOldPassword().contains(vo.getGoogleKey())){
+                oldPassword.setVisibility(View.GONE);
+                oldPassword.setText(vo.getOldPassword());
+            }else{
+                System.out.println("POTAENA MO");
+                oldPassword.setVisibility(View.VISIBLE);
+            }
+
+            oldPassword.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(!oldPassword.getText().toString().equals("")) {
+                        oldPassword.setBackgroundColor(Color.parseColor("#ffffff"));
+
+                    }else {
+                        oldPassword.setBackgroundColor(Color.parseColor("#60ffffff"));
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+            newPassword.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(!newPassword.getText().toString().equals("")) {
+                        newPassword.setBackgroundColor(Color.parseColor("#ffffff"));
+
+                    }else {
+                        newPassword.setBackgroundColor(Color.parseColor("#60ffffff"));
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+            confirmPassword.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(!confirmPassword.getText().toString().equals("")) {
+                        confirmPassword.setBackgroundColor(Color.parseColor("#ffffff"));
+
+                    }else {
+                        confirmPassword.setBackgroundColor(Color.parseColor("#60ffffff"));
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            cancel.setOnClickListener(v -> mDialog.dismiss());
+            submit.setOnClickListener(v -> {
+                if(oldPassword.getText().length() == 0 ||
+                        newPassword.getText().length() == 0 ||
+                        confirmPassword.getText().length() == 0){
+                    showNotifError(context,notifMessage,EDIT_PROFILE_MESSAGE);
+                }
+                else if(!newPassword.getText().toString().equals(confirmPassword.getText().toString())){
+                    showNotifError(context,notifMessage,MISMATCH_PASSWORD);
+                }
+                else if(oldPassword.getVisibility() == View.VISIBLE && !vo.getOldPassword().equals(oldPassword.getText().toString())){
+                    showNotifError(context,notifMessage,OLD_PASSWORD_NOT_MATCH);
+                }
+                else{
+                    if(oldPassword.getVisibility() == View.VISIBLE) {
+                        vo.setOldPassword(oldPassword.getText().toString());
+                    }
+                    vo.setNewPassword(newPassword.getText().toString());
+                    new EditProfileDAO().sendEditProfile(context,vo,getValueString("ACCESS_TOKEN",context));
+                }
+            });
+            showMessageBox(false,context,inflatedView);
+        }
+
+        public static int getCountryID(String countryName,Context context) {
+            int id = 177;
+            try {
+                InputStream is = context.getAssets().open("country.json");
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                is.read(buffer);
+                is.close();
+                String countryJson = new String(buffer, "UTF-8");
+
+                JSONArray country = new JSONArray(countryJson);
+                String[] countries = new String[country.length()];
+                for (int i = 0; i < country.length(); i++) {
+                    countries[i] = (country.getJSONObject(i).getString("name"));
+                }
+                ArrayList<String> countriesArray = new ArrayList<String>(Arrays.asList(countries));
+                id = countriesArray.indexOf(countryName);
+            } catch (Exception e) {
+                return id;
+            }
+            return id;
         }
     }

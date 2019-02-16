@@ -49,7 +49,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_EMAIL_ADDRESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGIN_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showLoginError;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
 
 public class LoginDAO {
     private Context mContext;
@@ -97,9 +97,9 @@ public class LoginDAO {
                         try {
                             JSONObject error = new JSONObject(errorResponse.toString());
                             if (error.has("message")) {
-                                showLoginError(mContext,activity.findViewById(R.id.login_text),error.getString("message"));
+                                showNotifError(mContext,activity.findViewById(R.id.login_text),error.getString("message"));
                             } else {
-                                showLoginError(mContext,activity.findViewById(R.id.login_text),error.getString("error"));
+                                showNotifError(mContext,activity.findViewById(R.id.login_text),error.getString("error"));
                             }
                             LoginManager.getInstance().logOut();
                             loading.hideLoading();

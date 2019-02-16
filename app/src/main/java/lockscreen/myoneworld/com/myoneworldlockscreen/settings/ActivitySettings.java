@@ -44,12 +44,15 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.dataChargesSettingMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getDataConsumption;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showChangePasswordPopUp;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.stopJobService;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
+import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
+import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileVO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
@@ -199,6 +202,8 @@ public class ActivitySettings extends AppCompatActivity {
                 save("WIFI_OR_DATA","",mContext);
             }
         });
+
+        changePasswordText.setOnClickListener(v -> new EditProfileDAO().getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),true));
     }
     private void showDialogBox(){
 //        LinearLayout layout = new LinearLayout(mContext);

@@ -10,25 +10,6 @@
     android:background="@drawable/new_background_color_gradient"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/linear_notif"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/notif_message"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:visibility="gone"
-            />
-    </LinearLayout>
 
     <ImageView
         android:id="@+id/signup_header"
@@ -49,19 +30,34 @@
         android:gravity="center"
         android:textSize="15sp"
         android:textColor="#fff"/>
+    <TextView
+        android:id="@+id/message_notif"
+        android:layout_below="@id/signup_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="5dp"
+        android:background="#ffbc00"
+        android:drawableStart="@drawable/ic_icon"
+        android:gravity="center"
+        android:padding="10sp"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"
+        android:textColor="#000"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="1"
-        android:layout_below="@+id/text_registration">
+        android:layout_below="@+id/message_notif">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
-            android:overScrollMode="never"
-            android:padding="0dp">
+            android:overScrollMode="never">
 
             <RelativeLayout
                 android:layout_width="match_parent"

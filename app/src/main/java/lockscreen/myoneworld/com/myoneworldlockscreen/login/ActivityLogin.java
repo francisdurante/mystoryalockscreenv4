@@ -23,7 +23,7 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.registration.ActivityRegis
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FILL_REQUIRED;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INVALID_EMAIL;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showLoginError;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
 
 public class ActivityLogin extends AppCompatActivity {
@@ -76,7 +76,7 @@ public class ActivityLogin extends AppCompatActivity {
             LoginVO vo = new LoginVO();
 
             if(!"".equals(userNameLogin.getText().toString()) && !userNameLogin.getText().toString().contains("@")){
-                showLoginError(mContext,errorText,INVALID_EMAIL);
+                showNotifError(mContext,errorText,INVALID_EMAIL);
             }
             else if(!"".equals(userNameLogin.getText().toString()) && !"".equals(passwordLogin.getText().toString())) {
                 vo.setEmail(userNameLogin.getText().toString());
@@ -84,7 +84,7 @@ public class ActivityLogin extends AppCompatActivity {
                 login.login(vo);
             }
             else{
-                showLoginError(mContext,errorText,FILL_REQUIRED);
+                showNotifError(mContext,errorText,FILL_REQUIRED);
             }
         });
     }

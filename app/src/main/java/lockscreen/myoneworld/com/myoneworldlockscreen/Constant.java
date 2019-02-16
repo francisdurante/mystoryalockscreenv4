@@ -76,7 +76,8 @@ public class Constant {
 
     public static String WEB_VIEW_SETTING = "TRUE";
 
-    public static final String MISMATCH_PASSWORD = "Mismatch Password";
+    public static final String MISMATCH_PASSWORD = "Password mismatch";
+    public static final String OLD_PASSWORD_NOT_MATCH = "Your current password is incorrect";
     public static final String ATLEAST_8_CHARACTERS = "Please Input at least 8 characters for Password";
     public static final String FIRST_NAME_REQUIRED = "First Name Field is Required";
     public static final String PHONE_NUMBER_REQUIRED = "Phone Number Field is Required";

@@ -90,7 +90,7 @@ public class ActivityEditProfile extends AppCompatActivity {
             adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
             spinnerCountry.setAdapter(adapter);
             init();
-            spinnerCountry.setSelection(adapter.getPosition(this.country));
+            spinnerCountry.setSelection(Integer.parseInt(this.country));
         }catch (Exception e){
             Writer writer = new StringWriter();
             e.printStackTrace(new PrintWriter(writer));

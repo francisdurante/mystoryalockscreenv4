@@ -54,4 +54,7 @@
     <string name="required_email"><font color='#FFFFFFFF'>Email Address </font><font color="#e40b0b">*</font></string>
     <string name="required_phone_number"><font color='#FFFFFFFF'>Phone Number </font><font color="#e40b0b">*</font></string>
     <string name="required_address"><font color='#FFFFFFFF'>Address </font><font color="#e40b0b">*</font></string>
+    <string name="old_password"><font color='#FFFFFFFF'>Old Password </font> <font color='#e40b0b'>*</font></string>
+    <string name="new_password"><font color='#FFFFFFFF'>New Password </font> <font color='#e40b0b'>*</font></string>
+    <string name="confirm_password"><font color='#FFFFFFFF'>Confirm Password </font> <font color='#e40b0b'>*</font></string>
 </resources>

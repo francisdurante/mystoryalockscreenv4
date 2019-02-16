@@ -10,6 +10,60 @@ public class EditProfileVO {
     private String address;
     private String userProfileID;
     private String dealer;
+    private String oldPassword;
+    private String newPassword;
+    private String facebookKey;
+    private String googleKey;
+    private String twitterKey;
+    private boolean isChangePassword;
+
+    public String getFacebookKey() {
+        return facebookKey;
+    }
+
+    public void setFacebookKey(String facebookKey) {
+        this.facebookKey = facebookKey;
+    }
+
+    public String getGoogleKey() {
+        return googleKey;
+    }
+
+    public void setGoogleKey(String googleKey) {
+        this.googleKey = googleKey;
+    }
+
+    public String getTwitterKey() {
+        return twitterKey;
+    }
+
+    public void setTwitterKey(String twitterKey) {
+        this.twitterKey = twitterKey;
+    }
+
+    public boolean isChangePassword() {
+        return isChangePassword;
+    }
+
+    public void setChangePassword(boolean changePassword) {
+        isChangePassword = changePassword;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 
     public String getUserProfileID() {
         return userProfileID;

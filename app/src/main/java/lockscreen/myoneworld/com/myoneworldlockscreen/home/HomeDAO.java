@@ -87,10 +87,12 @@ public class HomeDAO {
                         if(!userId.equalsIgnoreCase(getValueString("USER_ID",context))){
                             Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING);
                         }else{
-                            if(getValueString("FULL_NAME",context).contains("DEFAULT") || getValueString("EMAIL",context).contains("DEFAULT")){
+                            if(getValueString("FULL_NAME",context).contains("DEFAULT")
+                                    || getValueString("EMAIL",context).contains("DEFAULT")
+                                    || user_information.getString("address").contains("DEFAULT")){
                                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                                 EditProfileDAO dao = new EditProfileDAO();
-                                dao.getUserProfile(context,getValueString("ACCESS_TOKEN",context));
+                                dao.getUserProfile(context,getValueString("ACCESS_TOKEN",context),false);
                             }
                             else{
                                 fullName.setText(getValueString("FULL_NAME",context));
@@ -121,12 +123,12 @@ public class HomeDAO {
             generateJSONForLocation(addresses, context);
             AsyncHttpClient asyncHttpClient = new AsyncHttpClient(true,80,443);
             RequestParams rp = new RequestParams();
-            rp.add("id", id);
-            rp.add("location", getValueString("UNSENT_LOCATION", context));
+            rp.put("id", id);
+            rp.put("location", getValueString("UNSENT_LOCATION", context));
             List<Header> headers = new ArrayList<Header>();
             headers.add(new BasicHeader("Authorization", accessToken));
 
-            asyncHttpClient.post(API_STATUS.equals("LIVE") ? SEND_LOCATION_LIVE : SEND_LOCATION_TEST, rp, new JsonHttpResponseHandler() {
+            asyncHttpClient.post(context,API_STATUS.equals("LIVE") ? SEND_LOCATION_LIVE : SEND_LOCATION_TEST,headers.toArray(new Header[headers.size()]), rp,"multipart/form-data", new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     try {
@@ -143,6 +145,11 @@ public class HomeDAO {
                         e.printStackTrace();
                     }
 
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    System.out.println(responseString + " aaaaaaaaaaaaaaaaaa");
                 }
 
                 @Override
