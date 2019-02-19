@@ -136,7 +136,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
                 TextView tv = (TextView) v;
                 tv.setTypeface(font);
                 tv.setText(GOOGLE_BUTTON);
-                tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_google_button));
+                tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_google_button_02192019_2));
                 tv.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, null);
                 if (Build.VERSION.SDK_INT == 19) {
                     tv.setBackgroundColor(Color.parseColor("#DC4E41"));
@@ -164,7 +164,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
         twitterLoginButton.setText(TWITTER_BUTTON);
         twitterLoginButton.setTypeface(font);
         twitterLoginButton.setTextSize(12f);
-        twitterLoginButton.setBackground(getResources().getDrawable(R.drawable.ic_twitter_button));
+        twitterLoginButton.setBackground(getResources().getDrawable(R.drawable.ic_twitter_button_02192019));
         twitterLoginButton.setCompoundDrawablesRelativeWithIntrinsicBounds(null,null,null,null);
         if(Build.VERSION.SDK_INT == 19){
             twitterLoginButton.setBackgroundColor(Color.parseColor("#55ACEE"));

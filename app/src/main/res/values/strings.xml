@@ -32,7 +32,7 @@
     <string name="submit">SUBMIT</string>
     <string name="create_account">CREATE ACCOUNT</string>
     <string name="edit_profile">EDIT PROFILE</string>
-    <string name="briefing_text"><font color='#FFFFFFFF'>\nSharing uplifting stories\nto influence the people,\nas they inspire us.\n\n</font><font color='#FFD800'><b>WRITE. INSPIRE. CHANGE</b></font>
+    <string name="briefing_text"><font color='#FFFFFFFF'>\nSharing uplifting stories\nto influence the people,\nas they inspire us.\n\n</font><font color='#1580e3'><b>WRITE. INSPIRE. CHANGE</b></font>
     </string>
     <string name="dont_show_again">Don\'t show this again</string>
     <string name="data_usage_message">Using mobile data connection\nmay apply data charges.\nDo you want to proceed?</string>
@@ -40,14 +40,11 @@
     <string name="go_to_settings">GO TO SETTINGS</string>
     <string name="cancel">CANCEL</string>
     <string name="change_the_world_one_story_at_a_time">Change the World\nOne Story at a Time</string>
-    <string name="mid_message">Thank you for sharing my|storya’s\n
-    mission to provide an inspiring story\n
-    selection designed to motivate\n
-    the reader to improve themselves\n
-    and the world they live in.</string>
-    <string name="bot_message">Join us in changing the world by\n
-    sharing this with your friend.</string>
-    <string name="footer_message">If you have story ideas or suggestions\nplease message us at mystorya.com.ph.</string>
+    <string name="mid_message">Thank you for reading this
+        \ninspiring story.
+        \n\nJoin us in changing the world by
+        \sharing this with your friend.</string>
+    <string name="footer_message">If you have story ideas or suggestions,\nplease message us \@mystorya.com.ph.</string>
     <string name="required_first_name"><font color='#FFFFFFFF'>First Name </font><font color="#e40b0b">*</font></string>
     <string name="required_last_name"><font color='#FFFFFFFF'>Last Name </font><font color="#e40b0b">*</font></string>
     <string name="required_birthday"><font color='#FFFFFFFF'>Birthday </font><font color="#e40b0b">*</font></string>
@@ -57,4 +54,9 @@
     <string name="old_password"><font color='#FFFFFFFF'>Old Password </font> <font color='#e40b0b'>*</font></string>
     <string name="new_password"><font color='#FFFFFFFF'>New Password </font> <font color='#e40b0b'>*</font></string>
     <string name="confirm_password"><font color='#FFFFFFFF'>Confirm Password </font> <font color='#e40b0b'>*</font></string>
+    <string name="select_image">SELECT IMAGE</string>
+    <string name="save">SAVE</string>
+    <string name="take_photo">TAKE PHOTO</string>
+    <string name="close">CLOSE</string>
+    <string name="sign_in">Sign in</string>
 </resources>

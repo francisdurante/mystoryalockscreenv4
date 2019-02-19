@@ -48,6 +48,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGGED_IN_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_EMAIL_ADDRESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGIN_TEST;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INCORRECT_PASSWORD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
 
@@ -97,7 +98,8 @@ public class LoginDAO {
                         try {
                             JSONObject error = new JSONObject(errorResponse.toString());
                             if (error.has("message")) {
-                                showNotifError(mContext,activity.findViewById(R.id.login_text),error.getString("message"));
+                                if(error.getString("message").equals("The user credentials were incorrect."))
+                                    showNotifError(mContext,activity.findViewById(R.id.login_text),INCORRECT_PASSWORD);
                             } else {
                                 showNotifError(mContext,activity.findViewById(R.id.login_text),error.getString("error"));
                             }

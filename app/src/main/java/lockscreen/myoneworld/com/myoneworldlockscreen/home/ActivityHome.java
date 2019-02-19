@@ -7,9 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -55,20 +59,30 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.zip.Inflater;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CAMERA;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_KEY;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GALLERY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGGING_OUT_MESSAGE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGGING_OUT_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGOUT;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGOUT_MSG;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ERROR;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_PHOTO;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CODE_CAMERA;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CODE_READ_STORAGE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.YES_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showPopUpProfilePicture;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.stopJobService;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.createNotificationChannel;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isNetworkAvailable;
@@ -129,7 +143,7 @@ public class ActivityHome extends AppCompatActivity {
         }
         iniDefaultSetting();
 
-        serviceButton.setTypeface(setFont(mContext, "font/Century_Gothic.ttf"));
+        serviceButton.setTypeface(setFont(mContext, GOTHIC_FONT_PATH));
 
         if (isMyServiceRunning(LockscreenService.class, mContext)) {
             serviceButton.setText(STOP);
@@ -165,6 +179,7 @@ public class ActivityHome extends AppCompatActivity {
         viewPager.setCurrentItem(0);
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         if (isNetworkAvailable(mContext)) {
             save("connection", "true", mContext);
@@ -189,6 +204,23 @@ public class ActivityHome extends AppCompatActivity {
                 if (permission.equals(Manifest.permission.ACCESS_FINE_LOCATION) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     showGPSDisabledAlertToUser();
                 }
+            }
+        }
+        if(requestCode == REQUEST_CODE_CAMERA){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, REQUEST_CODE_CAMERA);
+            }else{
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA);
+            }
+        }
+        if(requestCode == REQUEST_CODE_READ_STORAGE){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, REQUEST_CODE_READ_STORAGE);
+            }else{
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY);
             }
         }
     }
@@ -267,6 +299,11 @@ public class ActivityHome extends AppCompatActivity {
         TextView fullName = navigationView.getHeaderView(0).findViewById(R.id.full_name);
         TextView email = navigationView.getHeaderView(0).findViewById(R.id.email_side);
         ImageView profilePicture = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
+
+        profilePicture.setOnClickListener(v -> {
+            EditProfileDAO dao = new EditProfileDAO();
+            dao.getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),false,true);
+        });
         settings = navigationView.getMenu().findItem(R.id.setting_drawer);
         aboutUs = navigationView.getMenu().findItem(R.id.about);
         logout = navigationView.getMenu().findItem(R.id.logout_side);
@@ -281,15 +318,6 @@ public class ActivityHome extends AppCompatActivity {
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         serviceButton = findViewById(R.id.stopService);
         registerReceiver(ncr, intentFilter);
-//        if(getValueString("FULL_NAME",mContext).contains("DEFAULT") || getValueString("EMAIL",mContext).contains("DEFAULT")){
-//            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-//            EditProfileDAO dao = new EditProfileDAO();
-//            dao.getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext));
-//        }
-//        else{
-//            fullName.setText(getValueString("FULL_NAME",mContext));
-//            email.setText(getValueString("EMAIL",mContext));
-//        }
     }
 
     private MenuItem.OnMenuItemClickListener menuClick = item -> {
@@ -306,36 +334,34 @@ public class ActivityHome extends AppCompatActivity {
         return true;
     };
 
-//    public void logout(){
-//        AlertDialog.Builder ab = new AlertDialog.Builder(mContext,R.style.AppCompatAlertDialogStyle);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            try {
-//                ab.setIcon(mContext.getResources().getDrawable(R.drawable.new_logo_top));
-//            }catch (Exception e){
-//
-//            }
-//        }
-//        ab.setTitle(LOGOUT);
-//        ab.setMessage(LOGOUT_MSG);
-//        ab.setPositiveButton(YES_BUTTON, (dialog, which) -> {
-////            save("SHOW_POP_UP_DATA_USAGE","0",mContext);
-//            save("USER_ID","",mContext);
-//            save("FULL_NAME","",mContext);
-//            save("EMAIL","",mContext);
-//            save("ACCESS_TOKEN","",mContext);
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                stopJobService(mContext);
-//            }
-//            stopService(new Intent(mContext,LockscreenService.class));
-//            startActivity(new Intent(mContext,ActivityLoginOptions.class));
-//            save("SERVICE", "0",mContext);
-//
-//            finish();
-//        });
-//        ab.setNegativeButton(NO_BUTTON, (dialog, which) -> {
-//
-//        });
-//        AlertDialog a = ab.create();
-//        a.show();
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == CAMERA){
+            if(resultCode == RESULT_OK) {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                if(null != photo) {
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                    Utility.customLoadProfilePic(mContext, photo, R.drawable.com_facebook_profile_picture_blank_square);
+                }else{
+                    globalMessageBox(mContext,NO_PHOTO,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                }
+            }
+        }
+        if(requestCode == GALLERY){
+
+            if (resultCode == RESULT_OK)
+            {
+                Uri imageUri = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                    Utility.customLoadProfilePic(mContext,bitmap,R.drawable.com_facebook_profile_picture_blank_square);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
 }

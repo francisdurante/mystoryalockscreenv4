@@ -16,6 +16,34 @@ public class EditProfileVO {
     private String googleKey;
     private String twitterKey;
     private boolean isChangePassword;
+    private String uploadMessage;
+    private String imageId;
+    private String imageProfileUrl;
+
+
+    public String getImageProfileUrl() {
+        return imageProfileUrl;
+    }
+
+    public void setImageProfileUrl(String imageProfileUrl) {
+        this.imageProfileUrl = imageProfileUrl;
+    }
+
+    public String getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
+
+    public String getUploadMessage() {
+        return uploadMessage;
+    }
+
+    public void setUploadMessage(String uploadMessage) {
+        this.uploadMessage = uploadMessage;
+    }
 
     public String getFacebookKey() {
         return facebookKey;

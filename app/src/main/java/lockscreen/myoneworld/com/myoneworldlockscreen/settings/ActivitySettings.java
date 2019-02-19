@@ -203,7 +203,7 @@ public class ActivitySettings extends AppCompatActivity {
             }
         });
 
-        changePasswordText.setOnClickListener(v -> new EditProfileDAO().getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),true));
+        changePasswordText.setOnClickListener(v -> new EditProfileDAO().getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),true,false));
     }
     private void showDialogBox(){
 //        LinearLayout layout = new LinearLayout(mContext);

@@ -25,7 +25,7 @@ import java.util.Calendar;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.makeNotification;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isValidBirthday;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FIRST_NAME_REQUIRED;
@@ -39,6 +39,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MISMATCH_P
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_COUNTRY;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_ADDRESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_BIRTHDAY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
 
 public class ActivityRegister extends AppCompatActivity {
 
@@ -54,6 +55,7 @@ public class ActivityRegister extends AppCompatActivity {
     private EditText birthday = null;
     private Button submit = null;
     private TextView signupHeader = null;
+    private TextView textNotif = null;
     Context mContext = this;
     private Spinner spinnerCountry;
     static SharedPreferences spf;
@@ -63,7 +65,7 @@ public class ActivityRegister extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        font = setFont(mContext,"font/Century_Gothic.ttf");
+        font = setFont(mContext,GOTHIC_FONT_PATH);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         init();
@@ -83,6 +85,7 @@ public class ActivityRegister extends AppCompatActivity {
         submit = this.findViewById(R.id.registration);
         phoneNumber = findViewById(R.id.phone_number);
         signupHeader = findViewById(R.id.text_registration);
+        textNotif = findViewById(R.id.notif_message);
         Animation myanim = AnimationUtils.loadAnimation(this, R.anim.right_enter);
         firstName.startAnimation(myanim);
         lastName.startAnimation(myanim);
@@ -276,24 +279,24 @@ public class ActivityRegister extends AppCompatActivity {
         address.setVisibility(View.INVISIBLE);
         submit.setOnClickListener(v -> {
             if (firstName.getText().toString().equals("")) {
-                makeNotification("error", FIRST_NAME_REQUIRED, ActivityRegister.this);
+                showNotifError(mContext,textNotif,FIRST_NAME_REQUIRED);
             } else if (lastName.getText().toString().equals("")) {
-                makeNotification("error", LAST_NAME_REQUIRED, ActivityRegister.this);
+                showNotifError(mContext,textNotif,LAST_NAME_REQUIRED);
             } else if (email.getText().toString().equals("")) {
-                makeNotification("error", EMAIL_REQUIRED, ActivityRegister.this);
+                showNotifError(mContext,textNotif,EMAIL_REQUIRED);
             } else if (password.getText().length() < 8) {
-                makeNotification("error", ATLEAST_8_CHARACTERS, ActivityRegister.this);
+                showNotifError(mContext,textNotif,ATLEAST_8_CHARACTERS);
             } else if (!birthday.getText().toString().equals("") && !isValidBirthday(birthday.getText().toString())) {
-                makeNotification("error", INVALID_DATE, ActivityRegister.this);
+                showNotifError(mContext,textNotif,INVALID_DATE);
             } else if (!password.getText().toString().equals(reTypePassword.getText().toString())) {
-                makeNotification("error", MISMATCH_PASSWORD, ActivityRegister.this);
+                showNotifError(mContext,textNotif,MISMATCH_PASSWORD);
             } else if (!email.getText().toString().contains("@")) {
-                makeNotification("error", INVALID_EMAIL, ActivityRegister.this);
+                showNotifError(mContext,textNotif,INVALID_EMAIL);
             } else if (phoneNumber.getText().toString().equals("")) {
-                makeNotification("error", PHONE_NUMBER_REQUIRED, ActivityRegister.this);
+                showNotifError(mContext,textNotif,PHONE_NUMBER_REQUIRED);
             } else {
 //                makeNotification("success",PLEASE_WAIT,ActivityRegister.this);
-                RegistrationDAO registrationDAO = new RegistrationDAO();
+                RegistrationDAO registrationDAO = new RegistrationDAO(textNotif);
                 RegistrationVO vo = new RegistrationVO();
                 vo.setFirstName(firstName.getText().toString());
                 vo.setLastName(lastName.getText().toString());
@@ -303,7 +306,7 @@ public class ActivityRegister extends AppCompatActivity {
                 vo.setBirthday(birthday.getText().toString().equals("") ? DEFAULT_BIRTHDAY : birthday.getText().toString());
                 vo.setCountry(DEFAULT_COUNTRY);
                 vo.setAddress(DEFAULT_ADDRESS);
-                registrationDAO.registration(vo,mContext,ActivityRegister.this);
+                registrationDAO.registration(vo,mContext);
             }
         });
     }

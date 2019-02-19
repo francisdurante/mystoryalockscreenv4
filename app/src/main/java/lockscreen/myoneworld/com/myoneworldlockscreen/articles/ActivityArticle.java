@@ -51,6 +51,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ARBERKLEY_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ARTICLE_POPUP_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CLOUD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.COMIC_ARTICLE;
@@ -92,6 +93,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WA
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.AnalyticsApplication;
+import lockscreen.myoneworld.com.myoneworldlockscreen.Constant;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 
@@ -117,7 +119,6 @@ public class ActivityArticle extends AppCompatActivity {
     private int shared = 0;
     private TextView topMessage;
     private TextView midMessage;
-    private TextView botMessage;
     RelativeLayout afterVideoLayout;
     public static boolean dataUsageConfirm = false;
     private AlertDialog popUp;
@@ -145,7 +146,6 @@ public class ActivityArticle extends AppCompatActivity {
             afterVideoLayout = findViewById(R.id.after_video_layout);
             topMessage = findViewById(R.id.top_title_after_video);
             midMessage = findViewById(R.id.mid_message);
-            botMessage = findViewById(R.id.bot_message);
             bringToFrontLayout();
             AnalyticsApplication application = (AnalyticsApplication) getApplication();
             mTracker = application.getDefaultTracker();
@@ -461,12 +461,12 @@ public class ActivityArticle extends AppCompatActivity {
     public void bringToFrontLayout(){
         TextView footerMessage = findViewById(R.id.footer_message);
         Typeface font = setFont(mContext,GOTHIC_FONT_PATH);
-        Typeface bold = setFont(mContext,GOTHIC_BOLD_FONT_PATH);
+        Typeface bold = setFont(mContext,ARBERKLEY_FONT_PATH);
         afterVideoLayout.bringToFront();
         afterVideoLayout.setVisibility(View.VISIBLE);
         topMessage.setTypeface(bold);
+        topMessage.setTextSize(30);
         midMessage.setTypeface(font);
-        botMessage.setTypeface(font);
         footerMessage.setTypeface(font);
         if(null != videoView) {
             videoView.stopPlayback();
@@ -488,7 +488,6 @@ public class ActivityArticle extends AppCompatActivity {
         afterVideoLayout = null;
         topMessage = null;
         midMessage = null;
-        botMessage = null;
         finish();
         super.onDestroy();
     }

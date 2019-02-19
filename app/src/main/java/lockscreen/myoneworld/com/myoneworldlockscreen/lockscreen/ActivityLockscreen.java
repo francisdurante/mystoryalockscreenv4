@@ -38,6 +38,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ROBOTO_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SWIPE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.freeMemory;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.sendAnalytics;
@@ -121,7 +122,7 @@ public class ActivityLockscreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        font = setFont(mContext, "font/Roboto-Light.ttf");
+        font = setFont(mContext, ROBOTO_FONT_PATH);
         try {
             super.onCreate(savedInstanceState);
             initialLoad();

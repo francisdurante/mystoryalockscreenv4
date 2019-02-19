@@ -21,8 +21,10 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.registration.ActivityRegister;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FILL_REQUIRED;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INVALID_EMAIL;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
 
@@ -35,6 +37,7 @@ public class ActivityLogin extends AppCompatActivity {
     NetworkReceiver nr;
     TextView signUpLink;
     TextView errorText;
+    TextView signInText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,10 @@ public class ActivityLogin extends AppCompatActivity {
         linearLogin = findViewById(R.id.linear_login);
         signUpLink = findViewById(R.id.signup_text);
         errorText = findViewById(R.id.login_text);
+        signInText = findViewById(R.id.sign_in_text);
 
+        loginButton.setTypeface(setFont(mContext,GOTHIC_FONT_PATH));
+        signInText.setTypeface(setFont(mContext,GOTHIC_FONT_PATH));
         signUpLink.setOnClickListener(v -> {
             try {
                 startActivity(new Intent(mContext, ActivityRegister.class));

@@ -9,6 +9,7 @@ import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -52,23 +53,13 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
                 if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected() || networkInfo.getType() == ConnectivityManager.TYPE_MOBILE && networkInfo.isConnected()) {
                     header.startAnimation(myanim);
-                    header.setBackgroundColor(Color.parseColor("#f89a1e"));
-                    header.setImageResource(R.drawable.header_new_update_3);
+                    header.setBackgroundColor(Color.parseColor("#3a5daa"));
+                    header.setImageResource(R.drawable.new_header_blue_02192019);
                     header.setOnClickListener(v -> {
-                        context.startActivity(new Intent(context, ActivitySettings.class));
-                        activity.finish();
+                        drawerLayout.openDrawer(Gravity.START);
+//                        context.startActivity(new Intent(context, ActivitySettings.class));
+//                        activity.finish();
                     });
-//                    if(networkInfo.getType() == ConnectivityManager.TYPE_MOBILE && networkInfo.isConnected()){
-//                        globalMessageBox(context,DATA_USAGE_MSG,DATA_USAGE_TITLE,MSG_BOX_WARNING);
-//                        save("WIFI_ONLY","",context);
-//                        save("WIFI_OR_DATA","",context);
-//                        save("DO_NOT_DOWNLOAD","1",context);
-//
-//                    }else if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()){
-//                        save("WIFI_ONLY","1",context);
-//                        save("WIFI_OR_DATA","",context);
-//                        save("DO_NOT_DOWNLOAD","",context);
-//                    }
                     if("outdated".equalsIgnoreCase(getValueString("VERSION_ONLINE",context))){
                         globalMessageBox(context,NEW_VERSION_MSG,NEW_VERSION_TITLE,MSG_BOX_WARNING);
                     }
@@ -77,7 +68,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                 }
                 else {
                     header.startAnimation(myanim);
-                    header.setBackgroundColor(Color.parseColor("#1db7fd"));
+                    header.setBackgroundColor(Color.parseColor("#3a5daa"));
                     header.setImageResource(R.drawable.connection);
                     header.setClickable(false);
                 }

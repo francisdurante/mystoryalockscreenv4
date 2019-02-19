@@ -32,6 +32,7 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
 import lockscreen.myoneworld.com.myoneworldlockscreen.registration.ActivityRegister;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_BIRTHDAY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.getValueString;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.editProfilePopUp;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
@@ -62,7 +63,7 @@ public class ActivityEditProfile extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener mDatePicker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        font = setFont(mContext,"font/Century_Gothic.ttf");
+        font = setFont(mContext,GOTHIC_FONT_PATH);
         super.onCreate(savedInstanceState);
         editProfilePopUp(mContext);
         setContentView(R.layout.activity_edit_profile);

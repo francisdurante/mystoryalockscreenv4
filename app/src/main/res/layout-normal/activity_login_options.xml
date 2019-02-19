@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/mystorya_new_background"
+    android:background="@drawable/new_splash_screen_02192019"
     android:gravity="center"
     android:orientation="vertical"
     android:theme="@style/Theme.Design.NoActionBar"
@@ -48,7 +48,7 @@
                 android:adjustViewBounds="true"
                 android:paddingTop="30dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/new_logo_top"
+                android:src="@drawable/sign_up_top_logo"
                 android:textColor="#ff6600" />
         </LinearLayout>
 
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40sp"
                 android:layout_gravity="center"
-                android:background="@drawable/ic_facebook_button"
+                android:background="@drawable/ic_facebook_button_02192019_1"
                 android:foregroundGravity="center"
                 android:gravity="center"
                 android:paddingTop="10dp"
@@ -122,7 +122,7 @@
                 android:background="@drawable/gradient_login_button"
                 android:drawableStart="@drawable/ic_my_one_world"
                 android:gravity="center"
-                android:paddingStart="15sp"
+                android:paddingStart="10sp"
                 android:paddingEnd="30sp"
                 android:textColor="#ffffff"
                 android:textSize="12sp" />

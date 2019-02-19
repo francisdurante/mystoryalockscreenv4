@@ -37,7 +37,7 @@ public class ActivitySplashScreen extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        Animation myanim = AnimationUtils.loadAnimation(mContext, R.anim.bounce);
+        Animation myanim = AnimationUtils.loadAnimation(mContext, R.anim.fadein);
         img.startAnimation(myanim);
         final Intent i = new Intent(this,ActivityBriefing.class);
         new CountDownTimer(5000, 1000) {

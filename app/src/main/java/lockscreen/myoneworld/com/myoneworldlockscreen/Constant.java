@@ -24,6 +24,7 @@ public class Constant {
     public static final String MY_STORYA_SINGLE_CONTENT = "https://api.myoneworld.tech/api/front/story/";
     public static final String ANALYTICS_STORIES_LIVE = "https://api.myoneworld.tech/api/mystory/analytics";
     public static final String EDIT_USER_PROFILE_LIVE = "https://api.myoneworld.tech/api/user/";
+    public static final String EDIT_PROFILE_PIC_LIVE = "https://api.myoneworld.tech/api/gallery/";
 
 
     public static final String ANDROID_PATH = Environment.getExternalStorageDirectory().toString() + "/Android/data/";
@@ -42,6 +43,7 @@ public class Constant {
     public static final String DO_NOT_SHOW_AGAIN = "Do not show again.";
     public static final String ENABLE_AUTO_START_MSG = "Please enable autostart on my|ONEworld navigation app.";
     public static final String AUTO_START_MSG_TITLE = "Autostart application";
+    public static final String CHANGE_PROFILE_PIC_TITLE = "Choose option";
     public static final String EDIT_PROFILE_TITLE = "Edit Profile";
     public static final String SUCCESS_EDIT_PROFILE_MSG = "Your profile was successfully updated.";
     public static final String ERROR_EDIT_PROFILE_MSG = "Something went wrong in updating profile.";
@@ -57,12 +59,13 @@ public class Constant {
     public static final String ERROR_OCCURED_SIGN_IN = "Error occured while signing in.";
     public static final String LOGOUT = "Log out";
     public static final String LOGOUT_MSG = "Do you want to logout my|storya?";
-    public static final String DISABLE_LOCKSCREEN_MSG = "Please disable my|storya lockscreen";
+    public static final String DISABLE_LOCKSCREEN_MSG = "Please disable my|storya lockscreen first to access this settings";
     public static final String DISABLE_LOCKSCREEN_TITLE = "Download settings";
     public static final String ENABLE_WIFI_AND_DATA = "Enabling Mobile data or Wifi setting may apply data charges.\n";
     public static final String ERROR_PLYAING_VIDEO = "Error in Playing Video";
     public static final String DATA_USAGE_MAY_APPLY_SETTING_TITLE = "Data Charges May Apply";
     public static final String EDIT_PROFILE_MESSAGE = "Please fill in the required information.";
+    public static final String INCORRECT_PASSWORD = "Incorrect email address or password.";
 
     public static final String CONSUMER_KEY = "F64atV1oWBXFAKhwn6tyktWMA";
     public static final String CONSUMER_SECRET = "FgOylOPUnzV9g063MbvLlA6sTTaHxq0kpPDLUK2CtGuaNcnbyd";
@@ -87,8 +90,9 @@ public class Constant {
     public static final String ADDRESS_RQUIRED = "Address Field is Required";
     public static final String INVALID_EMAIL = "Invalid Email Address"; //@
     public static final String INVALID_DATE = "Invalid date format. Need date format(YYYY-MM-DD)";
-    public static final String REGISTER_SUCCESS = "Registered Successful\nRedirecting to login page...";
+    public static final String REGISTER_SUCCESS = "Registration Successful!\nYou will now be redirected to login page.";
     public static final String FILL_REQUIRED = "Please fill all the required fields.";
+    public static final String NO_PHOTO = "No photo is selected or capture. Please try again.";
 
     public static final String MSG_BOX_WARNING = "warning";
     public static final String MSG_BOX_SUCCESS = "success";
@@ -111,6 +115,7 @@ public class Constant {
     public static final String SEND_COMMENT_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/send_comment";
     public static final String EDIT_USER_PROFILE_TEST = "http://192.168.1.149/myoneworld/public/api/user/";
     public static final String G_VERSION_LOGGED_IN_TEST = "http://192.168.1.149/myoneworld/public/api/user/info";
+    public static final String EDIT_PROFILE_PIC_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/edit/profile_pic";
 
 
     static final String UPDATE_NOW_BUTTON = "UPDATE NOW";
@@ -159,8 +164,15 @@ public class Constant {
 
     public static final String GOTHIC_FONT_PATH = "font/Century_Gothic.ttf";
     public static final String GOTHIC_BOLD_FONT_PATH = "font/Gothicbold.TTF";
+    public static final String ROBOTO_FONT_PATH = "font/Roboto-Light.ttf";
+    public static final String ARBERKLEY_FONT_PATH = "font/ARBERKLEY.ttf";
 
     public static final String DONE_VIEWED_ARTICLE = "DONE_VIEWED_ARTICLE";
     public static final String SWIPE = "SWIPE";
 
+
+    public static final int GALLERY = 10001;
+    public static final int CAMERA = 10002;
+    public static final int REQUEST_CODE_CAMERA = 10003;
+    public static final int REQUEST_CODE_READ_STORAGE = 10004;
 }

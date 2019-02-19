@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/mystorya_new_background"
+    android:background="@drawable/new_splash_screen_02192019"
     tools:context=".briefing.ActivityBriefing">
 
     <ImageView
@@ -12,15 +12,25 @@
         android:id="@+id/top_logo_briefing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/new_logo_top"
+        android:src="@drawable/new_header_home"
         android:adjustViewBounds="true"
         android:maxHeight="250sp"/>
+    <ImageView
+        android:id="@+id/border"
+        android:layout_below="@id/top_logo_briefing"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="30sp"
+        android:adjustViewBounds="true"
+        android:background="#FFF"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"/>
 
     <ScrollView
         android:id="@+id/scroll_briefer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/top_logo_briefing"
+        android:layout_below="@id/border"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
@@ -38,10 +48,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="25sp"
+                android:paddingEnd="25sp"
+                android:paddingStart="25sp"
+                android:paddingBottom="25sp"
                 android:text="@string/briefing_text"
                 android:textSize="20sp" />
-
+            <ImageView
+                android:id="@+id/border_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:adjustViewBounds="true"
+                android:background="#FFF"
+                android:layout_marginStart="100sp"
+                android:layout_marginEnd="100sp"
+                android:layout_marginBottom="25sp"/>
             <Button
                 android:id="@+id/get_started"
                 android:background="@drawable/rounded_button_login"

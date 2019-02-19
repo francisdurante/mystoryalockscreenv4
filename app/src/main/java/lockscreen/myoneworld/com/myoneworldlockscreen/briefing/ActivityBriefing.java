@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
+
+import lockscreen.myoneworld.com.myoneworldlockscreen.Constant;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
 
@@ -21,7 +24,7 @@ public class ActivityBriefing extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        font = Typeface.createFromAsset(getAssets(), "font/Century_Gothic.ttf");
+        font = Typeface.createFromAsset(getAssets(), GOTHIC_FONT_PATH);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_briefing);
         getStarted = findViewById(R.id.get_started);

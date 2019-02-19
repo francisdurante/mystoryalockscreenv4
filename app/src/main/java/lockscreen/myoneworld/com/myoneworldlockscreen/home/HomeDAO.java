@@ -46,6 +46,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_TEST;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.loadProfilePic;
 
 public class HomeDAO {
     Context context;
@@ -82,7 +83,7 @@ public class HomeDAO {
                                     urlPictureSquare = user_information.getJSONObject("gallery").getString("url_square");
                                 }
                             }
-                            loadProfilePic(urlPictureSquare,profilePic);
+                            loadProfilePic(context,urlPictureSquare,profilePic,R.drawable.com_facebook_profile_picture_blank_square);
                         }
                         if(!userId.equalsIgnoreCase(getValueString("USER_ID",context))){
                             Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING);
@@ -92,7 +93,7 @@ public class HomeDAO {
                                     || user_information.getString("address").contains("DEFAULT")){
                                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                                 EditProfileDAO dao = new EditProfileDAO();
-                                dao.getUserProfile(context,getValueString("ACCESS_TOKEN",context),false);
+                                dao.getUserProfile(context,getValueString("ACCESS_TOKEN",context),false,false);
                             }
                             else{
                                 fullName.setText(getValueString("FULL_NAME",context));
@@ -224,15 +225,15 @@ public class HomeDAO {
         }
     }
 
-    private void loadProfilePic(String url, ImageView profilePic) {
-        if("".equals(url)){
-            url = "https://mystorya.com.ph";
-        }
-        Picasso.with(context)
-                .load(url)
-                .placeholder(R.drawable.ic_user)
-                .error(R.drawable.ic_user)
-                .fit()
-                .into(profilePic);
-    }
+//    private void loadProfilePic(String url, ImageView profilePic) {
+//        if("".equals(url)){
+//            url = "https://mystorya.com.ph";
+//        }
+//        Picasso.with(context)
+//                .load(url)
+//                .placeholder(R.drawable.com_facebook_profile_picture_blank_square)
+//                .error(R.drawable.com_facebook_profile_picture_blank_square)
+//                .fit()
+//                .into(profilePic);
+//    }
 }

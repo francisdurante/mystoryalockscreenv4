@@ -16,7 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:layout_below="@+id/linear_notif"
         android:minHeight="120sp"
         android:maxHeight="120sp"
         android:padding="10sp"

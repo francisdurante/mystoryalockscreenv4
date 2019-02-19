@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.widget.TextView;
+
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
@@ -29,11 +31,16 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ER
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLEASE_CHECK_CONNECTION;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REGISTER_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.makeNotification;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
 
 public class RegistrationDAO {
 
-    public void registration(RegistrationVO vo, Context context, Activity activity){
+    private TextView notifText;
+    public RegistrationDAO(){}
+    public RegistrationDAO(TextView textView){
+        notifText = textView;
+    }
+    public void registration(RegistrationVO vo, Context context){
         Utility util = new Utility();
         util.showLoading(context);
         RequestParams rp = new RequestParams();
@@ -57,7 +64,7 @@ public class RegistrationDAO {
                     JSONObject serverResp = new JSONObject(response.toString());
                     vo.setRegistrationStatusMessage(serverResp.getString("status"));
                     if("success".equals(vo.getRegistrationStatusMessage())){
-                        makeNotification("success",REGISTER_SUCCESS,activity);
+                        showNotifError(context,notifText,REGISTER_SUCCESS);
                         new CountDownTimer(2000,1000){
 
                             @Override
@@ -67,12 +74,12 @@ public class RegistrationDAO {
                             @Override
                             public void onFinish() {
                                 context.startActivity(new Intent(context,ActivityLogin.class));
-                                activity.finish();
+                                ((Activity) context).finish();
                             }
                         }.start();
                     }else{
                         util.hideLoading();
-                        makeNotification("error",vo.getRegistrationStatusMessage(),activity);
+                        showNotifError(context,notifText,vo.getRegistrationStatusMessage());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -83,10 +90,10 @@ public class RegistrationDAO {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 if(null == errorResponse){
-                    makeNotification(MSG_BOX_ERROR,PLEASE_CHECK_CONNECTION,activity);
+                    showNotifError(context,notifText,PLEASE_CHECK_CONNECTION);
                     util.hideLoading();
                 }else{
-                    makeNotification(MSG_BOX_ERROR,ERROR_OCCURED_SIGN_IN,activity);
+                    showNotifError(context,notifText,ERROR_OCCURED_SIGN_IN);
                 }
             }
         });
@@ -94,7 +101,6 @@ public class RegistrationDAO {
     public void registration(RegistrationVO registerVO, LoginVO loginVO,Context context,Activity activity){
         RequestParams rp = new RequestParams();
         ApiClass api = new ApiClass();
-        System.out.println(loginVO.getLoginPlatform() + " aaaaaaaaaaaaaaaa " + loginVO.getSocialId());
         switch (loginVO.getLoginPlatform()){
             case FACEBOOK:
                 rp.add("facebook_key",loginVO.getSocialId());
@@ -132,7 +138,6 @@ public class RegistrationDAO {
                     LoginDAO loginDAO = new LoginDAO(context,activity);
                     JSONObject serverResp = new JSONObject(response.toString());
                     registerVO.setRegistrationStatusMessage(serverResp.getString("status"));
-                    System.out.println(registerVO.getRegistrationStatusMessage() + " aaaaaaaaaaaaaaa");
                     if(null != loginVO.getLoginPlatform() || !"".equalsIgnoreCase(loginVO.getLoginPlatform())){
                         loginVO.setEmail(loginVO.getSocialId());
                         loginVO.setPassword("DEFAULT_PASSPORT");
