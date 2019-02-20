@@ -103,7 +103,7 @@ public class ActivitySettings extends AppCompatActivity {
         downloadSettingText = findViewById(R.id.download_setting);
         accountSettingText = findViewById(R.id.account_setting);
         changePasswordText = findViewById(R.id.change_password);
-        logoutText = findViewById(R.id.logout);
+//        logoutText = findViewById(R.id.logout);
 
         Typeface font = Typeface.createFromAsset(getAssets(), "font/Century_Gothic.ttf");
 
@@ -115,7 +115,7 @@ public class ActivitySettings extends AppCompatActivity {
         wifiAndData.setTypeface(font);
         doNotDownload.setTypeface(font);
         wifiOnly.setTypeface(font);
-        logoutText.setTypeface(font);
+//        logoutText.setTypeface(font);
         changePasswordText.setTypeface(font);
 
         settingText.setText(SETTING_TEXT);
@@ -155,21 +155,27 @@ public class ActivitySettings extends AppCompatActivity {
             }
         });
         wifiOnly.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked){
-                wifiAndData.setChecked(false);
-                doNotDownload.setChecked(false);
-                save("WIFI_ONLY","1",mContext);
-                save("WIFI_OR_DATA","",mContext);
-                save("DO_NOT_DOWNLOAD","",mContext);
-            }else{
-                save("WIFI_ONLY","",mContext);
-            }
-            if(!wifiAndData.isChecked() && !doNotDownload.isChecked() && !wifiOnly.isChecked()){
-                doNotDownload.setChecked(true);
-                save("DO_NOT_DOWNLOAD","1",mContext);
-                save("WIFI_ONLY","",mContext);
-                save("WIFI_OR_DATA","",mContext);
-            }
+//            if(isChecked){
+//                wifiAndData.setChecked(false);
+//                doNotDownload.setChecked(false);
+//                save("WIFI_ONLY","1",mContext);
+//                save("WIFI_OR_DATA","",mContext);
+//                save("DO_NOT_DOWNLOAD","",mContext);
+//            }else{
+//                save("WIFI_ONLY","",mContext);
+//            }
+//            if(!wifiAndData.isChecked() && !doNotDownload.isChecked() && !wifiOnly.isChecked()){
+//                doNotDownload.setChecked(true);
+//                save("DO_NOT_DOWNLOAD","1",mContext);
+//                save("WIFI_ONLY","",mContext);
+//                save("WIFI_OR_DATA","",mContext);
+//            }
+            globalMessageBox(mContext,"Download setting Wifi Only is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING);
+            save("WIFI_ONLY","",mContext);
+            save("WIFI_OR_DATA","",mContext);
+            save("DO_NOT_DOWNLOAD","1",mContext);
+            wifiOnly.setChecked(false);
+
         });
         wifiAndData.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
@@ -248,38 +254,38 @@ public class ActivitySettings extends AppCompatActivity {
     }
 
 
-    public void logout(View v){
-        AlertDialog.Builder ab = new AlertDialog.Builder(mContext,R.style.AppCompatAlertDialogStyle);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            try {
-                ab.setIcon(mContext.getResources().getDrawable(R.drawable.new_logo_top));
-            }catch (Exception e){
-
-            }
-        }
-        ab.setTitle(LOGOUT);
-        ab.setMessage(LOGOUT_MSG);
-        ab.setPositiveButton(YES_BUTTON, (dialog, which) -> {
-//            save("SHOW_POP_UP_DATA_USAGE","0",mContext);
-            save("USER_ID","",mContext);
-            save("FULL_NAME","",mContext);
-            save("EMAIL","",mContext);
-            save("ACCESS_TOKEN","",mContext);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                stopJobService(mContext);
-            }
-            stopService(new Intent(mContext,LockscreenService.class));
-            startActivity(new Intent(mContext,ActivityLoginOptions.class));
-            save("SERVICE", "0",mContext);
-
-            finish();
-        });
-        ab.setNegativeButton(NO_BUTTON, (dialog, which) -> {
-
-        });
-        AlertDialog a = ab.create();
-        a.show();
-    }
+//    public void logout(View v){
+//        AlertDialog.Builder ab = new AlertDialog.Builder(mContext,R.style.AppCompatAlertDialogStyle);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            try {
+//                ab.setIcon(mContext.getResources().getDrawable(R.drawable.new_logo_top));
+//            }catch (Exception e){
+//
+//            }
+//        }
+//        ab.setTitle(LOGOUT);
+//        ab.setMessage(LOGOUT_MSG);
+//        ab.setPositiveButton(YES_BUTTON, (dialog, which) -> {
+////            save("SHOW_POP_UP_DATA_USAGE","0",mContext);
+//            save("USER_ID","",mContext);
+//            save("FULL_NAME","",mContext);
+//            save("EMAIL","",mContext);
+//            save("ACCESS_TOKEN","",mContext);
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                stopJobService(mContext);
+//            }
+//            stopService(new Intent(mContext,LockscreenService.class));
+//            startActivity(new Intent(mContext,ActivityLoginOptions.class));
+//            save("SERVICE", "0",mContext);
+//
+//            finish();
+//        });
+//        ab.setNegativeButton(NO_BUTTON, (dialog, which) -> {
+//
+//        });
+//        AlertDialog a = ab.create();
+//        a.show();
+//    }
     public void accountSettingClick(View v){
         if(accountSettingShow) {
             accountSettingLinear.setVisibility(View.GONE);

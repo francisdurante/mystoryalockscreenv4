@@ -77,7 +77,7 @@
             android:configChanges="orientation"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreenWithIcon" />
         <activity
             android:name=".login.ActivityLoginOptions"
             android:configChanges="orientation"

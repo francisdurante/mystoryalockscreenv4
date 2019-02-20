@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".settings.ActivitySettings"
-    android:background="@drawable/mystorya_new_background">
+    android:background="@drawable/new_splash_screen_02192019">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +18,7 @@
             android:paddingTop="5sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/new_header_2" />
+            android:src="@drawable/sign_up_top_logo" />
 
         <TextView
             android:id="@+id/setting_text"
@@ -183,18 +183,18 @@
                         android:paddingTop="15sp"
                         android:paddingBottom="15sp"
                         android:textSize="15sp"/>
-                    <TextView
-                        android:id="@+id/logout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="45dp"
-                        android:layout_marginEnd="19dp"
-                        android:text="@string/logout_login"
-                        android:textColor="#FFF"
-                        android:paddingTop="15sp"
-                        android:paddingBottom="15sp"
-                        android:textSize="15sp"
-                        android:onClick="logout"/>
+                    <!--<TextView-->
+                        <!--android:id="@+id/logout"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginStart="45dp"-->
+                        <!--android:layout_marginEnd="19dp"-->
+                        <!--android:text="@string/logout_login"-->
+                        <!--android:textColor="#FFF"-->
+                        <!--android:paddingTop="15sp"-->
+                        <!--android:paddingBottom="15sp"-->
+                        <!--android:textSize="15sp"-->
+                        <!--android:onClick="logout"/>-->
 
                 </LinearLayout>
             </RelativeLayout>

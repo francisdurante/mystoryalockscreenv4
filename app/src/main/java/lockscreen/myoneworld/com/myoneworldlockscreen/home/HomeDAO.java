@@ -6,13 +6,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Location;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.Api;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -37,23 +40,37 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_OCCURED;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_OCCURED_SIGN_IN;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EXPIRED_LOG_IN;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_WALLET_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_WALLET_TEST;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGGED_IN_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGIN_EXPIRED_MSG;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ERROR;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PHP;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PHP_CURRENCY_WALLET;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PHP_SIGN;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.POINTS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.RAFFLE_POINTS_WALLET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGGED_IN_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_TEST;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.loadProfilePic;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showMessageBox;
 
 public class HomeDAO {
     Context context;
     Activity activity;
     public static Location location;
     private static int locationStatus = 0;
-
+    public HomeDAO(){}
     public HomeDAO(Context context, Activity activity){
         this.activity = activity;
         this.context = context;
@@ -225,15 +242,47 @@ public class HomeDAO {
         }
     }
 
-//    private void loadProfilePic(String url, ImageView profilePic) {
-//        if("".equals(url)){
-//            url = "https://mystorya.com.ph";
+    public void getUserWallet(Context context, String accessToken, String currency, TextView phpWallet,TextView rafflePoints,View view, Utility util) {
+        ApiClass api = new ApiClass();
+        RequestParams rp = new RequestParams();
+        rp.add("id", getValueString("USER_ID", context));
+        rp.add("currency", currency);
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Authorization", accessToken));
+//        if(currency.equalsIgnoreCase(POINTS)) {
+//            util.showLoading(context);
 //        }
-//        Picasso.with(context)
-//                .load(url)
-//                .placeholder(R.drawable.com_facebook_profile_picture_blank_square)
-//                .error(R.drawable.com_facebook_profile_picture_blank_square)
-//                .fit()
-//                .into(profilePic);
-//    }
+        api.getByUrlHeader(context, API_STATUS.equalsIgnoreCase("LIVE") ? GET_USER_WALLET_LIVE : GET_USER_WALLET_TEST,
+                headers.toArray(new Header[headers.size()]),
+                rp,
+                new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        if(null != response){
+                            try{
+                                JSONObject serverResponse = new JSONObject(response.toString());
+                                String points = serverResponse.getString("amount");
+                                if(PHP.equals(currency)){
+                                    phpWallet.setTypeface(setFont(context, GOTHIC_FONT_PATH));
+                                    phpWallet.setText(PHP_CURRENCY_WALLET + PHP_SIGN + Double.parseDouble(points));
+                                    getUserWallet(context,accessToken,POINTS,phpWallet,rafflePoints,view,util);
+                                }else{
+                                    rafflePoints.setTypeface(setFont(context, GOTHIC_FONT_PATH));
+                                    rafflePoints.setText(RAFFLE_POINTS_WALLET + points + POINTS);
+                                    showMessageBox(true,context,view);
+//                                    util.hideLoading();
+                                }
+                            }catch (JSONException e){
+                                globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        globalMessageBox(context,responseString,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                    }
+                });
+    }
+
 }

@@ -23,6 +23,15 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsFloating">false</item>
     </style>
+    <style name="Theme.AppCompat.Light.NoActionBar.FullScreenWithIcon" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+
+        <!-- No backgrounds, titles or window float -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
     <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
         <item name="android:textColor">#FFF</item>
     </style>

@@ -25,6 +25,7 @@ public class Constant {
     public static final String ANALYTICS_STORIES_LIVE = "https://api.myoneworld.tech/api/mystory/analytics";
     public static final String EDIT_USER_PROFILE_LIVE = "https://api.myoneworld.tech/api/user/";
     public static final String EDIT_PROFILE_PIC_LIVE = "https://api.myoneworld.tech/api/gallery/";
+    public static final String GET_USER_WALLET_LIVE = "https://api.myoneworld.tech/api/mystory/getwallet";
 
 
     public static final String ANDROID_PATH = Environment.getExternalStorageDirectory().toString() + "/Android/data/";
@@ -66,6 +67,7 @@ public class Constant {
     public static final String DATA_USAGE_MAY_APPLY_SETTING_TITLE = "Data Charges May Apply";
     public static final String EDIT_PROFILE_MESSAGE = "Please fill in the required information.";
     public static final String INCORRECT_PASSWORD = "Incorrect email address or password.";
+    public static final String ERROR_OCCURED = "ERROR OCCURED.";
 
     public static final String CONSUMER_KEY = "F64atV1oWBXFAKhwn6tyktWMA";
     public static final String CONSUMER_SECRET = "FgOylOPUnzV9g063MbvLlA6sTTaHxq0kpPDLUK2CtGuaNcnbyd";
@@ -116,6 +118,7 @@ public class Constant {
     public static final String EDIT_USER_PROFILE_TEST = "http://192.168.1.149/myoneworld/public/api/user/";
     public static final String G_VERSION_LOGGED_IN_TEST = "http://192.168.1.149/myoneworld/public/api/user/info";
     public static final String EDIT_PROFILE_PIC_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/edit/profile_pic";
+    public static final String GET_USER_WALLET_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/getwallet";
 
 
     static final String UPDATE_NOW_BUTTON = "UPDATE NOW";
@@ -175,4 +178,12 @@ public class Constant {
     public static final int CAMERA = 10002;
     public static final int REQUEST_CODE_CAMERA = 10003;
     public static final int REQUEST_CODE_READ_STORAGE = 10004;
+
+    public static final String PHP_CURRENCY_WALLET = "PHP WALLET\n";
+    public static final String RAFFLE_POINTS_WALLET = "RAFFLE POINTS\n";
+
+    public static final String PHP = "PHP";
+    public static final String POINTS = "POINTS";
+
+    public static final String PHP_SIGN = "₱";
 }

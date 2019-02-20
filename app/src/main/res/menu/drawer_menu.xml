@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:id="@+id/accountsetting"
-        android:menuCategory="container">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activities.MenuAdsAppCompatActivity">
         <item android:id="@+id/setting_drawer"
-            android:title="SETTINGS"/>
+            android:title="SETTINGS"
+            android:icon="@drawable/ic_settings"
+            app:showAsAction="ifRoom|withText"/>
+        <item android:id="@+id/wallet"
+            android:title="WALLET"
+            android:icon="@drawable/ic_wallet"
+            app:showAsAction="ifRoom|withText"/>
         <item android:id="@+id/about"
-            android:title="ABOUT US"/>
+            android:title="ABOUT US"
+            android:icon="@drawable/ic_about_us"
+            app:showAsAction="ifRoom|withText"/>
         <item android:id="@+id/logout_side"
-            android:title="LOGOUT"/>
-    </group>
+            android:title="LOGOUT"
+            android:icon="@drawable/ic_sign_out"
+            app:showAsAction="ifRoom|withText"/>
 </menu>

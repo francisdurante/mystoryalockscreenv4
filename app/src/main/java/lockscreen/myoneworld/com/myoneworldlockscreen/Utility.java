@@ -90,6 +90,7 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ArticleDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileVO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
+import lockscreen.myoneworld.com.myoneworldlockscreen.home.HomeDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenJobService;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
@@ -122,9 +123,11 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OPPO_AUTO_START_CLASS_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PACKAGE_NAME;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PHP;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_GENERAL;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_MARKET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_TITLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.POINTS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REGISTER_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CODE_CAMERA;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CODE_READ_STORAGE;
@@ -1018,7 +1021,7 @@ public class Utility {
 
     }
 
-    private static void showMessageBox(boolean cancelable, Context context, View view) {
+    public static void showMessageBox(boolean cancelable, Context context, View view) {
         mDialog = new AlertDialog.Builder(context).create();
         mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         mDialog.setView(view);
@@ -1470,5 +1473,19 @@ public class Utility {
                 cursor.close();
             }
         }
+    }
+    public static void showPopUpWallet(Context context, String accessTokens){
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View inflatedView = layoutInflater.inflate(R.layout.show_wallet_layout, null, false);
+        TextView titleMessage = inflatedView.findViewById(R.id.message_box_title);
+        TextView phpWallet = inflatedView.findViewById(R.id.php_wallet);
+        TextView rafflePoint = inflatedView.findViewById(R.id.raffle_points);
+        titleMessage.setTypeface(setFont(context,GOTHIC_FONT_PATH));
+        Button okay = inflatedView.findViewById(R.id.okay_button_wallet);
+        okay.setOnClickListener(v -> mDialog.dismiss());
+        HomeDAO dao = new HomeDAO();
+        Utility util = new Utility();
+        dao.getUserWallet(context,accessTokens,PHP,phpWallet,rafflePoint,inflatedView,util);
+
     }
 }

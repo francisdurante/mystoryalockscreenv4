@@ -2,6 +2,7 @@ package lockscreen.myoneworld.com.myoneworldlockscreen.home;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -37,6 +39,7 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileVO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
 import lockscreen.myoneworld.com.myoneworldlockscreen.settings.ActivitySettings;
+import lockscreen.myoneworld.com.myoneworldlockscreen.webviews.ActivityWebView;
 
 import android.support.v4.view.ViewPager;
 import android.widget.TextView;
@@ -61,6 +64,7 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.zip.Inflater;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CAMERA;
@@ -83,6 +87,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessa
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showPopUpProfilePicture;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showPopUpWallet;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.stopJobService;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.createNotificationChannel;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isNetworkAvailable;
@@ -107,6 +112,7 @@ public class ActivityHome extends AppCompatActivity {
     private MenuItem settings;
     private MenuItem aboutUs;
     private MenuItem logout;
+    private MenuItem wallet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -307,10 +313,13 @@ public class ActivityHome extends AppCompatActivity {
         settings = navigationView.getMenu().findItem(R.id.setting_drawer);
         aboutUs = navigationView.getMenu().findItem(R.id.about);
         logout = navigationView.getMenu().findItem(R.id.logout_side);
+        wallet = navigationView.getMenu().findItem(R.id.wallet);
         header = findViewById(R.id.header);
+
         settings.setOnMenuItemClickListener(menuClick);
         aboutUs.setOnMenuItemClickListener(menuClick);
         logout.setOnMenuItemClickListener(menuClick);
+        wallet.setOnMenuItemClickListener(menuClick);
 
         ncr = new NetworkChangeReceiver(header, this,drawerLayout,fullName,email,profilePicture
         );
@@ -326,9 +335,15 @@ public class ActivityHome extends AppCompatActivity {
                 startActivity(new Intent(mContext,ActivitySettings.class));
                 break;
             case R.id.about :
+                ActivityWebView.url = "https://mystorya.tech";
+                startActivity(new Intent(mContext,ActivityWebView.class));
+                finish();
                 break;
             case R.id.logout_side :
                 globalMessageBox(mContext,LOGGING_OUT_MESSAGE,LOGGING_OUT_TITLE,MSG_BOX_WARNING);
+                break;
+            case R.id.wallet :
+                showPopUpWallet(mContext,getValueString("ACCESS_TOKEN",mContext));
                 break;
         }
         return true;

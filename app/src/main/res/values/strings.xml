@@ -59,4 +59,9 @@
     <string name="take_photo">TAKE PHOTO</string>
     <string name="close">CLOSE</string>
     <string name="sign_in">Sign in</string>
+    <string name="php_wallet">PHP WALLET</string>
+    <string name="raffle_points">RAFFLE POINTS</string>
+    <string name="wallet_details">Wallet Details</string>
+
+
 </resources>
