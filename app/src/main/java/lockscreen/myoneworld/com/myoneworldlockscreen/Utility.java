@@ -1007,7 +1007,7 @@ public class Utility {
             errorText.setBackgroundColor(Color.parseColor("#FF60CC2E"));
             errorText.setCompoundDrawables(context.getResources().getDrawable(R.drawable.ic_checked),null,null,null);
         }
-        new CountDownTimer(3000, 1000) {
+        new CountDownTimer(5000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
             }
@@ -1487,5 +1487,15 @@ public class Utility {
         Utility util = new Utility();
         dao.getUserWallet(context,accessTokens,PHP,phpWallet,rafflePoint,inflatedView,util);
 
+    }
+
+    public static String getVersionName (Context context){
+        String versionName = "3.0.0";
+        try {
+            versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+        }catch (PackageManager.NameNotFoundException e){
+            globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR,MSG_BOX_ERROR);
+        }
+        return  "Version: " + versionName;
     }
 }

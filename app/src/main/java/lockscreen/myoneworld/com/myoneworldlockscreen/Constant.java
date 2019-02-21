@@ -1,10 +1,9 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen;
 
-import android.content.Context;
 import android.os.Environment;
 
 public class Constant {
-    public static final String API_STATUS = "TEST";
+    public static final String API_STATUS = "LIVE";
     public static final String G_VERSION_LOGIN_LIVE = "https://api.myoneworld.tech/oauth/token";
     public static final String G_VERSION_LOGGED_IN_LIVE = "https://api.myoneworld.tech/api/user/info";
     public static final String G_VERSION_REGISTRATION_LIVE = "https://api.myoneworld.tech/api/mystory/registration";
@@ -24,7 +23,7 @@ public class Constant {
     public static final String MY_STORYA_SINGLE_CONTENT = "https://api.myoneworld.tech/api/front/story/";
     public static final String ANALYTICS_STORIES_LIVE = "https://api.myoneworld.tech/api/mystory/analytics";
     public static final String EDIT_USER_PROFILE_LIVE = "https://api.myoneworld.tech/api/user/";
-    public static final String EDIT_PROFILE_PIC_LIVE = "https://api.myoneworld.tech/api/gallery/";
+    public static final String EDIT_PROFILE_PIC_LIVE = "https://api.myoneworld.tech/api/mystory/edit/profile_pic";
     public static final String GET_USER_WALLET_LIVE = "https://api.myoneworld.tech/api/mystory/getwallet";
 
 
@@ -67,6 +66,7 @@ public class Constant {
     public static final String DATA_USAGE_MAY_APPLY_SETTING_TITLE = "Data Charges May Apply";
     public static final String EDIT_PROFILE_MESSAGE = "Please fill in the required information.";
     public static final String INCORRECT_PASSWORD = "Incorrect email address or password.";
+    public static final String EMAIL_ALREADY_REGISTERED = "This email address was already registered using different social or manual login.";
     public static final String ERROR_OCCURED = "ERROR OCCURED.";
 
     public static final String CONSUMER_KEY = "F64atV1oWBXFAKhwn6tyktWMA";

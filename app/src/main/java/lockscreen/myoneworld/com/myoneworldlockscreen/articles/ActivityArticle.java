@@ -146,7 +146,6 @@ public class ActivityArticle extends AppCompatActivity {
             afterVideoLayout = findViewById(R.id.after_video_layout);
             topMessage = findViewById(R.id.top_title_after_video);
             midMessage = findViewById(R.id.mid_message);
-            bringToFrontLayout();
             AnalyticsApplication application = (AnalyticsApplication) getApplication();
             mTracker = application.getDefaultTracker();
             videoView = findViewById(R.id.flipper);
@@ -171,6 +170,7 @@ public class ActivityArticle extends AppCompatActivity {
             super.onCreate(savedInstanceState);
         }else{
             videoView.stopPlayback();
+            videoView.suspend();
         }
 
         sendAnalytics(mContext,SWIPE, article_id);
@@ -233,6 +233,7 @@ public class ActivityArticle extends AppCompatActivity {
             }.start();
         }else{
             likeButton.setImageResource(R.drawable.ic_heart);
+            videoView.stopPlayback();
         }
     }
 
@@ -297,6 +298,7 @@ public class ActivityArticle extends AppCompatActivity {
                                 util.showLoading(mContext);
                             }
                         } catch (Exception e) {
+
                         }
                     }
                 }
@@ -449,11 +451,12 @@ public class ActivityArticle extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == 1010) {
-            videoView.stopPlayback();
-            if (resultCode == RESULT_OK) {
-//                finish();
-            }else if (resultCode == RESULT_CANCELED){
-               shared = 1;
+            if(resultCode == RESULT_CANCELED) {
+                shared = 1;
+                finish();
+            }
+            else if(resultCode == RESULT_OK){
+                shared = 1;
             }
         }
     }
@@ -612,4 +615,5 @@ public class ActivityArticle extends AppCompatActivity {
         popUp.setCancelable(cancelable);
         popUp.show();
     }
+
 }

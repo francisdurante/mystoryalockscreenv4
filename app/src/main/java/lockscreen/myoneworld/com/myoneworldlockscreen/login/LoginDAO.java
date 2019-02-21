@@ -42,6 +42,7 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.registration.RegistrationD
 import lockscreen.myoneworld.com.myoneworldlockscreen.registration.RegistrationVO;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EMAIL_ALREADY_REGISTERED;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_API_KEY;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGGED_IN_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGIN_LIVE;
@@ -98,14 +99,21 @@ public class LoginDAO {
                         try {
                             JSONObject error = new JSONObject(errorResponse.toString());
                             if (error.has("message")) {
-                                if(error.getString("message").equals("The user credentials were incorrect."))
-                                    showNotifError(mContext,activity.findViewById(R.id.login_text),INCORRECT_PASSWORD);
+                                if (vo.getEmail().contains("@")) {
+                                    if (error.getString("message").equals("The user credentials were incorrect.")) {
+                                        showNotifError(mContext, activity.findViewById(R.id.login_text), INCORRECT_PASSWORD);
+                                    }
+                                } else {
+                                    if (error.getString("message").equals("The user credentials were incorrect."))
+                                        showNotifError(mContext, activity.findViewById(R.id.login_text), EMAIL_ALREADY_REGISTERED);
+                                }
+
+                                LoginManager.getInstance().logOut();
+                                loading.hideLoading();
                             } else {
-                                showNotifError(mContext,activity.findViewById(R.id.login_text),error.getString("error"));
+                                showNotifError(mContext, activity.findViewById(R.id.login_text), error.getString("error"));
                             }
-                            LoginManager.getInstance().logOut();
-                            loading.hideLoading();
-                        } catch (JSONException e) {
+                        }catch (JSONException e) {
                             e.printStackTrace();
                             loading.hideLoading();
                         }

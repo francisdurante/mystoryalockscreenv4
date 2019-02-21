@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -83,6 +84,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CO
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CODE_READ_STORAGE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.YES_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getVersionName;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
@@ -310,11 +312,15 @@ public class ActivityHome extends AppCompatActivity {
             EditProfileDAO dao = new EditProfileDAO();
             dao.getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),false,true);
         });
+        Typeface font = setFont(mContext,GOTHIC_FONT_PATH);
         settings = navigationView.getMenu().findItem(R.id.setting_drawer);
         aboutUs = navigationView.getMenu().findItem(R.id.about);
         logout = navigationView.getMenu().findItem(R.id.logout_side);
         wallet = navigationView.getMenu().findItem(R.id.wallet);
         header = findViewById(R.id.header);
+        TextView versionText = findViewById(R.id.version);
+        versionText.setTypeface(font);
+        versionText.setText(getVersionName(mContext));
 
         settings.setOnMenuItemClickListener(menuClick);
         aboutUs.setOnMenuItemClickListener(menuClick);
