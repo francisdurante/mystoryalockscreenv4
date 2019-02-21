@@ -39,6 +39,7 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileVO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
+import lockscreen.myoneworld.com.myoneworldlockscreen.notification.NotificationDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.settings.ActivitySettings;
 import lockscreen.myoneworld.com.myoneworldlockscreen.webviews.ActivityWebView;
 
@@ -307,7 +308,7 @@ public class ActivityHome extends AppCompatActivity {
         TextView fullName = navigationView.getHeaderView(0).findViewById(R.id.full_name);
         TextView email = navigationView.getHeaderView(0).findViewById(R.id.email_side);
         ImageView profilePicture = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
-
+        new NotificationDAO().getAllUnreadNotificationInMyCrazySale(mContext,getValueString("ACCESS_TOKEN",mContext));
         profilePicture.setOnClickListener(v -> {
             EditProfileDAO dao = new EditProfileDAO();
             dao.getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),false,true);

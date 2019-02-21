@@ -39,10 +39,12 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
+import lockscreen.myoneworld.com.myoneworldlockscreen.notification.NotificationDAO;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_OCCURED;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_OCCURED_SIGN_IN;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EXPIRED_LOG_IN;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_NOTIFICATION_MY_CRAZY_SALE_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_WALLET_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_WALLET_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
@@ -62,6 +64,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCAT
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.loadProfilePic;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.rePatternDate;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showMessageBox;
 
@@ -204,6 +207,16 @@ public class HomeDAO {
                         }
                     }
                 }
+            }
+        };
+        ayncTimer.schedule(timerTaskAsync, 0, 5000);
+    }
+    public void checkNotification() {
+        Timer ayncTimer = new Timer();
+        TimerTask timerTaskAsync = new TimerTask() {
+            @Override
+            public void run() {
+                //
             }
         };
         ayncTimer.schedule(timerTaskAsync, 0, 5000);

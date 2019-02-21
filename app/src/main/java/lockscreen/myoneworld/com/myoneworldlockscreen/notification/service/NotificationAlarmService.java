@@ -23,6 +23,7 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.webviews.ActivityWebView;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYPHONE_SHOP;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_LIFE_URL;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_STORYA_URL;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.save;
 
 public class NotificationAlarmService extends BroadcastReceiver {
 
@@ -84,5 +85,6 @@ public class NotificationAlarmService extends BroadcastReceiver {
         }
 
         notificationManager.notify(intent.getExtras().getInt("NOTIF_ID"), notification);
+        save("NOTIFICATION_"+intent.getExtras().getInt("NOTIF_ID"),"1",context);
     }
 }

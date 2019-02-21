@@ -209,6 +209,17 @@ public class Utility {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(new Date());
     }
+    public static String rePatternDate(String pattern,String date) {
+        Date newDate = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat newFormat = new SimpleDateFormat(pattern);
+        try {
+            newDate =  sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return newFormat.format(newDate);
+    }
 
     public static List<Address> getCurrentLocation(Context context, Location location) throws IOException {
         List<Address> addresses;
@@ -1498,4 +1509,6 @@ public class Utility {
         }
         return  "Version: " + versionName;
     }
+
+    public void
 }

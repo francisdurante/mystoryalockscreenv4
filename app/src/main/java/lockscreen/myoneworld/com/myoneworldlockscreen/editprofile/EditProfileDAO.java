@@ -33,6 +33,7 @@ import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
+import lockscreen.myoneworld.com.myoneworldlockscreen.home.HomeDAO;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CHANGE_PROFILE_PIC_TITLE;
@@ -94,7 +95,6 @@ public class EditProfileDAO {
                                     }
                                 }
                             }
-
                             EditProfileVO vo = new EditProfileVO();
                             vo.setImageProfileUrl(profilePicLink);
                             vo.setFirstName(firsName);

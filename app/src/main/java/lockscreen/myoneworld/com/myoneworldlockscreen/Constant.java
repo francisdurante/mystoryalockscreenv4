@@ -25,6 +25,7 @@ public class Constant {
     public static final String EDIT_USER_PROFILE_LIVE = "https://api.myoneworld.tech/api/user/";
     public static final String EDIT_PROFILE_PIC_LIVE = "https://api.myoneworld.tech/api/mystory/edit/profile_pic";
     public static final String GET_USER_WALLET_LIVE = "https://api.myoneworld.tech/api/mystory/getwallet";
+    public static final String GET_USER_NOTIFICATION_MY_CRAZY_SALE_LIVE = "https://api.myoneworld.tech/api/notification_users/";
 
 
     public static final String ANDROID_PATH = Environment.getExternalStorageDirectory().toString() + "/Android/data/";
@@ -119,6 +120,7 @@ public class Constant {
     public static final String G_VERSION_LOGGED_IN_TEST = "http://192.168.1.149/myoneworld/public/api/user/info";
     public static final String EDIT_PROFILE_PIC_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/edit/profile_pic";
     public static final String GET_USER_WALLET_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/getwallet";
+    public static final String GET_USER_NOTIFICATION_MY_CRAZY_SALE_TEST = "http://192.168.1.149/myoneworld/public/api/notification_users/";
 
 
     static final String UPDATE_NOW_BUTTON = "UPDATE NOW";
