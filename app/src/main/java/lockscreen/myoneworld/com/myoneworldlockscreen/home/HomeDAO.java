@@ -67,6 +67,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.loadProfile
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.rePatternDate;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showMessageBox;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.notification.NotificationDAO.getCountUnread;
 
 public class HomeDAO {
     Context context;
@@ -211,12 +212,12 @@ public class HomeDAO {
         };
         ayncTimer.schedule(timerTaskAsync, 0, 5000);
     }
-    public void checkNotification() {
+    public void checkNotification(Context context) {
         Timer ayncTimer = new Timer();
         TimerTask timerTaskAsync = new TimerTask() {
             @Override
             public void run() {
-                //
+                getCountUnread(context,getValueString("ACCESS_TOKEN",context));
             }
         };
         ayncTimer.schedule(timerTaskAsync, 0, 5000);

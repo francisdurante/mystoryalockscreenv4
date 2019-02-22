@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.provider.ContactsContract;
@@ -86,6 +87,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ArticleDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileVO;
@@ -859,13 +863,18 @@ public class Utility {
             ok.setText(OK_BUTTON);
             linearButtons.setVisibility(View.VISIBLE);
             ok.setOnClickListener(v -> {
-                save("USER_ID", "", context);
                 save("FULL_NAME", "", context);
+                save("USER_ID", "", context);
                 save("EMAIL", "", context);
-                save("ACCESS_TOKEN", "", context);
+                save("ACCESS_TOKEN","",context);
+                save("CRYPT","",context);
+                save("FB_KEY","",context);
+                save("GOOGLE_KEY","",context);
+                save("TWITTER_KEY","",context);
                 if (isMyServiceRunning(LockscreenService.class, context)) {
                     context.stopService(new Intent(context, LockscreenService.class));
                     save("SERVICE", "0", context);
+
                 }
                 context.startActivity(new Intent(context, ActivityLoginOptions.class));
                 mDialog.dismiss();
@@ -1094,14 +1103,17 @@ public class Utility {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
     }
 
-    public void immediateNotification(Context context, int id, String Message, int app) {// 1- my|crazysale 2-my|storya 3 - my|lifeStyle 4
-
+    public void immediateNotification(Context context, int id, String Message, int app,@Nullable String link) {// 1- my|crazysale 2-my|storya 3 - my|lifeStyle 4
+        if(null == link){
+            link = "";
+        }
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent notificationIntent = new Intent(context, NotificationAlarmService.class)
                 .putExtra("NOTIF_MESSAGE", Message)
                 .putExtra("NOTIF_ID", id)
-                .putExtra("APP", app);
+                .putExtra("APP", app)
+                .putExtra("LINK",link);
 
         PendingIntent broadcast = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -1510,5 +1522,4 @@ public class Utility {
         return  "Version: " + versionName;
     }
 
-    public void
 }

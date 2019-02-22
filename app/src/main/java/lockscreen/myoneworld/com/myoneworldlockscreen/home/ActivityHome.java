@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -67,6 +68,8 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.zip.Inflater;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CAMERA;
@@ -101,6 +104,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.AUTO_START
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.STOP;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.START;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.notification.NotificationDAO.getCountUnread;
 
 public class ActivityHome extends AppCompatActivity {
     Context mContext = this;
@@ -116,6 +120,7 @@ public class ActivityHome extends AppCompatActivity {
     private MenuItem aboutUs;
     private MenuItem logout;
     private MenuItem wallet;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,7 +140,7 @@ public class ActivityHome extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         initDrawer();
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            globalMessageBox(mContext,ENABLE_AUTO_START_MSG,AUTO_START_MSG_TITLE,MSG_BOX_WARNING);
+            globalMessageBox(mContext, ENABLE_AUTO_START_MSG, AUTO_START_MSG_TITLE, MSG_BOX_WARNING);
         }
         init();
     }
@@ -151,7 +156,7 @@ public class ActivityHome extends AppCompatActivity {
             e.printStackTrace();
         }
         iniDefaultSetting();
-
+        getCountUnreadNotification(mContext);
         serviceButton.setTypeface(setFont(mContext, GOTHIC_FONT_PATH));
 
         if (isMyServiceRunning(LockscreenService.class, mContext)) {
@@ -215,20 +220,20 @@ public class ActivityHome extends AppCompatActivity {
                 }
             }
         }
-        if(requestCode == REQUEST_CODE_CAMERA){
+        if (requestCode == REQUEST_CODE_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intent, REQUEST_CODE_CAMERA);
-            }else{
+            } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA);
             }
         }
-        if(requestCode == REQUEST_CODE_READ_STORAGE){
+        if (requestCode == REQUEST_CODE_READ_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(galleryIntent, REQUEST_CODE_READ_STORAGE);
-            }else{
+            } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY);
             }
         }
@@ -246,22 +251,25 @@ public class ActivityHome extends AppCompatActivity {
                 return;
             }
             HomeDAO.location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         try {
             network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             HomeDAO.location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ignored) {}
-        if(!gps_enabled && !network_enabled) {
+        } catch (Exception ignored) {
+        }
+        if (!gps_enabled && !network_enabled) {
             Intent callGPSSettingIntent = new Intent(
                     android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             mContext.startActivity(callGPSSettingIntent);
-        }else{
-            new HomeDAO(mContext,this).sendLocationTimer();
+        } else {
+            new HomeDAO(mContext, this).sendLocationTimer();
         }
     }
-    private void iniDefaultSetting(){
-        if(getValueString("WIFI_ONLY",mContext).equals("") && getValueString("WIFI_OR_DATA",mContext).equals("") && getValueString("DO_NOT_DOWNLOAD",mContext).equals("")){
-            save("DO_NOT_DOWNLOAD","1",mContext);
+
+    private void iniDefaultSetting() {
+        if (getValueString("WIFI_ONLY", mContext).equals("") && getValueString("WIFI_OR_DATA", mContext).equals("") && getValueString("DO_NOT_DOWNLOAD", mContext).equals("")) {
+            save("DO_NOT_DOWNLOAD", "1", mContext);
         }
     }
 
@@ -302,18 +310,18 @@ public class ActivityHome extends AppCompatActivity {
 //       new Utility().twitterShare("https://google.com",mContext,session);
 //    }
 
-    private void initDrawer(){
+    private void initDrawer() {
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_details);
         TextView fullName = navigationView.getHeaderView(0).findViewById(R.id.full_name);
         TextView email = navigationView.getHeaderView(0).findViewById(R.id.email_side);
         ImageView profilePicture = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
-        new NotificationDAO().getAllUnreadNotificationInMyCrazySale(mContext,getValueString("ACCESS_TOKEN",mContext));
+        new NotificationDAO().getAllUnreadNotificationInMyCrazySale(mContext, getValueString("ACCESS_TOKEN", mContext));
         profilePicture.setOnClickListener(v -> {
             EditProfileDAO dao = new EditProfileDAO();
-            dao.getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),false,true);
+            dao.getUserProfile(mContext, getValueString("ACCESS_TOKEN", mContext), false, true);
         });
-        Typeface font = setFont(mContext,GOTHIC_FONT_PATH);
+        Typeface font = setFont(mContext, GOTHIC_FONT_PATH);
         settings = navigationView.getMenu().findItem(R.id.setting_drawer);
         aboutUs = navigationView.getMenu().findItem(R.id.about);
         logout = navigationView.getMenu().findItem(R.id.logout_side);
@@ -328,7 +336,7 @@ public class ActivityHome extends AppCompatActivity {
         logout.setOnMenuItemClickListener(menuClick);
         wallet.setOnMenuItemClickListener(menuClick);
 
-        ncr = new NetworkChangeReceiver(header, this,drawerLayout,fullName,email,profilePicture
+        ncr = new NetworkChangeReceiver(header, this, drawerLayout, fullName, email, profilePicture
         );
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -337,20 +345,20 @@ public class ActivityHome extends AppCompatActivity {
     }
 
     private MenuItem.OnMenuItemClickListener menuClick = item -> {
-        switch(item.getItemId()){
-            case R.id.setting_drawer :
-                startActivity(new Intent(mContext,ActivitySettings.class));
+        switch (item.getItemId()) {
+            case R.id.setting_drawer:
+                startActivity(new Intent(mContext, ActivitySettings.class));
                 break;
-            case R.id.about :
+            case R.id.about:
                 ActivityWebView.url = "https://mystorya.tech";
-                startActivity(new Intent(mContext,ActivityWebView.class));
+                startActivity(new Intent(mContext, ActivityWebView.class));
                 finish();
                 break;
-            case R.id.logout_side :
-                globalMessageBox(mContext,LOGGING_OUT_MESSAGE,LOGGING_OUT_TITLE,MSG_BOX_WARNING);
+            case R.id.logout_side:
+                globalMessageBox(mContext, LOGGING_OUT_MESSAGE, LOGGING_OUT_TITLE, MSG_BOX_WARNING);
                 break;
-            case R.id.wallet :
-                showPopUpWallet(mContext,getValueString("ACCESS_TOKEN",mContext));
+            case R.id.wallet:
+                showPopUpWallet(mContext, getValueString("ACCESS_TOKEN", mContext));
                 break;
         }
         return true;
@@ -358,32 +366,51 @@ public class ActivityHome extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == CAMERA){
-            if(resultCode == RESULT_OK) {
+        if (requestCode == CAMERA) {
+            if (resultCode == RESULT_OK) {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
-                if(null != photo) {
+                if (null != photo) {
                     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                     photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                     Utility.customLoadProfilePic(mContext, photo, R.drawable.com_facebook_profile_picture_blank_square);
-                }else{
-                    globalMessageBox(mContext,NO_PHOTO,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                } else {
+                    globalMessageBox(mContext, NO_PHOTO, MSG_BOX_ERROR.toUpperCase(), MSG_BOX_ERROR);
                 }
             }
         }
-        if(requestCode == GALLERY){
+        if (requestCode == GALLERY) {
 
-            if (resultCode == RESULT_OK)
-            {
+            if (resultCode == RESULT_OK) {
                 Uri imageUri = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                    Utility.customLoadProfilePic(mContext,bitmap,R.drawable.com_facebook_profile_picture_blank_square);
+                    Utility.customLoadProfilePic(mContext, bitmap, R.drawable.com_facebook_profile_picture_blank_square);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
 
+    private void getCountUnreadNotification(Context context) {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        TimerTask backtask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(() -> {
+                    try {
+                       if(!"".equals(getValueString("ACCESS_TOKEN",context))) {
+                           getCountUnread(context, getValueString("ACCESS_TOKEN", context));
+                       }else{
+                           handler.removeCallbacks(this);
+                       }
+                    } catch (Exception e) {
+                    }
+                });
+            }
+        };
+        timer.schedule(backtask , 0, 5000);
     }
 }

@@ -21,10 +21,13 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_UNREAD_NOTIFICATION_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_UNREAD_NOTIFICATION_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_NOTIFICATION_MY_CRAZY_SALE_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_NOTIFICATION_MY_CRAZY_SALE_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ERROR;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.getValueString;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.save;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.rePatternDate;
 
@@ -54,7 +57,8 @@ public class NotificationDAO {
                                         String message = notificationData.getString("message");
                                         String datePosted = rePatternDate("MMM dd, yyyy HH:mm",notificationData.getString("created_at"));
                                         String notificationID = notificationData.getString("id");
-                                        new Utility().immediateNotification(context,Integer.parseInt(notificationID),message + "\n" + datePosted,1);
+                                        String link = notificationData.getString("click_url");
+                                        new Utility().immediateNotification(context,Integer.parseInt(notificationID),message + "\n" + datePosted,1,link);
 
                                     }
                                 }
@@ -121,5 +125,41 @@ public class NotificationDAO {
                     }
                 });
     }
+
+    public static void getCountUnread(Context context, String accessToken){
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(true,80,443);
+        RequestParams rp = new RequestParams();
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Authorization", accessToken));
+        asyncHttpClient.get(context,API_STATUS.equals("LIVE") ?
+        GET_UNREAD_NOTIFICATION_LIVE : GET_UNREAD_NOTIFICATION_TEST,headers.toArray(new Header[headers.size()]),
+                rp,
+                new JsonHttpResponseHandler(){
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                    }
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        String countString = getValueString("UNREAD_NOTIFICATION_"+getValueString("USER_ID",context),context);
+                        int count = "".equals(countString) ? 0 : Integer.parseInt(countString);
+                        if(count < Integer.parseInt(responseString)){
+                            new NotificationDAO().getAllUnreadNotificationInMyCrazySale(context,getValueString("ACCESS_TOKEN",context));
+                        }
+                        save("UNREAD_NOTIFICATION_"+getValueString("USER_ID",context),responseString,context);
+                    }
+                });
+    }
+
 
 }

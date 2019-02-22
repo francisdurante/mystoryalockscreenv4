@@ -146,7 +146,7 @@ public class ArticleDAO {
                     }
 
                     Utility utility = new Utility();
-                    utility.immediateNotification(context,Integer.parseInt(article_id),"You receive 10 points!",1);
+                    utility.immediateNotification(context,Integer.parseInt(article_id),"You receive 10 points!",1,null);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -216,7 +216,7 @@ public class ArticleDAO {
                         for (int index = 0; index < _comments.length; index++) {
                             String commentContent = "<html><pre><b>" + _userCommented[index] + "</b> " +
                                     "<i><small>" + getDatePostedComputations(_datePosted[index]) + "</i></small></pre></html>" +
-                                    "<br><br><html><pre><b>\t\t" + _comments[index] + "</b><pre></html>";
+                                    "<br><br><html><pre><b>\t\t" +  Html.fromHtml(_comments[index]).toString() + "</b><pre></html>";
 
                             comment.add(Html.fromHtml(commentContent));
                         }

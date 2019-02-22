@@ -26,6 +26,7 @@ public class Constant {
     public static final String EDIT_PROFILE_PIC_LIVE = "https://api.myoneworld.tech/api/mystory/edit/profile_pic";
     public static final String GET_USER_WALLET_LIVE = "https://api.myoneworld.tech/api/mystory/getwallet";
     public static final String GET_USER_NOTIFICATION_MY_CRAZY_SALE_LIVE = "https://api.myoneworld.tech/api/notification_users/";
+    public static final String GET_UNREAD_NOTIFICATION_LIVE = "https://api.myoneworld.tech/api/notification_unread_count";
 
 
     public static final String ANDROID_PATH = Environment.getExternalStorageDirectory().toString() + "/Android/data/";
@@ -80,7 +81,7 @@ public class Constant {
     public static final String START = "START LOCKSCREEN";
 
 
-    public static String WEB_VIEW_SETTING = "TRUE";
+    public static String WEB_VIEW_SETTING = "FALSE";
 
     public static final String MISMATCH_PASSWORD = "Password mismatch";
     public static final String OLD_PASSWORD_NOT_MATCH = "Your current password is incorrect";
@@ -121,6 +122,8 @@ public class Constant {
     public static final String EDIT_PROFILE_PIC_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/edit/profile_pic";
     public static final String GET_USER_WALLET_TEST = "http://192.168.1.149/myoneworld/public/api/mystory/getwallet";
     public static final String GET_USER_NOTIFICATION_MY_CRAZY_SALE_TEST = "http://192.168.1.149/myoneworld/public/api/notification_users/";
+    public static final String GET_UNREAD_NOTIFICATION_TEST = "http://192.168.1.149/myoneworld/public/api/notification_unread_count";
+
 
 
     static final String UPDATE_NOW_BUTTON = "UPDATE NOW";

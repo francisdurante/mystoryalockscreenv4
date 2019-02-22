@@ -41,6 +41,14 @@
                     android:src="@drawable/connection" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/development"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DEVELOPMENT"
+                android:textColor="#FFF51B26"
+                android:gravity="end|top"
+                android:visibility="gone"/>
             <ImageView
                 android:id="@+id/image_top_login"
                 android:layout_width="match_parent"
@@ -49,7 +57,8 @@
                 android:paddingTop="30dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/sign_up_top_logo"
-                android:textColor="#ff6600" />
+                android:textColor="#ff6600"/>
+
         </LinearLayout>
 
         <LinearLayout

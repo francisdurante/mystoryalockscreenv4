@@ -170,7 +170,7 @@ public class ActivitySettings extends AppCompatActivity {
 //                save("WIFI_ONLY","",mContext);
 //                save("WIFI_OR_DATA","",mContext);
 //            }
-            globalMessageBox(mContext,"Download setting Wifi Only is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING);
+            globalMessageBox(mContext,"Wifi Only is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING);
             save("WIFI_ONLY","",mContext);
             save("WIFI_OR_DATA","",mContext);
             save("DO_NOT_DOWNLOAD","1",mContext);
@@ -178,18 +178,23 @@ public class ActivitySettings extends AppCompatActivity {
 
         });
         wifiAndData.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked){
-                showDialogBox();
-            }else{
-                save("WIFI_OR_DATA","",mContext);
-            }
-            if(!wifiAndData.isChecked() && !doNotDownload.isChecked() && !wifiOnly.isChecked()){
-                doNotDownload.setChecked(true);
-                save("DO_NOT_DOWNLOAD","1",mContext);
-                save("WIFI_ONLY","",mContext);
-                save("WIFI_OR_DATA","",mContext);
-
-            }
+//            if(isChecked){
+//                showDialogBox();
+//            }else{
+//                save("WIFI_OR_DATA","",mContext);
+//            }
+//            if(!wifiAndData.isChecked() && !doNotDownload.isChecked() && !wifiOnly.isChecked()){
+//                doNotDownload.setChecked(true);
+//                save("DO_NOT_DOWNLOAD","1",mContext);
+//                save("WIFI_ONLY","",mContext);
+//                save("WIFI_OR_DATA","",mContext);
+//
+//            }
+            globalMessageBox(mContext,"Wifi or Data is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING);
+            save("WIFI_ONLY","",mContext);
+            save("WIFI_OR_DATA","",mContext);
+            save("DO_NOT_DOWNLOAD","1",mContext);
+            wifiAndData.setChecked(false);
         });
         doNotDownload.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){

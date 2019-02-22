@@ -42,6 +42,8 @@ import java.util.Arrays;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
+
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_KEY;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOOGLE_BUTTON;
@@ -67,6 +69,10 @@ public class ActivityLoginOptions extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(API_STATUS.equals("TEST")){
+            TextView development = findViewById(R.id.development);
+            development.setVisibility(View.VISIBLE);
+        }
         if(!getValueString("FULL_NAME",mContext).equals("") &&
                 !getValueString("USER_ID",mContext).equals("") &&
                 !getValueString("EMAIL",mContext).equals("")){

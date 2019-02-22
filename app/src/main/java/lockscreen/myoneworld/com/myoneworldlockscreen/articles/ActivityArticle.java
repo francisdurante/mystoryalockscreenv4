@@ -127,46 +127,55 @@ public class ActivityArticle extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if(shared != 1) {
-            setContentView(R.layout.activity_article);
-            rotate = AnimationUtils.loadAnimation(mContext, R.anim.rotation_fast);
-            initial = findViewById(R.id.initial_page);
-            BitmapDrawable initialBackground = new BitmapDrawable(filePath(article_id, mContext));
-            initial.setBackground(initialBackground);
-            initial.bringToFront();
-            textComment = findViewById(R.id.text_comment);
-            likeButton = findViewById(R.id.like);
-            shareButton = findViewById(R.id.share);
-            likeAnimation = findViewById(R.id.heart_anim_linear);
-            textComment.setOnClickListener(this::onShowPopup);
-            shareButton.setOnClickListener(v -> dialogShare());
-            likeButton.setOnClickListener(v -> {
-                clickLikeButton(tempLikeStatus);
-                tempLikeStatus = !tempLikeStatus;
-            });
-            afterVideoLayout = findViewById(R.id.after_video_layout);
-            topMessage = findViewById(R.id.top_title_after_video);
-            midMessage = findViewById(R.id.mid_message);
-            AnalyticsApplication application = (AnalyticsApplication) getApplication();
-            mTracker = application.getDefaultTracker();
-            videoView = findViewById(R.id.flipper);
-            if ("video_with_slide_show".equals(getValueString("article_kind_" + article_id, mContext))) {
-                String[] articleType = {VIDEO_ARTICLE, COMIC_ARTICLE};
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
-                builder.setTitle(ARTICLE_POPUP_TITLE);
-                builder.setIcon(mContext.getResources().getDrawable(R.drawable.m1w_logo));
-                builder.setCancelable(false);
-                builder.setItems(articleType, (dialog, which) -> {
-                    if (VIDEO_ARTICLE.equals(articleType[which])) {
-                        chooseOptionArticle("video");
-                    } else if (COMIC_ARTICLE.equals(articleType[which])) {
-                        chooseOptionArticle("slide_show");
-                    }
+            if(null == videoView) {
+                setContentView(R.layout.activity_article);
+                rotate = AnimationUtils.loadAnimation(mContext, R.anim.rotation_fast);
+                initial = findViewById(R.id.initial_page);
+                BitmapDrawable initialBackground = new BitmapDrawable(filePath(article_id, mContext));
+                initial.setBackground(initialBackground);
+                initial.bringToFront();
+                textComment = findViewById(R.id.text_comment);
+                likeButton = findViewById(R.id.like);
+                shareButton = findViewById(R.id.share);
+                likeAnimation = findViewById(R.id.heart_anim_linear);
+                textComment.setOnClickListener(this::onShowPopup);
+                shareButton.setOnClickListener(v -> dialogShare());
+                likeButton.setOnClickListener(v -> {
+                    clickLikeButton(tempLikeStatus);
+                    tempLikeStatus = !tempLikeStatus;
                 });
-                builder.show();
-            } else {
-                chooseOptionArticle(getValueString("article_kind_" + article_id, mContext));
+                afterVideoLayout = findViewById(R.id.after_video_layout);
+                topMessage = findViewById(R.id.top_title_after_video);
+                midMessage = findViewById(R.id.mid_message);
+                AnalyticsApplication application = (AnalyticsApplication) getApplication();
+                mTracker = application.getDefaultTracker();
+                videoView = findViewById(R.id.flipper);
+                if ("video_with_slide_show".equals(getValueString("article_kind_" + article_id, mContext))) {
+                    String[] articleType = {VIDEO_ARTICLE, COMIC_ARTICLE};
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+                    builder.setTitle(ARTICLE_POPUP_TITLE);
+                    builder.setIcon(mContext.getResources().getDrawable(R.drawable.m1w_logo));
+                    builder.setCancelable(false);
+                    builder.setItems(articleType, (dialog, which) -> {
+                        if (VIDEO_ARTICLE.equals(articleType[which])) {
+                            chooseOptionArticle("video");
+                        } else if (COMIC_ARTICLE.equals(articleType[which])) {
+                            chooseOptionArticle("slide_show");
+                        }
+                    });
+                    builder.show();
+                } else {
+                    chooseOptionArticle(getValueString("article_kind_" + article_id, mContext));
+                }
             }
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             super.onCreate(savedInstanceState);
         }else{
             videoView.stopPlayback();
@@ -232,8 +241,10 @@ public class ActivityArticle extends AppCompatActivity {
                 }
             }.start();
         }else{
-            likeButton.setImageResource(R.drawable.ic_heart);
-            videoView.stopPlayback();
+            if(null != videoView) {
+                likeButton.setImageResource(R.drawable.ic_heart);
+                videoView.stopPlayback();
+            }
         }
     }
 
@@ -453,10 +464,11 @@ public class ActivityArticle extends AppCompatActivity {
         if (requestCode == 1010) {
             if(resultCode == RESULT_CANCELED) {
                 shared = 1;
-                finish();
+                videoView = null;
             }
-            else if(resultCode == RESULT_OK){
+            if(resultCode == RESULT_OK){
                 shared = 1;
+                videoView = null;
             }
         }
     }
@@ -474,6 +486,7 @@ public class ActivityArticle extends AppCompatActivity {
         if(null != videoView) {
             videoView.stopPlayback();
             videoView.suspend();
+            videoView = null;
         }
     }
 
@@ -560,9 +573,11 @@ public class ActivityArticle extends AppCompatActivity {
         videoView.requestFocus();
         videoView.setOnPreparedListener(mp -> {
             initial.setVisibility(View.GONE);
-            mp.setLooping(false);
-            videoView.start();
-            util.hideLoading();
+            if(null != videoView) {
+                mp.setLooping(false);
+                videoView.start();
+                util.hideLoading();
+            }
         });
     }
     public boolean globalMessageBox(Context context){

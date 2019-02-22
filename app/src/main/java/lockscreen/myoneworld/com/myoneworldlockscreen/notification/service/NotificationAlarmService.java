@@ -48,6 +48,8 @@ public class NotificationAlarmService extends BroadcastReceiver {
         Intent notificationIntent = new Intent(context, ActivityNotificationDetails.class);
         notificationIntent.putExtra("NOTIFICATION_ID",intent.getExtras().getInt("NOTIF_ID"));
         notificationIntent.putExtra("NOTIFICATION_MESSAGE",intent.getExtras().getString("NOTIF_MESSAGE"));
+        notificationIntent.putExtra("LINK",intent.getExtras().getString("LINK"));
+        notificationIntent.putExtra("APP",intent.getExtras().getInt("APP"));
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingNotificationIntent = PendingIntent.getActivity(context,intent.getExtras().getInt("NOTIF_ID"),notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);

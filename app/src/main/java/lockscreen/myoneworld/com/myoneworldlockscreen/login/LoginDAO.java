@@ -143,6 +143,10 @@ public class LoginDAO {
                             String email = serverResp.getString("email");
                             String fullName = user_information.getString("full_name");
                             String userId = user_information.getString("user_id");
+                            String crypt = serverResp.getString("crypt");
+                            String facebookKey = serverResp.getString("facebook_key");
+                            String googleKey = serverResp.getString("google_key");
+                            String twitterKey = serverResp.getString("twitter_key");
 
                             vo.setFullName(fullName);
                             vo.setUserID(userId);
@@ -152,6 +156,11 @@ public class LoginDAO {
                             save("USER_ID", vo.getUserID(), mContext);
                             save("EMAIL", vo.getEmail(), mContext);
                             save("ACCESS_TOKEN",accessToken,mContext);
+                            save("CRYPT",crypt,mContext);
+                            save("FB_KEY",facebookKey,mContext);
+                            save("GOOGLE_KEY",googleKey,mContext);
+                            save("TWITTER_KEY",twitterKey,mContext);
+
 
                             util.hideLoading();
                             mContext.startActivity(new Intent(mContext, ActivityHome.class));
