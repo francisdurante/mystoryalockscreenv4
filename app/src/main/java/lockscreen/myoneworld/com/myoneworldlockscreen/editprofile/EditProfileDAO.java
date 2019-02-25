@@ -1,6 +1,7 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.editprofile;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -46,6 +47,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGGED_IN_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ERROR;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_SUCCESS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SUCCESS_EDIT_PASSWORD_MSG;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SUCCESS_EDIT_PROFILE_MSG;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.getValueString;
@@ -59,7 +61,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showPopUpPr
 
 public class EditProfileDAO {
 
-    public void getUserProfile(Context context, String accessToken,boolean isChangePassword, boolean isChangeProfile) {
+    public void getUserProfile(Context context, String accessToken,boolean isChangePassword, boolean isChangeProfile, boolean fromEditButton) {
         ApiClass api = new ApiClass();
         RequestParams rp = new RequestParams();
         List<Header> headers = new ArrayList<Header>();
@@ -87,9 +89,11 @@ public class EditProfileDAO {
                             String countryName = countryDetails.getString("name");
                             String dealer = user_information.getString("dealer");
                             String profilePicLink = null;
+                            String galleryId = null;
                             if(user_information.has("gallery")) {
                                 if(!"null".equalsIgnoreCase(user_information.getString("gallery")) ) {
                                     JSONObject gallery = user_information.getJSONObject("gallery");
+                                    galleryId = gallery.getString("id");
                                     if (gallery.has("url_square")) {
                                         profilePicLink = user_information.getJSONObject("gallery").getString("url_square");
                                     }
@@ -109,8 +113,9 @@ public class EditProfileDAO {
                             vo.setGoogleKey(googleKey);
                             vo.setTwitterKey(twitterKey);
                             vo.setOldPassword(decrypt);
+                            vo.setImageId(galleryId);
                             if(isChangeProfile && !isChangePassword){
-                                showPopUpProfilePicture(context, vo);
+                                showPopUpProfilePicture(context, vo,new AlertDialog.Builder(context).create());
                             }
                             if(!isChangePassword && !isChangeProfile) {
                                 context.startActivity(new Intent(context, ActivityEditProfile.class)
@@ -122,7 +127,9 @@ public class EditProfileDAO {
                                         .putExtra("USER_PROFILE_ID", vo.getUserProfileID())
                                         .putExtra("BIRTHDAY", vo.getBirthday())
                                         .putExtra("COUNTRY", vo.getCountry())
-                                        .putExtra("DEALER", dealer));
+                                        .putExtra("DEALER", dealer)
+                                        .putExtra("GALLERY_ID",vo.getImageId())
+                                        .putExtra("FROM_EDIT_BUTTON",fromEditButton));
                                 ((Activity) context).finish();
                             }
                             if(isChangePassword && !isChangeProfile){
@@ -156,7 +163,7 @@ public class EditProfileDAO {
             if(null != vo.getDealer()) {
                 userProfileParam.put("dealer", Integer.parseInt(vo.getDealer()));
             }
-            if(vo.getImageId() != null){
+            if(!"".equals(vo.getImageId()) || null != vo.getImageId()){
                 userProfileParam.put("gallery_id", Integer.parseInt(vo.getImageId()));
             }
             if (vo.isChangePassword()) {
@@ -166,7 +173,7 @@ public class EditProfileDAO {
             }
             se = new StringEntity(userProfileParam.toString());
         } catch (Exception e) {
-            globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+            globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
         }
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Authorization", accessToken));
@@ -182,11 +189,16 @@ public class EditProfileDAO {
                             if (null != data) {
                                 String fullName = data.getString("first_name") + " " + data.getString("last_name");
                                 String email = data.getString("email");
-                                globalMessageBox(context, SUCCESS_EDIT_PROFILE_MSG, EDIT_PROFILE_TITLE, MSG_BOX_SUCCESS);
+                                if(!vo.isChangePassword()) {
+                                    globalMessageBox(context, SUCCESS_EDIT_PROFILE_MSG, EDIT_PROFILE_TITLE, MSG_BOX_SUCCESS,new AlertDialog.Builder(context).create());
+                                }
+                                else {
+                                    globalMessageBox(context, SUCCESS_EDIT_PASSWORD_MSG, EDIT_PROFILE_TITLE, MSG_BOX_SUCCESS,new AlertDialog.Builder(context).create());
+                                }
                                 save("FULL_NAME", fullName, context);
                                 save("EMAIL", email, context);
                             } else {
-                                globalMessageBox(context, ERROR_EDIT_PROFILE_MSG, EDIT_PROFILE_TITLE, MSG_BOX_ERROR);
+                                globalMessageBox(context, ERROR_EDIT_PROFILE_MSG, EDIT_PROFILE_TITLE, MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
                             }
                         } catch (JSONException e) {
 
@@ -195,13 +207,13 @@ public class EditProfileDAO {
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        globalMessageBox(context,responseString,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                        globalMessageBox(context,responseString,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
 //                                showNotifError(context, ((Activity) context).findViewById(R.id.notif_message), responseString);
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        globalMessageBox(context,errorResponse.toString(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                        globalMessageBox(context,errorResponse.toString(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
                     }
                 });
 
@@ -241,15 +253,15 @@ public class EditProfileDAO {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable,JSONArray errorResponse) {
-                            globalMessageBox(context,errorResponse.toString(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                            globalMessageBox(context,errorResponse.toString(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
                         }
                         @Override
                         public void onFailure(int statusCode, Header[] headers,String errorResponse, Throwable throwable) {
-                            globalMessageBox(context,errorResponse,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                            globalMessageBox(context,errorResponse,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
                         }
                     });
         } catch (Exception e) {
-            globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+            globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
         }
     }
 

@@ -1,27 +1,20 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.home;
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Location;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.common.api.Api;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,13 +31,7 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
-import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
-import lockscreen.myoneworld.com.myoneworldlockscreen.notification.NotificationDAO;
-
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_OCCURED;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_OCCURED_SIGN_IN;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EXPIRED_LOG_IN;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_NOTIFICATION_MY_CRAZY_SALE_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_WALLET_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_WALLET_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
@@ -64,9 +51,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCAT
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.loadProfilePic;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.rePatternDate;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.notification.NotificationDAO.getCountUnread;
 
 public class HomeDAO {
@@ -107,14 +92,14 @@ public class HomeDAO {
                             loadProfilePic(context,urlPictureSquare,profilePic,R.drawable.com_facebook_profile_picture_blank_square);
                         }
                         if(!userId.equalsIgnoreCase(getValueString("USER_ID",context))){
-                            Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING);
+                            Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
                         }else{
-                            if(getValueString("FULL_NAME",context).contains("DEFAULT")
-                                    || getValueString("EMAIL",context).contains("DEFAULT")
+                            if(user_information.getString("full_name").contains("DEFAULT")
+                                    || serverResp.getString("email").contains("DEFAULT")
                                     || user_information.getString("address").contains("DEFAULT")){
                                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                                 EditProfileDAO dao = new EditProfileDAO();
-                                dao.getUserProfile(context,getValueString("ACCESS_TOKEN",context),false,false);
+                                dao.getUserProfile(context,getValueString("ACCESS_TOKEN",context),false,false,false);
                             }
                             else{
                                 fullName.setText(getValueString("FULL_NAME",context));
@@ -122,22 +107,22 @@ public class HomeDAO {
                             }
                         }
                     } catch (Exception e) {
-                        Utility.globalMessageBox(context,e.getMessage(),EXPIRED_LOG_IN,MSG_BOX_WARNING);
+                        Utility.globalMessageBox(context,e.getMessage(),EXPIRED_LOG_IN,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
                     }
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING);
+                    Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING);
+                    Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
                 }
             });
         }catch (Exception e){
-            Utility.globalMessageBox(context,e.getMessage(),EXPIRED_LOG_IN,MSG_BOX_WARNING);
+            Utility.globalMessageBox(context,e.getMessage(),EXPIRED_LOG_IN,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
         }
     }
     public static void sendLocation(String id, List<Address> addresses, Context context, String accessToken) {
@@ -167,11 +152,6 @@ public class HomeDAO {
                         e.printStackTrace();
                     }
 
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    System.out.println(responseString + " aaaaaaaaaaaaaaaaaa");
                 }
 
                 @Override
@@ -282,19 +262,19 @@ public class HomeDAO {
                                     getUserWallet(context,accessToken,POINTS,phpWallet,rafflePoints,view,util);
                                 }else{
                                     rafflePoints.setTypeface(setFont(context, GOTHIC_FONT_PATH));
-                                    rafflePoints.setText(RAFFLE_POINTS_WALLET + points + POINTS);
-                                    showMessageBox(true,context,view);
+                                    rafflePoints.setText(RAFFLE_POINTS_WALLET + points + " " + POINTS);
+                                    new Utility().showMessageBox(true,view,new AlertDialog.Builder(context).create());
 //                                    util.hideLoading();
                                 }
                             }catch (JSONException e){
-                                globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                                globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
                             }
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        globalMessageBox(context,responseString,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+                        globalMessageBox(context,responseString,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
                     }
                 });
     }

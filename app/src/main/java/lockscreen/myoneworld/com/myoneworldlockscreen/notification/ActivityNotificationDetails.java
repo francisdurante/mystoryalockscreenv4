@@ -9,10 +9,6 @@ import android.widget.TextView;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.webviews.ActivityWebView;
-
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYPHONE_SHOP;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_LIFE_URL;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_STORYA_URL;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.getValueString;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.save;
 

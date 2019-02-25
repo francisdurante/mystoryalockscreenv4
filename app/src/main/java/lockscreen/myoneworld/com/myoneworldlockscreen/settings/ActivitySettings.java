@@ -1,40 +1,22 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.settings;
 
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.net.TrafficStats;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.List;
-
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANCEL_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MAY_APPLY_SETTING_TITLE;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.OK_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SETTING_TEXT;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ENABLE_WIFI_AND_DATA;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PACKAGE_NAME;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGOUT;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGOUT_MSG;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_BUTTON;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.YES_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLUS_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEGATIVE_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DISABLE_LOCKSCREEN_MSG;
@@ -42,20 +24,13 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DISABLE_LO
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.dataChargesSettingMessageBox;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getDataConsumption;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showChangePasswordPopUp;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.stopJobService;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
-import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileVO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
-import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
 
 public class ActivitySettings extends AppCompatActivity {
 
@@ -170,7 +145,7 @@ public class ActivitySettings extends AppCompatActivity {
 //                save("WIFI_ONLY","",mContext);
 //                save("WIFI_OR_DATA","",mContext);
 //            }
-            globalMessageBox(mContext,"Wifi Only is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING);
+            globalMessageBox(mContext,"Wifi Only is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
             save("WIFI_ONLY","",mContext);
             save("WIFI_OR_DATA","",mContext);
             save("DO_NOT_DOWNLOAD","1",mContext);
@@ -190,7 +165,7 @@ public class ActivitySettings extends AppCompatActivity {
 //                save("WIFI_OR_DATA","",mContext);
 //
 //            }
-            globalMessageBox(mContext,"Wifi or Data is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING);
+            globalMessageBox(mContext,"Wifi or Data is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
             save("WIFI_ONLY","",mContext);
             save("WIFI_OR_DATA","",mContext);
             save("DO_NOT_DOWNLOAD","1",mContext);
@@ -214,83 +189,8 @@ public class ActivitySettings extends AppCompatActivity {
             }
         });
 
-        changePasswordText.setOnClickListener(v -> new EditProfileDAO().getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),true,false));
+        changePasswordText.setOnClickListener(v -> new EditProfileDAO().getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),true,false,false));
     }
-    private void showDialogBox(){
-//        LinearLayout layout = new LinearLayout(mContext);
-//        layout.setOrientation(LinearLayout.VERTICAL);
-//
-//        AlertDialog.Builder ab = new AlertDialog.Builder(mContext);
-//        ab.setIcon(mContext.getResources().getDrawable(R.drawable.new_logo_top));
-//        ab.setTitle(DATA_USAGE);
-//        final TextView et = new TextView(mContext);
-//        final TextView et2 = new TextView(mContext);
-//        et.setGravity(Gravity.LEFT);
-//        et.setPadding(35,0,0,10);
-//        et.setText(Message);
-//        String concat = "Estimate data usage of my|storya app\n" + getDataConsumption() + "\nDo you want to continue?";
-//        et2.setPadding(35,0,0,10);
-//        et.setGravity(Gravity.LEFT);
-//        et2.setTypeface(null,Typeface.BOLD);
-//        et2.setText(concat);
-//        layout.addView(et);
-//        layout.addView(et2);
-//        ab.setView(layout);
-//        ab.setCancelable(false);
-//        ab.setPositiveButton(OK_BUTTON, (dialog, which) -> {
-//            setting.setChecked(true);
-//            wifiOnly.setChecked(false);
-//            doNotDownload.setChecked(false);
-//            save("WIFI_OR_DATA","1",mContext);
-//            save("DO_NOT_DOWNLOAD","",mContext);
-//            save("WIFI_ONLY","",mContext);
-//        });
-//        ab.setNegativeButton(CANCEL_BUTTON, (dialog, which) -> {
-//            setting.setChecked(false);
-//            save("DO_NOT_DOWNLOAD","1",mContext);
-//            save("WIFI_OR_DATA","",mContext);
-//            save("WIFI_ONLY","",mContext);
-//        });
-//        AlertDialog a = ab.create();
-//        a.show();
-//        String message = "Estimate data usage of my|storya app\n" + getDataConsumption(mContext) + "\nDo you want to continue?";
-        Switch[] switches = {wifiAndData,wifiOnly,doNotDownload};
-        dataChargesSettingMessageBox(mContext,ENABLE_WIFI_AND_DATA,DATA_USAGE_MAY_APPLY_SETTING_TITLE,switches,MSG_BOX_WARNING);
-    }
-
-
-//    public void logout(View v){
-//        AlertDialog.Builder ab = new AlertDialog.Builder(mContext,R.style.AppCompatAlertDialogStyle);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            try {
-//                ab.setIcon(mContext.getResources().getDrawable(R.drawable.new_logo_top));
-//            }catch (Exception e){
-//
-//            }
-//        }
-//        ab.setTitle(LOGOUT);
-//        ab.setMessage(LOGOUT_MSG);
-//        ab.setPositiveButton(YES_BUTTON, (dialog, which) -> {
-////            save("SHOW_POP_UP_DATA_USAGE","0",mContext);
-//            save("USER_ID","",mContext);
-//            save("FULL_NAME","",mContext);
-//            save("EMAIL","",mContext);
-//            save("ACCESS_TOKEN","",mContext);
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                stopJobService(mContext);
-//            }
-//            stopService(new Intent(mContext,LockscreenService.class));
-//            startActivity(new Intent(mContext,ActivityLoginOptions.class));
-//            save("SERVICE", "0",mContext);
-//
-//            finish();
-//        });
-//        ab.setNegativeButton(NO_BUTTON, (dialog, which) -> {
-//
-//        });
-//        AlertDialog a = ab.create();
-//        a.show();
-//    }
     public void accountSettingClick(View v){
         if(accountSettingShow) {
             accountSettingLinear.setVisibility(View.GONE);
@@ -317,7 +217,7 @@ public class ActivitySettings extends AppCompatActivity {
             downloadSettingShow = !downloadSettingShow;
         }
         else{
-            globalMessageBox(mContext,DISABLE_LOCKSCREEN_MSG,DISABLE_LOCKSCREEN_TITLE,MSG_BOX_WARNING);
+            globalMessageBox(mContext,DISABLE_LOCKSCREEN_MSG,DISABLE_LOCKSCREEN_TITLE,MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
         }
     }
 

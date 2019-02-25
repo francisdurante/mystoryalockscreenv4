@@ -1,6 +1,7 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.home;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -61,7 +62,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 //                        activity.finish();
                     });
                     if("outdated".equalsIgnoreCase(getValueString("VERSION_ONLINE",context))){
-                        globalMessageBox(context,NEW_VERSION_MSG,NEW_VERSION_TITLE,MSG_BOX_WARNING);
+                        globalMessageBox(context,NEW_VERSION_MSG,NEW_VERSION_TITLE,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
                     }
                     HomeDAO dao = new HomeDAO(context,((Activity)context));
                     dao.checkIfValidLogin(getValueString("ACCESS_TOKEN",context),drawerLayout,fullName,email,profilePic);

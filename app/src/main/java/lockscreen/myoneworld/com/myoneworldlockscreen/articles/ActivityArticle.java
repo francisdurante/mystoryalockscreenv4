@@ -20,15 +20,12 @@ import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -42,7 +39,6 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 import com.google.android.gms.analytics.Tracker;
 import java.io.PrintWriter;
@@ -55,13 +51,10 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ARBERKLEY_
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ARTICLE_POPUP_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CLOUD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.COMIC_ARTICLE;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_MSG;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DONE_VIEWED_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_PLYAING_VIDEO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FACEBOOK_PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOOGLE_PACKAGE_NAME;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_BOLD_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INSTAGRAM_PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INTENT_SHARE_TITLE;
@@ -73,7 +66,6 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SHARING_IN
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SWIPE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER_PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.VIDEO_ARTICLE;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.WIFI;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.bookmarkComics;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.filePath;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.freeMemory;
@@ -82,18 +74,14 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.sendAnalyti
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isNetworkAvailable;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.filePathComics;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.generateErrorLog;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLEASE_WAIT;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANT_PLAY_ERROR_CLOUD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CANT_PLAY_ERROR;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.AnalyticsApplication;
-import lockscreen.myoneworld.com.myoneworldlockscreen.Constant;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 
@@ -215,7 +203,7 @@ public class ActivityArticle extends AppCompatActivity {
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetShareIntents.toArray(new Parcelable[]{}));
                 startActivityForResult(chooserIntent,1010);
             }else{
-                Utility.globalMessageBox(mContext,NO_SHARING_APP,SHARING_INTENT_TITLE,MSG_BOX_WARNING);
+                Utility.globalMessageBox(mContext,NO_SHARING_APP,SHARING_INTENT_TITLE,MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
                 finish();
             }
         }

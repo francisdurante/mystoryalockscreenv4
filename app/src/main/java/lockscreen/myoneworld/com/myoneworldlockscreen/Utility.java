@@ -625,14 +625,15 @@ public class Utility {
 //    }
 
     public static boolean isValidBirthday(String birthday) {
-        boolean accepted = false;
-        final SimpleDateFormat BIRTHDAY_FORMAT_PARSER = new SimpleDateFormat("Y/m/d");
+        boolean accepted;
+        final SimpleDateFormat BIRTHDAY_FORMAT_PARSER = new SimpleDateFormat("yyyy/MM/dd");
         Calendar calendar = Calendar.getInstance();
         BIRTHDAY_FORMAT_PARSER.setLenient(false);
         try {
             calendar.setTime(BIRTHDAY_FORMAT_PARSER.parse(birthday));
             accepted = true;
-        } catch (ParseException e) {
+        } catch (Exception e) {
+            accepted = false;
         }
         return accepted;
     }
@@ -672,14 +673,14 @@ public class Utility {
                 mDialog.dismiss();
 
             });
-            showMessageBox(false, context, inflatedView);
+            new Utility().showMessageBox(false, inflatedView, new AlertDialog.Builder(context).create());
         } else {
             response[0] = true;
         }
         return response[0];
     }
 
-    public static void globalMessageBox(Context context, String Message, String Title, @Nullable String type) {
+    public static void globalMessageBox(Context context, String Message, String Title, @Nullable String type, AlertDialog mDialog) {
 
         Typeface font = setFont(context, GOTHIC_FONT_PATH);
         AlertDialog.Builder ab = new AlertDialog.Builder(context, R.style.AppCompatAlertDialogStyle);
@@ -726,7 +727,7 @@ public class Utility {
                         save("SHOW_POP_UP_DATA_USAGE", "0", context);
                     mDialog.dismiss();
                 });
-                showMessageBox(false, context, inflatedView);
+                new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
             }
         } else if (Title.equalsIgnoreCase(NEW_VERSION_TITLE)) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -763,7 +764,7 @@ public class Utility {
             generalMessage.setTypeface(font);
             generalMessage.setText(Message);
 
-            showMessageBox(false, context, inflatedView);
+            new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
 
         } else if (Title.equalsIgnoreCase(AUTO_START_MSG_TITLE)) {
             if ("".equalsIgnoreCase(getValueString("AUTO_START", context)) && checkManufacturer()) {
@@ -797,7 +798,7 @@ public class Utility {
                 generalMessage.setTypeface(font);
                 generalMessage.setText(Message);
 
-                showMessageBox(false, context, inflatedView);
+                new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
             }
         } else if (Title.equalsIgnoreCase(EXPIRED_LOG_IN)) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -838,7 +839,7 @@ public class Utility {
             generalMessage.setTypeface(font);
             generalMessage.setText(Message);
 
-            showMessageBox(false, context, inflatedView);
+            new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
         } else if (Title.equalsIgnoreCase(LOGGING_OUT_TITLE)) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null, false);
@@ -884,7 +885,7 @@ public class Utility {
             generalMessage.setTypeface(font);
             generalMessage.setText(Message);
 
-            showMessageBox(false, context, inflatedView);
+            new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
         } else if (Title.equalsIgnoreCase(EDIT_PROFILE_TITLE)) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null, false);
@@ -917,7 +918,7 @@ public class Utility {
             generalMessage.setTypeface(font);
             generalMessage.setText(Message);
 
-            showMessageBox(false, context, inflatedView);
+            new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
         } else if(Title.equals(CHANGE_PROFILE_PIC_TITLE)){
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null, false);
@@ -954,7 +955,7 @@ public class Utility {
                 mDialog.dismiss();
             });
 
-            showMessageBox(true, context, inflatedView);
+           new Utility().showMessageBox(true, inflatedView,mDialog);
         }
         else {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -977,7 +978,7 @@ public class Utility {
             generalMessage.setText(Message);
             generalMessage.setTypeface(font);
 
-            showMessageBox(true, context, inflatedView);
+            new Utility().showMessageBox(true, inflatedView,new AlertDialog.Builder(context).create());
             new CountDownTimer(3000, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -1041,8 +1042,7 @@ public class Utility {
 
     }
 
-    public static void showMessageBox(boolean cancelable, Context context, View view) {
-        mDialog = new AlertDialog.Builder(context).create();
+    public void showMessageBox(boolean cancelable, View view, AlertDialog mDialog) {
         mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         mDialog.setView(view);
         mDialog.setCanceledOnTouchOutside(cancelable);
@@ -1167,7 +1167,7 @@ public class Utility {
             generalMessage.setTypeface(font);
             generalMessage.setText(message);
 
-            showMessageBox(false, context, inflatedView);
+            new Utility().showMessageBox(false,inflatedView,new AlertDialog.Builder(context).create());
         }
     }
 
@@ -1269,7 +1269,7 @@ public class Utility {
             activity.finish();
         });
         ok.setOnClickListener(v -> mDialog.dismiss());
-        showMessageBox(false, context, inflatedView);
+        new Utility().showMessageBox(false,inflatedView,new AlertDialog.Builder(context).create());
     }
 
     public static void showChangePasswordPopUp(Context context, EditProfileVO vo) {
@@ -1379,7 +1379,7 @@ public class Utility {
                 new EditProfileDAO().sendEditProfile(context, vo, getValueString("ACCESS_TOKEN", context));
             }
         });
-        showMessageBox(false, context, inflatedView);
+        new Utility().showMessageBox(false,inflatedView,new AlertDialog.Builder(context).create());
     }
 
     public static int getCountryID(String countryName, Context context) {
@@ -1405,21 +1405,19 @@ public class Utility {
         return id;
     }
 
-    public static void showPopUpProfilePicture(Context context, EditProfileVO vo) {
+    public static void showPopUpProfilePicture(Context context, EditProfileVO vo,AlertDialog mDialog) {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View inflatedView = layoutInflater.inflate(R.layout.show_profile_pic_layout, null, false);
         profilePic = inflatedView.findViewById(R.id.show_profile_pic);
         Button save = inflatedView.findViewById(R.id.save_profile_pic);
         Button cancel = inflatedView.findViewById(R.id.close_edit_profile_pic);
-
+        cancel.setOnClickListener(v -> mDialog.dismiss());
         loadProfilePic(context, vo.getImageProfileUrl(), profilePic, R.drawable.com_facebook_profile_picture_blank_square);
 
         Typeface font = setFont(context, GOTHIC_FONT_PATH);
         save.setTypeface(font);
         cancel.setTypeface(font);
-        profilePic.setOnClickListener(v -> {
-            globalMessageBox(context,"",CHANGE_PROFILE_PIC_TITLE,null);
-        });
+        profilePic.setOnClickListener(v -> globalMessageBox(context,"",CHANGE_PROFILE_PIC_TITLE,null,new AlertDialog.Builder(context).create()));
         save.setOnClickListener(v -> {
             EditProfileDAO dao = new EditProfileDAO();
             dao.editProfilePic(context,getRealPathFromUri(context,Uri.parse(profilePicPath)),getValueString("ACCESS_TOKEN",context),vo);
@@ -1427,8 +1425,8 @@ public class Utility {
 //
 //        selectPhoto.setOnClickListener(v -> choosePhotoFromGallary(context));
 
-        cancel.setOnClickListener(v -> mDialog.dismiss());
-        showMessageBox(true, context, inflatedView);
+
+        new Utility().showMessageBox(true, inflatedView,mDialog);
     }
 
     public static void loadProfilePic(Context context, String url, ImageView profilePic, int defaultPicOrError) {
@@ -1517,7 +1515,7 @@ public class Utility {
         try {
             versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         }catch (PackageManager.NameNotFoundException e){
-            globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR,MSG_BOX_ERROR);
+            globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR,MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
         }
         return  "Version: " + versionName;
     }

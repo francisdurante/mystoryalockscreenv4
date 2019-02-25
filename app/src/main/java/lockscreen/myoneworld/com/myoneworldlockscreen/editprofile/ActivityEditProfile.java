@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -24,12 +23,10 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
-import lockscreen.myoneworld.com.myoneworldlockscreen.registration.ActivityRegister;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_BIRTHDAY;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
@@ -60,12 +57,14 @@ public class ActivityEditProfile extends AppCompatActivity {
     private Typeface font;
     private ArrayAdapter<String> adapter;
     private String dealer;
+    private String galleryId;
     private DatePickerDialog.OnDateSetListener mDatePicker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         font = setFont(mContext,GOTHIC_FONT_PATH);
         super.onCreate(savedInstanceState);
-        editProfilePopUp(mContext);
+        if(!getIntent().getExtras().getBoolean("FROM_EDIT_BUTTON"))
+            editProfilePopUp(mContext);
         setContentView(R.layout.activity_edit_profile);
         spinnerCountry = findViewById(R.id.country_edit);
         spinnerCountryItems();
@@ -110,6 +109,7 @@ public class ActivityEditProfile extends AppCompatActivity {
         birthday = intent.getExtras().getString("BIRTHDAY");
         country = intent.getExtras().getString("COUNTRY");
         dealer = intent.getExtras().getString("DEALER");
+        galleryId = null == intent.getExtras().getString("GALLERY_ID") ? "" : intent.getExtras().getString("GALLERY_ID");
 
         tvFirstName = findViewById(R.id.first_name_edit);
         tvLastName = findViewById(R.id.last_name_edit);
@@ -178,6 +178,7 @@ public class ActivityEditProfile extends AppCompatActivity {
                 vo.setPhoneNumber(tvPhoneNumber.getText().toString());
                 vo.setAddress(tvAddress.getText().toString());
                 vo.setDealer(dealer);
+                vo.setImageId(galleryId);
 
                 dao.sendEditProfile(mContext,vo,getValueString("ACCESS_TOKEN",mContext));
             }else{

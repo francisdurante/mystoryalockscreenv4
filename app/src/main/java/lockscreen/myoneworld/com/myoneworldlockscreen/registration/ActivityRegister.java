@@ -16,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -53,6 +54,7 @@ public class ActivityRegister extends AppCompatActivity {
     private EditText phoneNumber = null;
     private EditText address = null;
     private EditText birthday = null;
+    private ImageButton birthdayIcon = null;
     private Button submit = null;
     private TextView signupHeader = null;
     private TextView textNotif = null;
@@ -86,6 +88,7 @@ public class ActivityRegister extends AppCompatActivity {
         phoneNumber = findViewById(R.id.phone_number);
         signupHeader = findViewById(R.id.text_registration);
         textNotif = findViewById(R.id.notif_message);
+        birthdayIcon = findViewById(R.id.birthday_icon);
         Animation myanim = AnimationUtils.loadAnimation(this, R.anim.right_enter);
         firstName.startAnimation(myanim);
         lastName.startAnimation(myanim);
@@ -255,7 +258,7 @@ public class ActivityRegister extends AppCompatActivity {
             }
         });
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            birthday.setOnClickListener(v -> {
+            birthdayIcon.setOnClickListener(v -> {
                 Calendar cal = Calendar.getInstance();
                 int year = cal.get(Calendar.YEAR);
                 int day = cal.get(Calendar.DAY_OF_MONTH);
@@ -302,7 +305,7 @@ public class ActivityRegister extends AppCompatActivity {
                 vo.setLastName(lastName.getText().toString());
                 vo.setEmail(email.getText().toString());
                 vo.setPassword(password.getText().toString());
-                vo.setContact(phoneNumber.getText().toString());
+                vo.setContact(phoneNumber.getText().toString()); //(YYYY/MM/DD)
                 vo.setBirthday(birthday.getText().toString().equals("") ? DEFAULT_BIRTHDAY : birthday.getText().toString());
                 vo.setCountry(DEFAULT_COUNTRY);
                 vo.setAddress(DEFAULT_ADDRESS);

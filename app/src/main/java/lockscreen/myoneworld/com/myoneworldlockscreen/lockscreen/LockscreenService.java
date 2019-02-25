@@ -9,16 +9,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.IntentCompat;
-import android.widget.RelativeLayout;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYONEWORLD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.ActivityLockscreen.ads_count;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.ActivityLockscreen.totalSize;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.PhoneStateReceiver.offScreen;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
-import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
 
 public class LockscreenService extends Service {

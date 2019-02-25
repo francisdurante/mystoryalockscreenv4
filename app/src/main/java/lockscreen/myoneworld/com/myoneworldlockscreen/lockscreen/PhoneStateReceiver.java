@@ -30,7 +30,6 @@ public class PhoneStateReceiver extends BroadcastReceiver {
             if(onCall || onRinging){
                 onCallOrRinging = true;
             }
-            System.out.println("CALL STATUS IN CALL : " + onCallOrRinging);
             if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) && !onCallOrRinging) {
                 offScreen = isPhoneIdle;
                 if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {

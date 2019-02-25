@@ -111,8 +111,15 @@
                    android:id="@+id/version"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:gravity="start"
-                   android:text="POWERED BY DIGIMA WEB SOLUTIONS INC." />
+                   android:gravity="start" />
+               <TextView
+                   android:id="@+id/test_version"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:gravity="end"
+                   android:textColor="#e40c0c"
+                   android:text="@string/development_mode"
+                   android:visibility="gone"/>
            </LinearLayout>
 
        </android.support.design.widget.NavigationView>

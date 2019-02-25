@@ -10,7 +10,7 @@ public class Constant {
     public static final String SEND_LOCATION_LIVE = "https://api.myoneworld.tech/api/mystory/location";
     public static final String MY_STORYA_DELETED_CONTENT = "https://api.myoneworld.tech/api/front/story?archived=1&showAll=1";
     public static final String MYPHONE_SHOP = "https://shop.myphone.com.ph";
-    public static final String MY_LIFE_URL = "https://mylifestyle.tech";
+    public static final String MY_LIFE_URL = "http://mylifestyle.tech";
     public static final String MY_STORYA_URL = "https://mystorya.tech";
     public static final String SEND_COMMENT_LIVE = "https://api.myoneworld.tech/api/mystory/send_comment";
     public static final String GET_COMMENT_STORY_ID_LIVE = "https://api.myoneworld.tech/api/mystory/get_comment";
@@ -48,6 +48,7 @@ public class Constant {
     public static final String CHANGE_PROFILE_PIC_TITLE = "Choose option";
     public static final String EDIT_PROFILE_TITLE = "Edit Profile";
     public static final String SUCCESS_EDIT_PROFILE_MSG = "Your profile was successfully updated.";
+    public static final String SUCCESS_EDIT_PASSWORD_MSG = "Your password has been changed successfully!";
     public static final String ERROR_EDIT_PROFILE_MSG = "Something went wrong in updating profile.";
     public static final String EXPIRED_LOG_IN = "Expired Login";
     public static final String LOGGING_OUT_TITLE = "Logging Out";
@@ -66,10 +67,11 @@ public class Constant {
     public static final String ENABLE_WIFI_AND_DATA = "Enabling Mobile data or Wifi setting may apply data charges.\n";
     public static final String ERROR_PLYAING_VIDEO = "Error in Playing Video";
     public static final String DATA_USAGE_MAY_APPLY_SETTING_TITLE = "Data Charges May Apply";
-    public static final String EDIT_PROFILE_MESSAGE = "Please fill in the required information.";
+    public static final String EDIT_PROFILE_MESSAGE = "Before you proceed to mystorya home page, please fill in the necessary information first.";
     public static final String INCORRECT_PASSWORD = "Incorrect email address or password.";
     public static final String EMAIL_ALREADY_REGISTERED = "This email address was already registered using different social or manual login.";
     public static final String ERROR_OCCURED = "ERROR OCCURED.";
+    public static final String DEVELOPMENT_VERSION = "DEVELOPMENT VERSION";
 
     public static final String CONSUMER_KEY = "F64atV1oWBXFAKhwn6tyktWMA";
     public static final String CONSUMER_SECRET = "FgOylOPUnzV9g063MbvLlA6sTTaHxq0kpPDLUK2CtGuaNcnbyd";
@@ -93,7 +95,7 @@ public class Constant {
     public static final String BIRTHDAY_REQUIRED = "Birthday Field is Required";
     public static final String ADDRESS_RQUIRED = "Address Field is Required";
     public static final String INVALID_EMAIL = "Invalid Email Address"; //@
-    public static final String INVALID_DATE = "Invalid date format. Need date format(YYYY-MM-DD)";
+    public static final String INVALID_DATE = "Invalid date format. Need date format(YYYY/MM/DD)";
     public static final String REGISTER_SUCCESS = "Registration Successful!\nYou will now be redirected to login page.";
     public static final String FILL_REQUIRED = "Please fill all the required fields.";
     public static final String NO_PHOTO = "No photo is selected or capture. Please try again.";

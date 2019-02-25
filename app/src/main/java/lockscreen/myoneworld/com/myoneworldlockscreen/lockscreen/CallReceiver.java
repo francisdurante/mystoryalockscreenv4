@@ -9,7 +9,7 @@ public class CallReceiver extends PhoneCallReceiver {
 
     @Override
     protected void onIncomingCallStarted(Context ctx, String number, Date start) {
-        System.out.println(" aaaaaaaaaaaa123"); onCall = true;
+        onCall = true;
     }
 
     @Override

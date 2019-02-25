@@ -47,6 +47,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_KEY;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOOGLE_BUTTON;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MYSTORYA_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
@@ -91,7 +92,7 @@ public class ActivityLoginOptions extends AppCompatActivity {
             Twitter.initialize(config);
 
             super.onCreate(savedInstanceState);
-            font = Typeface.createFromAsset(getAssets(), "font/Century_Gothic.ttf");
+            font = Typeface.createFromAsset(getAssets(), GOTHIC_FONT_PATH);
             setContentView(R.layout.activity_login_options);
             linearLayout = findViewById(R.id.linear_login_option);
             errorText = findViewById(R.id.login_text);

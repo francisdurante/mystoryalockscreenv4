@@ -27,7 +27,6 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_FI
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_LAST_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_ADDRESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_CONTACT;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ERROR;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLEASE_CHECK_CONNECTION;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REGISTER_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER;

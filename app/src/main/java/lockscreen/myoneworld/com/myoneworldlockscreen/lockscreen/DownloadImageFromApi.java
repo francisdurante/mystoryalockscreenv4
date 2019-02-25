@@ -1,7 +1,6 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;

@@ -1,5 +1,6 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.notification;
 
+import android.app.AlertDialog;
 import android.content.Context;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -17,7 +18,6 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
-import lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
@@ -90,7 +90,7 @@ public class NotificationDAO {
 
             se = new StringEntity(userProfileParam.toString());
         } catch (Exception e) {
-            globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR);
+            globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
         }
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Authorization", accessToken));

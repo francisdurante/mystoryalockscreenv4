@@ -2,7 +2,6 @@ package lockscreen.myoneworld.com.myoneworldlockscreen.home;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,75 +23,46 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import lockscreen.myoneworld.com.myoneworldlockscreen.BuildConfig;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
-import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.ActivityEditProfile;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
-import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileVO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
-import lockscreen.myoneworld.com.myoneworldlockscreen.login.ActivityLoginOptions;
 import lockscreen.myoneworld.com.myoneworldlockscreen.notification.NotificationDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.settings.ActivitySettings;
 import lockscreen.myoneworld.com.myoneworldlockscreen.webviews.ActivityWebView;
 
 import android.support.v4.view.ViewPager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.share.Sharer;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareDialog;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.DefaultLogger;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterConfig;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.zip.Inflater;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CAMERA;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_KEY;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CONSUMER_SECRET;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEVELOPMENT_VERSION;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GALLERY;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGGING_OUT_MESSAGE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGGING_OUT_TITLE;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGOUT;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGOUT_MSG;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_ERROR;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NO_PHOTO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CODE_CAMERA;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CODE_READ_STORAGE;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.YES_BUTTON;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getVersionName;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showPopUpProfilePicture;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showPopUpWallet;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.stopJobService;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.createNotificationChannel;
@@ -140,7 +110,7 @@ public class ActivityHome extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         initDrawer();
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            globalMessageBox(mContext, ENABLE_AUTO_START_MSG, AUTO_START_MSG_TITLE, MSG_BOX_WARNING);
+            globalMessageBox(mContext, ENABLE_AUTO_START_MSG, AUTO_START_MSG_TITLE, MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
         }
         init();
     }
@@ -149,7 +119,7 @@ public class ActivityHome extends AppCompatActivity {
         try {
             switch (updateStatus) {
                 case "outdated":
-                    globalMessageBox(mContext, NEW_VERSION_MSG, NEW_VERSION_TITLE, MSG_BOX_WARNING);
+                    globalMessageBox(mContext, NEW_VERSION_MSG, NEW_VERSION_TITLE, MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
                     break;
             }
         } catch (Exception e) {
@@ -316,10 +286,16 @@ public class ActivityHome extends AppCompatActivity {
         TextView fullName = navigationView.getHeaderView(0).findViewById(R.id.full_name);
         TextView email = navigationView.getHeaderView(0).findViewById(R.id.email_side);
         ImageView profilePicture = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
+        Button editProfile = navigationView.getHeaderView(0).findViewById(R.id.edit_profile_button);
+
+        editProfile.setOnClickListener(v -> {
+            EditProfileDAO dao = new EditProfileDAO();
+            dao.getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),false,false,true);
+        });
         new NotificationDAO().getAllUnreadNotificationInMyCrazySale(mContext, getValueString("ACCESS_TOKEN", mContext));
         profilePicture.setOnClickListener(v -> {
             EditProfileDAO dao = new EditProfileDAO();
-            dao.getUserProfile(mContext, getValueString("ACCESS_TOKEN", mContext), false, true);
+            dao.getUserProfile(mContext, getValueString("ACCESS_TOKEN", mContext), false, true,false);
         });
         Typeface font = setFont(mContext, GOTHIC_FONT_PATH);
         settings = navigationView.getMenu().findItem(R.id.setting_drawer);
@@ -328,9 +304,14 @@ public class ActivityHome extends AppCompatActivity {
         wallet = navigationView.getMenu().findItem(R.id.wallet);
         header = findViewById(R.id.header);
         TextView versionText = findViewById(R.id.version);
+        TextView testText = findViewById(R.id.test_version);
+        testText.setTypeface(font);
         versionText.setTypeface(font);
-        versionText.setText(getVersionName(mContext));
 
+        versionText.setText(getVersionName(mContext));
+        if (BuildConfig.DEBUG) {
+            testText.setVisibility(View.VISIBLE);
+        }
         settings.setOnMenuItemClickListener(menuClick);
         aboutUs.setOnMenuItemClickListener(menuClick);
         logout.setOnMenuItemClickListener(menuClick);
@@ -355,7 +336,7 @@ public class ActivityHome extends AppCompatActivity {
                 finish();
                 break;
             case R.id.logout_side:
-                globalMessageBox(mContext, LOGGING_OUT_MESSAGE, LOGGING_OUT_TITLE, MSG_BOX_WARNING);
+                globalMessageBox(mContext, LOGGING_OUT_MESSAGE, LOGGING_OUT_TITLE, MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
                 break;
             case R.id.wallet:
                 showPopUpWallet(mContext, getValueString("ACCESS_TOKEN", mContext));
@@ -370,11 +351,11 @@ public class ActivityHome extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
                 if (null != photo) {
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+//                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+//                    photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                     Utility.customLoadProfilePic(mContext, photo, R.drawable.com_facebook_profile_picture_blank_square);
                 } else {
-                    globalMessageBox(mContext, NO_PHOTO, MSG_BOX_ERROR.toUpperCase(), MSG_BOX_ERROR);
+                    globalMessageBox(mContext, NO_PHOTO, MSG_BOX_ERROR.toUpperCase(), MSG_BOX_ERROR,new AlertDialog.Builder(mContext).create());
                 }
             }
         }

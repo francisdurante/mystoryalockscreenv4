@@ -223,6 +223,8 @@ public class ArticleDAO {
 
                         listView.setAdapter(new ArrayAdapter<Spanned>(activity,
                                 R.layout.comment_list_item, android.R.id.text1, comment));
+
+
                     }
 
                 } catch (JSONException e) {

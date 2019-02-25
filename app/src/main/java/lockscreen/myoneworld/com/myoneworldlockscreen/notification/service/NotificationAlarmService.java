@@ -9,11 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Message;
-import android.support.v4.app.NotificationCompat;
-
-import java.util.Date;
 
 import static android.app.NotificationManager.IMPORTANCE_DEFAULT;
 
@@ -56,7 +51,6 @@ public class NotificationAlarmService extends BroadcastReceiver {
         stackBuilder.addParentStack(ActivityNotificationDetails.class);
         stackBuilder.addNextIntent(notificationIntent);
 
-//        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT|PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification.Builder builder = new Notification.Builder(context);
         Notification notification = builder.setContentTitle("my|ONEworld Notification")
@@ -69,14 +63,7 @@ public class NotificationAlarmService extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setChannelId(CHANNEL_ID);
         }
-//        Intent notificationIntent = new Intent(context, ActivityNotificationDetails.class);
-//        notificationIntent.putExtra("NOTIFICATION_ID", intent.getExtras().getInt("NOTIF_ID"));
-//        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        PendingIntent pendingNotificationIntent = PendingIntent.getActivity(context,notificationIndex,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-//        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-//        notification.setLatestEventInfo(getApplicationContext(), notificationTitle, intent.getExtras().getInt("NOTIF_ID"), pendingNotificationIntent);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//        PendingIntent pendingNotificationIntent = PendingIntent.getActivity(context,intent.getExtras().getInt("NOTIF_ID"),notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,

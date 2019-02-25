@@ -24,6 +24,7 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/profile_picture"
         android:src="@drawable/ic_launcher"
         android:layout_width="30dp"
         android:layout_height="30dp"/>
