@@ -7,8 +7,9 @@
     <string name="fb_login_protocol_scheme">fb2020717174654511</string>
     <string name="server_client_id">881704997121-67phn1rapqgr07o70hicg0akff52aa4b.apps.googleusercontent.com</string>
     <string name="setting">Settings</string>
+    <string name="setting_all_caps">SETTINGS</string>
     <string name="show_hide_data_usage">HIDE / SHOW DATA USAGE</string>
-    <string name="story_download_setting">my|storya Article Download Settings</string>
+    <string name="story_download_setting">my|storya Article Stream Settings</string>
     <string name="setting_sign">+</string>
     <string name="wifi_mobile"><b>MOBILE DATA OR WIFI</b>\n<font size='10'><i>Data charges may apply</i></font></string>
     <string name="wifi_only"><b>WIFI ONLY</b></string>
@@ -16,6 +17,7 @@
     <string name="account_setting">Account Settings</string>
     <string name="change_password"><b>CHANGE PASSWORD</b></string>
     <string name="logout_login"><b>LOG OUT</b></string>
+    <string name="logout">LOG OUT</string>
     <string name="time_hour">00</string>
     <string name="time_min">00</string>
     <string name="date">0-0-0000</string>
@@ -31,7 +33,6 @@
     <string name="address">Address</string>
     <string name="submit">SUBMIT</string>
     <string name="create_account">CREATE ACCOUNT</string>
-    <string name="edit_profile">EDIT PROFILE</string>
     <string name="briefing_text"><font color='#FFFFFFFF'>\nSharing uplifting stories\nto influence the people,\nas they inspire us.\n\n</font><font color='#1580e3'><b>WRITE. INSPIRE. CHANGE</b></font>
     </string>
     <string name="dont_show_again">Don\'t show this again</string>
@@ -59,10 +60,13 @@
     <string name="take_photo">TAKE PHOTO</string>
     <string name="close">CLOSE</string>
     <string name="sign_in">Sign in</string>
-    <string name="php_wallet">PHP WALLET</string>
+    <string name="ring_ph">RING.PH</string>
     <string name="raffle_points">RAFFLE POINTS</string>
     <string name="wallet_details">Wallet Details</string>
     <string name="development_mode">Development Mode</string>
+    <string name="edit_profile">EDIT PROFILE</string>
+    <string name="my_wallet">MY WALLET</string>
+    <string name="about_us">ABOUT US</string>
 
 
 </resources>

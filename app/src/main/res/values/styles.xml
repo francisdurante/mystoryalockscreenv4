@@ -35,4 +35,7 @@
     <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
         <item name="android:textColor">#FFF</item>
     </style>
+    <style name="GothicFont" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@assets/font/Gothicbold.ttf</item>
+    </style>
 </resources>

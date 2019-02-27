@@ -40,7 +40,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MISMATCH_P
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_COUNTRY;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_ADDRESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_BIRTHDAY;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showTopNotification;
 
 public class ActivityRegister extends AppCompatActivity {
 
@@ -282,21 +282,21 @@ public class ActivityRegister extends AppCompatActivity {
         address.setVisibility(View.INVISIBLE);
         submit.setOnClickListener(v -> {
             if (firstName.getText().toString().equals("")) {
-                showNotifError(mContext,textNotif,FIRST_NAME_REQUIRED);
+                showTopNotification(mContext,textNotif,FIRST_NAME_REQUIRED);
             } else if (lastName.getText().toString().equals("")) {
-                showNotifError(mContext,textNotif,LAST_NAME_REQUIRED);
+                showTopNotification(mContext,textNotif,LAST_NAME_REQUIRED);
             } else if (email.getText().toString().equals("")) {
-                showNotifError(mContext,textNotif,EMAIL_REQUIRED);
+                showTopNotification(mContext,textNotif,EMAIL_REQUIRED);
             } else if (password.getText().length() < 8) {
-                showNotifError(mContext,textNotif,ATLEAST_8_CHARACTERS);
+                showTopNotification(mContext,textNotif,ATLEAST_8_CHARACTERS);
             } else if (!birthday.getText().toString().equals("") && !isValidBirthday(birthday.getText().toString())) {
-                showNotifError(mContext,textNotif,INVALID_DATE);
+                showTopNotification(mContext,textNotif,INVALID_DATE);
             } else if (!password.getText().toString().equals(reTypePassword.getText().toString())) {
-                showNotifError(mContext,textNotif,MISMATCH_PASSWORD);
+                showTopNotification(mContext,textNotif,MISMATCH_PASSWORD);
             } else if (!email.getText().toString().contains("@")) {
-                showNotifError(mContext,textNotif,INVALID_EMAIL);
+                showTopNotification(mContext,textNotif,INVALID_EMAIL);
             } else if (phoneNumber.getText().toString().equals("")) {
-                showNotifError(mContext,textNotif,PHONE_NUMBER_REQUIRED);
+                showTopNotification(mContext,textNotif,PHONE_NUMBER_REQUIRED);
             } else {
 //                makeNotification("success",PLEASE_WAIT,ActivityRegister.this);
                 RegistrationDAO registrationDAO = new RegistrationDAO(textNotif);

@@ -16,6 +16,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -38,9 +39,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 import com.google.android.gms.analytics.Tracker;
+
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -52,6 +56,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ARTICLE_PO
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CLOUD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.COMIC_ARTICLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DONE_VIEWED_ARTICLE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DOWNLOADING_VIDEO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ERROR_PLYAING_VIDEO;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FACEBOOK_PACKAGE_NAME;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOOGLE_PACKAGE_NAME;
@@ -111,6 +116,8 @@ public class ActivityArticle extends AppCompatActivity {
     public static boolean dataUsageConfirm = false;
     private AlertDialog popUp;
     private String articleType = "video";
+    private Handler mHandler;
+    private SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +142,8 @@ public class ActivityArticle extends AppCompatActivity {
                 afterVideoLayout = findViewById(R.id.after_video_layout);
                 topMessage = findViewById(R.id.top_title_after_video);
                 midMessage = findViewById(R.id.mid_message);
+                seekBar = findViewById(R.id.seek_bar);
+
                 AnalyticsApplication application = (AnalyticsApplication) getApplication();
                 mTracker = application.getDefaultTracker();
                 videoView = findViewById(R.id.flipper);
@@ -240,6 +249,24 @@ public class ActivityArticle extends AppCompatActivity {
         articleType = type;
         Utility util = new Utility();
         if ("video".equals(type)) {
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if(fromUser) {
+                        videoView.seekTo(progress);
+                    }
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             android.widget.RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) videoView.getLayoutParams();
@@ -251,37 +278,83 @@ public class ActivityArticle extends AppCompatActivity {
                String path = "";
                 if (!getValueString("DO_NOT_DOWNLOAD",mContext).equals("1")) { // downloaded video played
                     String finalPath = path;
-                    videoView.setOnErrorListener((mp, what, extra) -> {
-                        videoStopped = mp.getCurrentPosition();
-                        videoView.pause();
-                        util.showLoading(mContext);
-                        videoView.setVideoPath(finalPath);
-                        videoView.seekTo(videoStopped);
-                        return true;
+
+                    videoView.setOnPreparedListener(mp -> {
+                        seekBar.setMax(videoView.getDuration());
+                        seekBar.postDelayed(onEverySecond, 1000);
+                        mp.setLooping(false);
+                        mp.start();
                     });
                     videoView.setOnCompletionListener(mp -> {
                         if (!getValueString("FULL_NAME",mContext).equals("")) {
                             bringToFrontLayout();
                             sendAnalytics(mContext,DONE_VIEWED_ARTICLE,article_id);
+                            seekBar.setVisibility(View.GONE);
+                            seekBar = null;
                         } else {
                             finish();
                         }
                     });
+                    videoView.setOnErrorListener((mp, what, extra) -> {
+                        videoStopped = mp.getCurrentPosition();
+                        videoView.pause();
+                        util.showLoading(mContext);
+//                        videoView.setVideoPath(finalPath);
+//                        videoView.seekTo(videoStopped);
+                        Utility.globalMessageBox(mContext,DOWNLOADING_VIDEO,MSG_BOX_WARNING.toUpperCase(),MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
+                        return true;
+                    });
                     if (!videoView.isPlaying()) {
                         path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
                         videoView.setVideoPath(path);
+
                         initial.setVisibility(View.GONE);
+                        if(videoStopped > 0) {
+                            videoView.setVideoPath(finalPath);
+                            videoView.seekTo(videoStopped);
+                        }
                         videoView.start();
                         util.hideLoading();
                     }
                     videoView.requestFocus();
-                    videoView.setOnPreparedListener(mp -> {
-                        mp.setLooping(false);
-                        mp.start();
-                    });
+
                 } else {// cloud video played
                     if (!isNetworkAvailable(mContext)) { // error no connection
                         errorOnPlayingVideo(CLOUD);
+                    }
+                    path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
+                    if(new File(path).exists()){
+                        String finalPath = path;
+                        videoView.setOnErrorListener((mp, what, extra) -> {
+                            videoStopped = mp.getCurrentPosition();
+                            videoView.pause();
+                            util.showLoading(mContext);
+                            videoView.setVideoPath(finalPath);
+                            videoView.seekTo(videoStopped);
+                            return true;
+                        });
+                        videoView.setOnCompletionListener(mp -> {
+                            if (!getValueString("FULL_NAME",mContext).equals("")) {
+                                bringToFrontLayout();
+                                sendAnalytics(mContext,DONE_VIEWED_ARTICLE,article_id);
+                                seekBar.setVisibility(View.GONE);
+                                seekBar = null;
+                            } else {
+                                finish();
+                            }
+                        });
+                        if (!videoView.isPlaying()) {
+                            path = Environment.getExternalStorageDirectory().toString() + "/Android/data/" + mContext.getPackageName() + "/mystory_articles/article_" + article_id + "/video_" + article_id + "_.mp4";
+                            videoView.setVideoPath(path);
+                            initial.setVisibility(View.GONE);
+                            videoView.start();
+                            util.hideLoading();
+                        }
+                        videoView.requestFocus();
+                        videoView.setOnPreparedListener(mp -> {
+                            mp.setLooping(false);
+                            mp.start();
+                        });
                     }
                     else {
                         try { // cloud loading
@@ -306,20 +379,22 @@ public class ActivityArticle extends AppCompatActivity {
             }
         } else if ("slide_show".equals(type)) {
             try {
+                seekBar.setVisibility(View.GONE);
                 if ("1".equals(getValueString("DO_NOT_DOWNLOAD", mContext))) {
                     ArticleDAO articleDAO = new ArticleDAO();
                     viewPager = findViewById(R.id.view_pager_article);
                     articleDAO.getComicsTypeImage(article_id, mContext,initial,textComment,likeButton,
                             shareButton,likeAnimation,viewPager,this,commentThings,afterVideoLayout);
                 }else{ // downloaded comics
-                    filePathComics(article_id,mContext);
+                    comicsPathArrayList = filePathComics(article_id,mContext);
                     if (!comicsPathArrayList.isEmpty()) {
-                        util.hideLoading();
+//                        util.hideLoading();
                         initial.setVisibility(View.GONE);
                         viewPager = findViewById(R.id.view_pager_article);
                         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(mContext, comicsPathArrayList,2);
                         viewPager.setAdapter(viewPagerAdapter);
                         int bookmark = Integer.parseInt("".equals(getValueString("bookmark_article_"+article_id,mContext)) ? "0" : getValueString("bookmark_article_"+article_id,mContext));
+
                         if(bookmark != 0)
                             viewPager.setCurrentItem(bookmark);
                         else
@@ -334,6 +409,7 @@ public class ActivityArticle extends AppCompatActivity {
                                 if (position == lastIdx) {
                                     bringToFrontLayout();
                                     sendAnalytics(mContext,DONE_VIEWED_ARTICLE,article_id);
+                                    save("bookmark_article_done_"+article_id,"DONE",mContext);
                                 }
                             }
 
@@ -362,7 +438,7 @@ public class ActivityArticle extends AppCompatActivity {
                 String s = writer.toString();
                 generateErrorLog(mContext, "err_log_" + getCurrentTime(), s);
                 finish();
-                util.hideLoading();
+//                util.hideLoading();
             }
         }
     }
@@ -515,7 +591,9 @@ public class ActivityArticle extends AppCompatActivity {
             videoView.setOnCompletionListener(mp -> {
                 if (!getValueString("FULL_NAME", mContext).equals("")) {
                     bringToFrontLayout();
-                    sendAnalytics(mContext,DONE_VIEWED_ARTICLE, article_id);
+                    sendAnalytics(mContext,DONE_VIEWED_ARTICLE,article_id);
+                    seekBar.setVisibility(View.GONE);
+                    seekBar = null;
                 } else {
                     finish();
                 }
@@ -542,7 +620,9 @@ public class ActivityArticle extends AppCompatActivity {
                 videoView.setOnCompletionListener(mp -> {
                     if (!getValueString("FULL_NAME", mContext).equals("")) {
                         bringToFrontLayout();
-                        sendAnalytics(mContext,DONE_VIEWED_ARTICLE, article_id);
+                        sendAnalytics(mContext,DONE_VIEWED_ARTICLE,article_id);
+                        seekBar.setVisibility(View.GONE);
+                        seekBar = null;
                     } else {
                         finish();
                     }
@@ -562,6 +642,8 @@ public class ActivityArticle extends AppCompatActivity {
         videoView.setOnPreparedListener(mp -> {
             initial.setVisibility(View.GONE);
             if(null != videoView) {
+                seekBar.setMax(videoView.getDuration());
+                seekBar.postDelayed(onEverySecond, 1000);
                 mp.setLooping(false);
                 videoView.start();
                 util.hideLoading();
@@ -618,5 +700,25 @@ public class ActivityArticle extends AppCompatActivity {
         popUp.setCancelable(cancelable);
         popUp.show();
     }
+
+    private Runnable onEverySecond=new Runnable() {
+
+        @Override
+        public void run() {
+
+            if(null != seekBar) {
+                if(seekBar.getProgress() == videoView.getDuration()) {
+                    seekBar.setVisibility(View.GONE);
+                }else {
+                    seekBar.setProgress(videoView.getCurrentPosition());
+                }
+            }
+            if(null != videoView) {
+                if (videoView.isPlaying()) {
+                    seekBar.postDelayed(onEverySecond, 1000);
+                }
+            }
+        }
+    };
 
 }

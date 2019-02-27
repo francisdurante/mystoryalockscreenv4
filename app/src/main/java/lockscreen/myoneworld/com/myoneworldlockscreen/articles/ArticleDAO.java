@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -34,6 +35,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_COMMEN
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MY_STORYA_SINGLE_CONTENT;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ANALYTICS_STORIES_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_COMMENT_STORY_ID_LIVE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.RECEIVE_POINTS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_COMMENT_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_COMMENT_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showProgressBar;
@@ -41,6 +43,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.hideProgres
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.parseDateToddMMyyyy;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getDatePostedComputations;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showTopNotification;
 
 public class ArticleDAO {
     RelativeLayout afterVideo;
@@ -145,8 +148,9 @@ public class ArticleDAO {
 //                        Toast.makeText(context,serverResp.getString("message"),Toast.LENGTH_LONG).show();
                     }
 
-                    Utility utility = new Utility();
-                    utility.immediateNotification(context,Integer.parseInt(article_id),"You receive 10 points!",1,null);
+//                    utility.immediateNotification(context,Integer.parseInt(article_id),"You receive 10 points!",1,null);
+                    TextView notification = ((Activity) context).findViewById(R.id.notif_article_text);
+                    showTopNotification(context,notification,RECEIVE_POINTS);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

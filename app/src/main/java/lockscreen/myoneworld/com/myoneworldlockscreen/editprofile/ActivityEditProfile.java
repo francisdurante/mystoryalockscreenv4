@@ -1,5 +1,6 @@
 package lockscreen.myoneworld.com.myoneworldlockscreen.editprofile;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -63,8 +64,8 @@ public class ActivityEditProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         font = setFont(mContext,GOTHIC_FONT_PATH);
         super.onCreate(savedInstanceState);
-        if(!getIntent().getExtras().getBoolean("FROM_EDIT_BUTTON"))
-            editProfilePopUp(mContext);
+//        if(!getIntent().getExtras().getBoolean("FROM_EDIT_BUTTON"))
+//            editProfilePopUp(mContext,new AlertDialog.Builder(mContext).create());
         setContentView(R.layout.activity_edit_profile);
         spinnerCountry = findViewById(R.id.country_edit);
         spinnerCountryItems();
@@ -179,7 +180,6 @@ public class ActivityEditProfile extends AppCompatActivity {
                 vo.setAddress(tvAddress.getText().toString());
                 vo.setDealer(dealer);
                 vo.setImageId(galleryId);
-
                 dao.sendEditProfile(mContext,vo,getValueString("ACCESS_TOKEN",mContext));
             }else{
                 //invalid email

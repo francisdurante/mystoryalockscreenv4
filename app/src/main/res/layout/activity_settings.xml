@@ -66,13 +66,13 @@
                     android:layout_marginStart="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_toStartOf="@+id/download_setting_sign"
+                    android:onClick="downloadSettingClick"
                     android:paddingStart="30sp"
                     android:paddingTop="10sp"
                     android:paddingBottom="15sp"
                     android:text="@string/story_download_setting"
                     android:textColor="#FFF"
-                    android:textSize="15sp"
-                    android:onClick="downloadSettingClick"/>
+                    android:textSize="15sp" />
 
 
                 <TextView
@@ -98,6 +98,7 @@
                     android:layout_below="@+id/download_setting"
                     android:orientation="vertical"
                     android:visibility="gone">
+
                     <Switch
                         android:id="@+id/mobile_and_wifi"
                         android:layout_width="match_parent"
@@ -105,10 +106,11 @@
                         android:layout_marginStart="45dp"
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="19dp"
-                        android:text="@string/wifi_mobile"
-                        android:textColor="#FFF"
                         android:paddingTop="20sp"
-                        android:paddingBottom="15sp"/>
+                        android:paddingBottom="15sp"
+                        android:text="@string/wifi_mobile"
+                        android:textColor="#FFF" />
+
                     <Switch
                         android:id="@+id/wifi_only"
                         android:layout_width="match_parent"
@@ -116,9 +118,10 @@
                         android:layout_marginStart="45dp"
                         android:layout_marginEnd="19dp"
                         android:paddingTop="20sp"
+                        android:paddingBottom="15sp"
                         android:text="@string/wifi_only"
-                        android:textColor="#FFF"
-                        android:paddingBottom="15sp"/>
+                        android:textColor="#FFF" />
+
                     <Switch
                         android:id="@+id/do_not_download"
                         android:layout_width="match_parent"
@@ -126,9 +129,9 @@
                         android:layout_marginStart="45dp"
                         android:layout_marginEnd="19dp"
                         android:paddingTop="20sp"
+                        android:paddingBottom="15sp"
                         android:text="@string/do_not_download"
-                        android:textColor="#FFF"
-                        android:paddingBottom="15sp"/>
+                        android:textColor="#FFF" />
                 </LinearLayout>
 
                 <TextView

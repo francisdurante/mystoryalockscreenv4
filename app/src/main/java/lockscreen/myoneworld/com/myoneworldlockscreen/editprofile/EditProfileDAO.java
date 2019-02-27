@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -15,29 +14,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.ClientProtocolException;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
-import lockscreen.myoneworld.com.myoneworldlockscreen.R;
-import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
-import lockscreen.myoneworld.com.myoneworldlockscreen.home.HomeDAO;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CHANGE_PROFILE_PIC_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_PIC_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_PIC_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_USER_PROFILE_LIVE;
@@ -52,10 +37,9 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SUCCESS_ED
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.getValueString;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.save;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCurrentTime;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.editProfilePopUp;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showChangePasswordPopUp;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.getCountryID;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showPopUpProfilePicture;
 
@@ -91,11 +75,12 @@ public class EditProfileDAO {
                             String profilePicLink = null;
                             String galleryId = null;
                             if(user_information.has("gallery")) {
-                                if(!"null".equalsIgnoreCase(user_information.getString("gallery")) ) {
-                                    JSONObject gallery = user_information.getJSONObject("gallery");
-                                    galleryId = gallery.getString("id");
-                                    if (gallery.has("url_square")) {
-                                        profilePicLink = user_information.getJSONObject("gallery").getString("url_square");
+                                String gallery = user_information.getString("gallery");
+                                if(!"null".equals(gallery)){
+                                    JSONObject galleryData = new JSONObject(gallery);
+                                    galleryId = galleryData.getString("id");
+                                    if (galleryData.has("url_square")) {
+                                        profilePicLink = galleryData.getString("url_square");
                                     }
                                 }
                             }
@@ -114,27 +99,32 @@ public class EditProfileDAO {
                             vo.setTwitterKey(twitterKey);
                             vo.setOldPassword(decrypt);
                             vo.setImageId(galleryId);
+                            vo.setDealer(dealer);
                             if(isChangeProfile && !isChangePassword){
                                 showPopUpProfilePicture(context, vo,new AlertDialog.Builder(context).create());
                             }
                             if(!isChangePassword && !isChangeProfile) {
-                                context.startActivity(new Intent(context, ActivityEditProfile.class)
-                                        .putExtra("FIRST_NAME", vo.getFirstName())
-                                        .putExtra("LAST_NAME", vo.getLastName())
-                                        .putExtra("ADDRESS", vo.getAddress())
-                                        .putExtra("PHONE_NUMBER", vo.getPhoneNumber())
-                                        .putExtra("EMAIL_ADDRESS", vo.getEmail())
-                                        .putExtra("USER_PROFILE_ID", vo.getUserProfileID())
-                                        .putExtra("BIRTHDAY", vo.getBirthday())
-                                        .putExtra("COUNTRY", vo.getCountry())
-                                        .putExtra("DEALER", dealer)
-                                        .putExtra("GALLERY_ID",vo.getImageId())
-                                        .putExtra("FROM_EDIT_BUTTON",fromEditButton));
-                                ((Activity) context).finish();
+                                if(!fromEditButton) {
+                                    editProfilePopUp(context, new AlertDialog.Builder(context).create(), vo, fromEditButton);
+                                }else {
+                                    context.startActivity(new Intent(context, ActivityEditProfile.class)
+                                            .putExtra("FIRST_NAME", vo.getFirstName())
+                                            .putExtra("LAST_NAME", vo.getLastName())
+                                            .putExtra("ADDRESS", vo.getAddress())
+                                            .putExtra("PHONE_NUMBER", vo.getPhoneNumber())
+                                            .putExtra("EMAIL_ADDRESS", vo.getEmail())
+                                            .putExtra("USER_PROFILE_ID", vo.getUserProfileID())
+                                            .putExtra("BIRTHDAY", vo.getBirthday())
+                                            .putExtra("COUNTRY", vo.getCountry())
+                                            .putExtra("DEALER", dealer)
+                                            .putExtra("GALLERY_ID", vo.getImageId())
+                                            .putExtra("FROM_EDIT_BUTTON", fromEditButton));
+                                    ((Activity) context).finish();
+                                }
                             }
                             if(isChangePassword && !isChangeProfile){
                                 vo.setChangePassword(true);
-                                showChangePasswordPopUp(context,vo);
+                                showChangePasswordPopUp(context,vo,new AlertDialog.Builder(context).create());
                             }
 
                         } catch (JSONException e) {
@@ -160,10 +150,10 @@ public class EditProfileDAO {
             userProfileParam.put("birthday", vo.getBirthday().replaceAll("/", "-"));
             userProfileParam.put("address", vo.getAddress());
             userProfileParam.put("mobile_number", vo.getPhoneNumber());
-            if(null != vo.getDealer()) {
+            if(!"".equals(vo.getDealer()) || null != vo.getDealer()) {
                 userProfileParam.put("dealer", Integer.parseInt(vo.getDealer()));
             }
-            if(!"".equals(vo.getImageId()) || null != vo.getImageId()){
+            if(!"".equals(vo.getImageId())){
                 userProfileParam.put("gallery_id", Integer.parseInt(vo.getImageId()));
             }
             if (vo.isChangePassword()) {

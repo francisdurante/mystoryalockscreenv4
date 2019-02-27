@@ -68,6 +68,7 @@ public class Constant {
     public static final String ERROR_PLYAING_VIDEO = "Error in Playing Video";
     public static final String DATA_USAGE_MAY_APPLY_SETTING_TITLE = "Data Charges May Apply";
     public static final String EDIT_PROFILE_MESSAGE = "Before you proceed to mystorya home page, please fill in the necessary information first.";
+    public static final String FILL_REQUIRED = "Please fill all required fields.";
     public static final String INCORRECT_PASSWORD = "Incorrect email address or password.";
     public static final String EMAIL_ALREADY_REGISTERED = "This email address was already registered using different social or manual login.";
     public static final String ERROR_OCCURED = "ERROR OCCURED.";
@@ -97,8 +98,8 @@ public class Constant {
     public static final String INVALID_EMAIL = "Invalid Email Address"; //@
     public static final String INVALID_DATE = "Invalid date format. Need date format(YYYY/MM/DD)";
     public static final String REGISTER_SUCCESS = "Registration Successful!\nYou will now be redirected to login page.";
-    public static final String FILL_REQUIRED = "Please fill all the required fields.";
     public static final String NO_PHOTO = "No photo is selected or capture. Please try again.";
+    public static final String DOWNLOADING_VIDEO = "Video is still download wait for download to finish";
 
     public static final String MSG_BOX_WARNING = "warning";
     public static final String MSG_BOX_SUCCESS = "success";
@@ -143,6 +144,7 @@ public class Constant {
     public static final String INTENT_SHARE_TITLE = "Choose app to share";
     public static final String NO_SHARING_APP = "No application applicable to share story.";
     public static final String SHARING_INTENT_TITLE = "Sharing Content";
+    public static final String RECEIVE_POINTS = "Congratulations! You received 10 points!";
 
     public static final String VIDEO_ARTICLE = "Video Article";
     public static final String COMIC_ARTICLE = "Comic Article";
@@ -186,7 +188,7 @@ public class Constant {
     public static final int REQUEST_CODE_CAMERA = 10003;
     public static final int REQUEST_CODE_READ_STORAGE = 10004;
 
-    public static final String PHP_CURRENCY_WALLET = "PHP WALLET\n";
+    public static final String PHP_CURRENCY_WALLET = "MY.RING\n";
     public static final String RAFFLE_POINTS_WALLET = "RAFFLE POINTS\n";
 
     public static final String PHP = "PHP";

@@ -51,7 +51,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_EM
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGIN_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INCORRECT_PASSWORD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showTopNotification;
 
 public class LoginDAO {
     private Context mContext;
@@ -101,17 +101,17 @@ public class LoginDAO {
                             if (error.has("message")) {
                                 if (vo.getEmail().contains("@")) {
                                     if (error.getString("message").equals("The user credentials were incorrect.")) {
-                                        showNotifError(mContext, activity.findViewById(R.id.login_text), INCORRECT_PASSWORD);
+                                        showTopNotification(mContext, activity.findViewById(R.id.login_text), INCORRECT_PASSWORD);
                                     }
                                 } else {
                                     if (error.getString("message").equals("The user credentials were incorrect."))
-                                        showNotifError(mContext, activity.findViewById(R.id.login_text), EMAIL_ALREADY_REGISTERED);
+                                        showTopNotification(mContext, activity.findViewById(R.id.login_text), EMAIL_ALREADY_REGISTERED);
                                 }
 
                                 LoginManager.getInstance().logOut();
                                 loading.hideLoading();
                             } else {
-                                showNotifError(mContext, activity.findViewById(R.id.login_text), error.getString("error"));
+                                showTopNotification(mContext, activity.findViewById(R.id.login_text), error.getString("error"));
                             }
                         }catch (JSONException e) {
                             e.printStackTrace();

@@ -28,6 +28,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyService
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
+import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
 import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
@@ -130,46 +131,46 @@ public class ActivitySettings extends AppCompatActivity {
             }
         });
         wifiOnly.setOnCheckedChangeListener((buttonView, isChecked) -> {
-//            if(isChecked){
-//                wifiAndData.setChecked(false);
-//                doNotDownload.setChecked(false);
-//                save("WIFI_ONLY","1",mContext);
-//                save("WIFI_OR_DATA","",mContext);
-//                save("DO_NOT_DOWNLOAD","",mContext);
-//            }else{
-//                save("WIFI_ONLY","",mContext);
-//            }
-//            if(!wifiAndData.isChecked() && !doNotDownload.isChecked() && !wifiOnly.isChecked()){
-//                doNotDownload.setChecked(true);
-//                save("DO_NOT_DOWNLOAD","1",mContext);
-//                save("WIFI_ONLY","",mContext);
-//                save("WIFI_OR_DATA","",mContext);
-//            }
-            globalMessageBox(mContext,"Wifi Only is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
-            save("WIFI_ONLY","",mContext);
-            save("WIFI_OR_DATA","",mContext);
-            save("DO_NOT_DOWNLOAD","1",mContext);
-            wifiOnly.setChecked(false);
+            if(isChecked){
+                wifiAndData.setChecked(false);
+                doNotDownload.setChecked(false);
+                save("WIFI_ONLY","1",mContext);
+                save("WIFI_OR_DATA","",mContext);
+                save("DO_NOT_DOWNLOAD","",mContext);
+            }else{
+                save("WIFI_ONLY","",mContext);
+            }
+            if(!wifiAndData.isChecked() && !doNotDownload.isChecked() && !wifiOnly.isChecked()){
+                doNotDownload.setChecked(true);
+                save("DO_NOT_DOWNLOAD","1",mContext);
+                save("WIFI_ONLY","",mContext);
+                save("WIFI_OR_DATA","",mContext);
+            }
+//            globalMessageBox(mContext,"Wifi Only is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
+//            save("WIFI_ONLY","",mContext);
+//            save("WIFI_OR_DATA","",mContext);
+//            save("DO_NOT_DOWNLOAD","1",mContext);
+//            wifiOnly.setChecked(false);
 
         });
         wifiAndData.setOnCheckedChangeListener((buttonView, isChecked) -> {
-//            if(isChecked){
-//                showDialogBox();
-//            }else{
-//                save("WIFI_OR_DATA","",mContext);
-//            }
-//            if(!wifiAndData.isChecked() && !doNotDownload.isChecked() && !wifiOnly.isChecked()){
-//                doNotDownload.setChecked(true);
-//                save("DO_NOT_DOWNLOAD","1",mContext);
-//                save("WIFI_ONLY","",mContext);
-//                save("WIFI_OR_DATA","",mContext);
-//
-//            }
-            globalMessageBox(mContext,"Wifi or Data is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
-            save("WIFI_ONLY","",mContext);
-            save("WIFI_OR_DATA","",mContext);
-            save("DO_NOT_DOWNLOAD","1",mContext);
-            wifiAndData.setChecked(false);
+            if(isChecked){
+                showDialogBox();
+            }else{
+                save("WIFI_OR_DATA","",mContext);
+            }
+            if(!wifiAndData.isChecked() && !doNotDownload.isChecked() && !wifiOnly.isChecked()){
+                doNotDownload.setChecked(true);
+                save("DO_NOT_DOWNLOAD","1",mContext);
+                save("WIFI_ONLY","",mContext);
+                save("WIFI_OR_DATA","",mContext);
+
+            }
+//            globalMessageBox(mContext,"Wifi or Data is under maintenance","UNDER MAINTENANCE",MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
+//            save("WIFI_ONLY","",mContext);
+//            save("WIFI_OR_DATA","",mContext);
+//            save("DO_NOT_DOWNLOAD","1",mContext);
+//            wifiAndData.setChecked(false);
         });
         doNotDownload.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
@@ -226,5 +227,9 @@ public class ActivitySettings extends AppCompatActivity {
         startActivity(new Intent(mContext,ActivityHome.class));
         finish();
         super.onBackPressed();
+    }
+    private void showDialogBox(){
+        Switch[] switches = {wifiAndData,wifiOnly,doNotDownload};
+        dataChargesSettingMessageBox(mContext,ENABLE_WIFI_AND_DATA,DATA_USAGE_MAY_APPLY_SETTING_TITLE,switches,MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
     }
 }

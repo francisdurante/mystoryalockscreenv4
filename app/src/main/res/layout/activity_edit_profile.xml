@@ -50,7 +50,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="1"
-        android:layout_below="@+id/message_notif">
+        android:layout_below="@+id/text_registration">
 
         <ScrollView
             android:layout_width="match_parent"

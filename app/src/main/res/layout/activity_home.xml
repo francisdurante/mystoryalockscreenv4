@@ -98,6 +98,7 @@
             android:background="#fff"
             app:itemTextColor="#000"
             app:menu="@menu/drawer_menu"
+            app:itemTextAppearance="@style/GothicFont"
             android:layout_gravity="start">
 
            <LinearLayout

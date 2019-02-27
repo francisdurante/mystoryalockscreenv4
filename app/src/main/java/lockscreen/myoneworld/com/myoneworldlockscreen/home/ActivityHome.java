@@ -23,8 +23,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -45,12 +47,14 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.CAMERA;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEVELOPMENT_VERSION;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GALLERY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_BOLD_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGGING_OUT_MESSAGE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LOGGING_OUT_TITLE;
@@ -90,6 +94,7 @@ public class ActivityHome extends AppCompatActivity {
     private MenuItem aboutUs;
     private MenuItem logout;
     private MenuItem wallet;
+    private MenuItem editProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -286,12 +291,7 @@ public class ActivityHome extends AppCompatActivity {
         TextView fullName = navigationView.getHeaderView(0).findViewById(R.id.full_name);
         TextView email = navigationView.getHeaderView(0).findViewById(R.id.email_side);
         ImageView profilePicture = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
-        Button editProfile = navigationView.getHeaderView(0).findViewById(R.id.edit_profile_button);
 
-        editProfile.setOnClickListener(v -> {
-            EditProfileDAO dao = new EditProfileDAO();
-            dao.getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),false,false,true);
-        });
         new NotificationDAO().getAllUnreadNotificationInMyCrazySale(mContext, getValueString("ACCESS_TOKEN", mContext));
         profilePicture.setOnClickListener(v -> {
             EditProfileDAO dao = new EditProfileDAO();
@@ -302,16 +302,20 @@ public class ActivityHome extends AppCompatActivity {
         aboutUs = navigationView.getMenu().findItem(R.id.about);
         logout = navigationView.getMenu().findItem(R.id.logout_side);
         wallet = navigationView.getMenu().findItem(R.id.wallet);
+        editProfile = navigationView.getMenu().findItem(R.id.edit_profile);
         header = findViewById(R.id.header);
+
         TextView versionText = findViewById(R.id.version);
         TextView testText = findViewById(R.id.test_version);
         testText.setTypeface(font);
         versionText.setTypeface(font);
-
+        fullName.setTypeface(font);
+        email.setTypeface(font);
         versionText.setText(getVersionName(mContext));
         if (BuildConfig.DEBUG) {
             testText.setVisibility(View.VISIBLE);
         }
+        editProfile.setOnMenuItemClickListener(menuClick);
         settings.setOnMenuItemClickListener(menuClick);
         aboutUs.setOnMenuItemClickListener(menuClick);
         logout.setOnMenuItemClickListener(menuClick);
@@ -339,7 +343,11 @@ public class ActivityHome extends AppCompatActivity {
                 globalMessageBox(mContext, LOGGING_OUT_MESSAGE, LOGGING_OUT_TITLE, MSG_BOX_WARNING,new AlertDialog.Builder(mContext).create());
                 break;
             case R.id.wallet:
-                showPopUpWallet(mContext, getValueString("ACCESS_TOKEN", mContext));
+                showPopUpWallet(mContext, getValueString("ACCESS_TOKEN", mContext),new AlertDialog.Builder(mContext).create());
+                break;
+            case R.id.edit_profile:
+                EditProfileDAO dao = new EditProfileDAO();
+                dao.getUserProfile(mContext,getValueString("ACCESS_TOKEN",mContext),false,false,true);
                 break;
         }
         return true;

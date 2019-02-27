@@ -236,7 +236,7 @@ public class HomeDAO {
         }
     }
 
-    public void getUserWallet(Context context, String accessToken, String currency, TextView phpWallet,TextView rafflePoints,View view, Utility util) {
+    public void getUserWallet(Context context, String accessToken, String currency, TextView phpWallet,TextView rafflePoints,View view, Utility util, AlertDialog mDialog) {
         ApiClass api = new ApiClass();
         RequestParams rp = new RequestParams();
         rp.add("id", getValueString("USER_ID", context));
@@ -258,12 +258,12 @@ public class HomeDAO {
                                 String points = serverResponse.getString("amount");
                                 if(PHP.equals(currency)){
                                     phpWallet.setTypeface(setFont(context, GOTHIC_FONT_PATH));
-                                    phpWallet.setText(PHP_CURRENCY_WALLET + PHP_SIGN + Double.parseDouble(points));
-                                    getUserWallet(context,accessToken,POINTS,phpWallet,rafflePoints,view,util);
+                                    phpWallet.setText(PHP_CURRENCY_WALLET + Double.parseDouble(points));
+                                    getUserWallet(context,accessToken,POINTS,phpWallet,rafflePoints,view,util,mDialog);
                                 }else{
                                     rafflePoints.setTypeface(setFont(context, GOTHIC_FONT_PATH));
                                     rafflePoints.setText(RAFFLE_POINTS_WALLET + points + " " + POINTS);
-                                    new Utility().showMessageBox(true,view,new AlertDialog.Builder(context).create());
+                                    new Utility().showMessageBox(true,view,mDialog);
 //                                    util.hideLoading();
                                 }
                             }catch (JSONException e){
@@ -274,7 +274,7 @@ public class HomeDAO {
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        globalMessageBox(context,responseString,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
+                        globalMessageBox(context,responseString,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,mDialog);
                     }
                 });
     }

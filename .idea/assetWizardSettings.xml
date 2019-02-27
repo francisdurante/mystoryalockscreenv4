@@ -14,8 +14,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_calendar" />
-                            <entry key="sourceFile" value="C:\Users\Francis\Desktop\myONEworld lockscreen\calendar.svg" />
+                            <entry key="outputName" value="ic_user_profile" />
+                            <entry key="sourceFile" value="C:\Users\Francis\Desktop\myONEworld lockscreen\user_profile.svg" />
                           </map>
                         </option>
                       </PersistentState>

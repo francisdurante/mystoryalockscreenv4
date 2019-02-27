@@ -30,7 +30,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_CO
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLEASE_CHECK_CONNECTION;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REGISTER_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.TWITTER;
-import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showNotifError;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showTopNotification;
 
 public class RegistrationDAO {
 
@@ -63,7 +63,7 @@ public class RegistrationDAO {
                     JSONObject serverResp = new JSONObject(response.toString());
                     vo.setRegistrationStatusMessage(serverResp.getString("status"));
                     if("success".equals(vo.getRegistrationStatusMessage())){
-                        showNotifError(context,notifText,REGISTER_SUCCESS);
+                        showTopNotification(context,notifText,REGISTER_SUCCESS);
                         new CountDownTimer(2000,1000){
 
                             @Override
@@ -78,7 +78,7 @@ public class RegistrationDAO {
                         }.start();
                     }else{
                         util.hideLoading();
-                        showNotifError(context,notifText,vo.getRegistrationStatusMessage());
+                        showTopNotification(context,notifText,vo.getRegistrationStatusMessage());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -89,10 +89,10 @@ public class RegistrationDAO {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 if(null == errorResponse){
-                    showNotifError(context,notifText,PLEASE_CHECK_CONNECTION);
+                    showTopNotification(context,notifText,PLEASE_CHECK_CONNECTION);
                     util.hideLoading();
                 }else{
-                    showNotifError(context,notifText,ERROR_OCCURED_SIGN_IN);
+                    showTopNotification(context,notifText,ERROR_OCCURED_SIGN_IN);
                 }
             }
         });

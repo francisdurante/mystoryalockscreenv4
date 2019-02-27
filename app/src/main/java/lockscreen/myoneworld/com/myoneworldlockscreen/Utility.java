@@ -91,6 +91,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import lockscreen.myoneworld.com.myoneworldlockscreen.articles.ArticleDAO;
+import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.ActivityEditProfile;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileVO;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
@@ -108,6 +109,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DATA_USAGE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_MESSAGE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EXPIRED_LOG_IN;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FILL_REQUIRED;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GALLERY;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.HONOR;
@@ -132,6 +134,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLAY_STORE_URL_MARKET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EDIT_PROFILE_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.POINTS;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.RECEIVE_POINTS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REGISTER_SUCCESS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CODE_CAMERA;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.REQUEST_CODE_READ_STORAGE;
@@ -514,6 +517,7 @@ public class Utility {
             for (int x = 0; x < comicsImage.length; x++) {
                 comicsPath[x] = Constant.ANDROID_PATH + context.getPackageName() + "/mystory_articles/article_" + id + "/story_comics_" + id + "/" + comicsImage[x];
                 comicsPathArrayList.add(comicsPath[x]);
+                System.out.println(comicsPath[x] +" aaaaaaaaaaaaaaaaaaaaaa ");
             }
         }
         return comicsPathArrayList;
@@ -594,36 +598,6 @@ public class Utility {
         isActivityRunning = activityRunning;
     }
 
-//    public static void makeNotification(String type, String Message, Activity activity) {
-//        final LinearLayout notif = activity.findViewById(R.id.linear_notif);
-//        final TextView txtView = activity.findViewById(R.id.notif_message);
-//        notif.setVisibility(View.VISIBLE);
-//        txtView.setVisibility(View.VISIBLE);
-//        Animation myanim = AnimationUtils.loadAnimation(activity.getApplicationContext(), R.anim.bounce);
-//        notif.setAlpha(1);
-//        notif.startAnimation(myanim);
-//        if (type.equals("success")) {
-//            notif.setBackgroundColor(Color.parseColor("#ff00ff00"));
-//            txtView.setText(Message);
-//        } else if (type.equals("error")) {
-//            notif.setBackgroundColor(Color.parseColor("#ffff0000"));
-//            txtView.setText(Message);
-//        }
-//        new CountDownTimer(5000, 1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                notif.setAlpha(0);
-//                notif.setVisibility(View.GONE);
-//                txtView.setVisibility(View.GONE);
-//            }
-//        }.start();
-//    }
-
     public static boolean isValidBirthday(String birthday) {
         boolean accepted;
         final SimpleDateFormat BIRTHDAY_FORMAT_PARSER = new SimpleDateFormat("yyyy/MM/dd");
@@ -638,7 +612,7 @@ public class Utility {
         return accepted;
     }
 
-    public static boolean globalMessageBox(Context context) {
+    public static boolean showPopUpAutoStart(Context context) {
         final boolean[] checked = {false};
         final boolean[] response = {false};
         Typeface font = setFont(context, GOTHIC_FONT_PATH);
@@ -727,7 +701,7 @@ public class Utility {
                         save("SHOW_POP_UP_DATA_USAGE", "0", context);
                     mDialog.dismiss();
                 });
-                new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
+                new Utility().showMessageBox(false, inflatedView,mDialog);
             }
         } else if (Title.equalsIgnoreCase(NEW_VERSION_TITLE)) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -798,7 +772,7 @@ public class Utility {
                 generalMessage.setTypeface(font);
                 generalMessage.setText(Message);
 
-                new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
+                new Utility().showMessageBox(false, inflatedView,mDialog);
             }
         } else if (Title.equalsIgnoreCase(EXPIRED_LOG_IN)) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -839,7 +813,7 @@ public class Utility {
             generalMessage.setTypeface(font);
             generalMessage.setText(Message);
 
-            new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
+            new Utility().showMessageBox(false, inflatedView,mDialog);
         } else if (Title.equalsIgnoreCase(LOGGING_OUT_TITLE)) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null, false);
@@ -885,7 +859,7 @@ public class Utility {
             generalMessage.setTypeface(font);
             generalMessage.setText(Message);
 
-            new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
+            new Utility().showMessageBox(false, inflatedView,mDialog);
         } else if (Title.equalsIgnoreCase(EDIT_PROFILE_TITLE)) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null, false);
@@ -918,7 +892,7 @@ public class Utility {
             generalMessage.setTypeface(font);
             generalMessage.setText(Message);
 
-            new Utility().showMessageBox(false, inflatedView,new AlertDialog.Builder(context).create());
+            new Utility().showMessageBox(false, inflatedView,mDialog);
         } else if(Title.equals(CHANGE_PROFILE_PIC_TITLE)){
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View inflatedView = layoutInflater.inflate(R.layout.message_box_layout, null, false);
@@ -978,7 +952,8 @@ public class Utility {
             generalMessage.setText(Message);
             generalMessage.setTypeface(font);
 
-            new Utility().showMessageBox(true, inflatedView,new AlertDialog.Builder(context).create());
+
+            new Utility().showMessageBox(true, inflatedView,mDialog);
             new CountDownTimer(3000, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -1018,15 +993,21 @@ public class Utility {
         }
     }
 
-    public static void showNotifError(Context context, TextView errorText, String message) {
-        errorText.setVisibility(View.VISIBLE);
-        errorText.setText(message);
-        errorText.setTypeface(setFont(context, GOTHIC_FONT_PATH));
-        errorText.setTextSize(15);
-        errorText.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shake));
+    public static void showTopNotification(Context context, TextView textViewHolder, String message) {
+        textViewHolder.bringToFront();
+        textViewHolder.setVisibility(View.VISIBLE);
+        textViewHolder.setText(message);
+        textViewHolder.setTypeface(setFont(context, GOTHIC_FONT_PATH));
+        textViewHolder.setTextSize(15);
+        if(message.equalsIgnoreCase(RECEIVE_POINTS)){
+            textViewHolder.startAnimation(AnimationUtils.loadAnimation(context,R.anim.fadein));
+            textViewHolder.setBackgroundColor(Color.parseColor("#ffbc00"));
+        }else {
+            textViewHolder.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shake));
+        }
         if(message.equals(REGISTER_SUCCESS)){
-            errorText.setBackgroundColor(Color.parseColor("#FF60CC2E"));
-            errorText.setCompoundDrawables(context.getResources().getDrawable(R.drawable.ic_checked),null,null,null);
+            textViewHolder.setBackgroundColor(Color.parseColor("#FF60CC2E"));
+            textViewHolder.setCompoundDrawables(context.getResources().getDrawable(R.drawable.ic_checked),null,null,null);
         }
         new CountDownTimer(5000, 1000) {
             @Override
@@ -1035,8 +1016,8 @@ public class Utility {
 
             @Override
             public void onFinish() {
-                errorText.clearAnimation();
-                errorText.setVisibility(View.GONE);
+                textViewHolder.clearAnimation();
+                textViewHolder.setVisibility(View.GONE);
             }
         }.start();
 
@@ -1123,7 +1104,7 @@ public class Utility {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
     }
 
-    public static void dataChargesSettingMessageBox(Context context, String message, String Title, Switch[] sw, String type) {
+    public static void dataChargesSettingMessageBox(Context context, String message, String Title, Switch[] sw, String type,AlertDialog mDialog) {
         Typeface font = setFont(context, GOTHIC_FONT_PATH);
         if (Title.equalsIgnoreCase(DATA_USAGE_MAY_APPLY_SETTING_TITLE)) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1167,7 +1148,7 @@ public class Utility {
             generalMessage.setTypeface(font);
             generalMessage.setText(message);
 
-            new Utility().showMessageBox(false,inflatedView,new AlertDialog.Builder(context).create());
+            new Utility().showMessageBox(false,inflatedView,mDialog);
         }
     }
 
@@ -1248,7 +1229,7 @@ public class Utility {
         }
     }
 
-    public static void editProfilePopUp(Context context) {
+    public static void editProfilePopUp(Context context, AlertDialog mDialog,EditProfileVO vo,boolean fromEditButton) {
         Typeface font = setFont(context, GOTHIC_FONT_PATH);
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View inflatedView = layoutInflater.inflate(R.layout.pop_up_layout, null, false);
@@ -1268,11 +1249,27 @@ public class Utility {
             Activity activity = (Activity) context;
             activity.finish();
         });
-        ok.setOnClickListener(v -> mDialog.dismiss());
-        new Utility().showMessageBox(false,inflatedView,new AlertDialog.Builder(context).create());
+        ok.setOnClickListener(v -> {
+            context.startActivity(new Intent(context, ActivityEditProfile.class)
+                    .putExtra("FIRST_NAME", vo.getFirstName())
+                    .putExtra("LAST_NAME", vo.getLastName())
+                    .putExtra("ADDRESS", vo.getAddress())
+                    .putExtra("PHONE_NUMBER", vo.getPhoneNumber())
+                    .putExtra("EMAIL_ADDRESS", vo.getEmail())
+                    .putExtra("USER_PROFILE_ID", vo.getUserProfileID())
+                    .putExtra("BIRTHDAY", vo.getBirthday())
+                    .putExtra("COUNTRY", vo.getCountry())
+                    .putExtra("DEALER", vo.getDealer())
+                    .putExtra("GALLERY_ID",vo.getImageId())
+                    .putExtra("FROM_EDIT_BUTTON",fromEditButton));
+            ((Activity) context).finish();
+            mDialog.dismiss();
+
+        });
+        new Utility().showMessageBox(false,inflatedView,mDialog);
     }
 
-    public static void showChangePasswordPopUp(Context context, EditProfileVO vo) {
+    public static void showChangePasswordPopUp(Context context, EditProfileVO vo, AlertDialog mDialog) {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View inflatedView = layoutInflater.inflate(R.layout.change_password_layout, null, false);
         Typeface font = setFont(context, GOTHIC_FONT_PATH);
@@ -1366,11 +1363,11 @@ public class Utility {
             if (oldPassword.getText().length() == 0 ||
                     newPassword.getText().length() == 0 ||
                     confirmPassword.getText().length() == 0) {
-                showNotifError(context, notifMessage, EDIT_PROFILE_MESSAGE);
+                showTopNotification(context, notifMessage, FILL_REQUIRED);
             } else if (!newPassword.getText().toString().equals(confirmPassword.getText().toString())) {
-                showNotifError(context, notifMessage, MISMATCH_PASSWORD);
+                showTopNotification(context, notifMessage, MISMATCH_PASSWORD);
             } else if (oldPassword.getVisibility() == View.VISIBLE && !vo.getOldPassword().equals(oldPassword.getText().toString())) {
-                showNotifError(context, notifMessage, OLD_PASSWORD_NOT_MATCH);
+                showTopNotification(context, notifMessage, OLD_PASSWORD_NOT_MATCH);
             } else {
                 if (oldPassword.getVisibility() == View.VISIBLE) {
                     vo.setOldPassword(oldPassword.getText().toString());
@@ -1379,7 +1376,7 @@ public class Utility {
                 new EditProfileDAO().sendEditProfile(context, vo, getValueString("ACCESS_TOKEN", context));
             }
         });
-        new Utility().showMessageBox(false,inflatedView,new AlertDialog.Builder(context).create());
+        new Utility().showMessageBox(false,inflatedView,mDialog);
     }
 
     public static int getCountryID(String countryName, Context context) {
@@ -1495,7 +1492,7 @@ public class Utility {
             }
         }
     }
-    public static void showPopUpWallet(Context context, String accessTokens){
+    public static void showPopUpWallet(Context context, String accessTokens, AlertDialog mDialog){
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View inflatedView = layoutInflater.inflate(R.layout.show_wallet_layout, null, false);
         TextView titleMessage = inflatedView.findViewById(R.id.message_box_title);
@@ -1506,7 +1503,7 @@ public class Utility {
         okay.setOnClickListener(v -> mDialog.dismiss());
         HomeDAO dao = new HomeDAO();
         Utility util = new Utility();
-        dao.getUserWallet(context,accessTokens,PHP,phpWallet,rafflePoint,inflatedView,util);
+        dao.getUserWallet(context,accessTokens,PHP,phpWallet,rafflePoint,inflatedView,util,mDialog);
 
     }
 
