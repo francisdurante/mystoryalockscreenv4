@@ -31,6 +31,7 @@ import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterConfig;
@@ -70,10 +71,10 @@ public class ActivityLoginOptions extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(API_STATUS.equals("TEST")){
-            TextView development = findViewById(R.id.development);
-            development.setVisibility(View.VISIBLE);
-        }
+//        if(API_STATUS.equals("TEST")){
+//            TextView development = findViewById(R.id.development);
+//            development.setVisibility(View.VISIBLE);
+//        }
         if(!getValueString("FULL_NAME",mContext).equals("") &&
                 !getValueString("USER_ID",mContext).equals("") &&
                 !getValueString("EMAIL",mContext).equals("")){
@@ -192,8 +193,8 @@ public class ActivityLoginOptions extends AppCompatActivity {
 
             @Override
             public void failure(TwitterException exception) {
-//                setButtonEnable(true);
-                Toast.makeText(mContext,exception.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext,"Login failed." ,Toast.LENGTH_SHORT).show();
+                TwitterCore.getInstance().getSessionManager().clearActiveSession();
             }
         });
     }

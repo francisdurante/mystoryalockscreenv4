@@ -19,8 +19,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -71,6 +73,7 @@ import com.facebook.share.model.ShareLinkContent;
 
 import org.json.JSONArray;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
@@ -600,7 +603,7 @@ public class Utility {
 
     public static boolean isValidBirthday(String birthday) {
         boolean accepted;
-        final SimpleDateFormat BIRTHDAY_FORMAT_PARSER = new SimpleDateFormat("yyyy/MM/dd");
+        final SimpleDateFormat BIRTHDAY_FORMAT_PARSER = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
         BIRTHDAY_FORMAT_PARSER.setLenient(false);
         try {
@@ -925,7 +928,7 @@ public class Utility {
                 mDialog.dismiss();
             });
             selectPhoto.setOnClickListener(v -> {
-                choosePhotoFromGallary(context);
+                choosePhotoFromGallery(context);
                 mDialog.dismiss();
             });
 
@@ -1410,7 +1413,9 @@ public class Utility {
         Button cancel = inflatedView.findViewById(R.id.close_edit_profile_pic);
         cancel.setOnClickListener(v -> mDialog.dismiss());
         loadProfilePic(context, vo.getImageProfileUrl(), profilePic, R.drawable.com_facebook_profile_picture_blank_square);
-
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            setPermission(REQUEST_CODE_CAMERA,context);
+        }
         Typeface font = setFont(context, GOTHIC_FONT_PATH);
         save.setTypeface(font);
         cancel.setTypeface(font);
@@ -1440,15 +1445,23 @@ public class Utility {
     public static void customLoadProfilePic(Context context, Bitmap bitmap, int defaultPicOrError) {
 
         profilePicPath = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, "image", null);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100,baos);
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inSampleSize = 1;
+        Bitmap newbitmap = BitmapFactory.decodeStream(new ByteArrayInputStream(baos.toByteArray()),null,o);
+        profilePicPath = MediaStore.Images.Media.insertImage(context.getContentResolver(), newbitmap, "image", null);
         Picasso.with(context)
                 .load(profilePicPath)
                 .placeholder(defaultPicOrError)
                 .error(defaultPicOrError)
+                .centerCrop()
                 .fit()
                 .into(profilePic);
     }
 
-    public static void choosePhotoFromGallary(Context context) {
+    public static void choosePhotoFromGallery(Context context) {
         Activity activity = (Activity) context;
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -1461,10 +1474,10 @@ public class Utility {
 
     private static void takePhotoFromCamera(Context context) {
         Activity activity = (Activity) context;
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
             setPermission(REQUEST_CODE_CAMERA,context);
         }else {
+            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             activity.startActivityForResult(intent, CAMERA);
         }
     }

@@ -9,6 +9,7 @@ import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.gson.Gson;
@@ -24,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
@@ -31,6 +35,8 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.ApiClass;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.Utility;
 import lockscreen.myoneworld.com.myoneworldlockscreen.editprofile.EditProfileDAO;
+import lockscreen.myoneworld.com.myoneworldlockscreen.lockscreen.LockscreenService;
+
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EXPIRED_LOG_IN;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_WALLET_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GET_USER_WALLET_TEST;
@@ -42,14 +48,19 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WA
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PHP;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PHP_CURRENCY_WALLET;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PHP_SIGN;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PLEASE_CHECK_CONNECTION;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.POINTS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.RAFFLE_POINTS_WALLET;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.START;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.STOP;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.WAIT_FOR_A_WHILE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.G_VERSION_LOGGED_IN_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.API_STATUS;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_LIVE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SEND_LOCATION_TEST;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.globalMessageBox;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.loadProfilePic;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.notification.NotificationDAO.getCountUnread;
@@ -66,11 +77,13 @@ public class HomeDAO {
     }
 
 
-    public void checkIfValidLogin(String accessToken, DrawerLayout drawerLayout, TextView fullName, TextView email, ImageView profilePic){
+    public void checkIfValidLogin(String accessToken, DrawerLayout drawerLayout, TextView fullName, TextView email, ImageView profilePic, Button lockscreen){
         ApiClass api = new ApiClass();
         RequestParams rp = new RequestParams();
         rp.put("Authorization", accessToken);
         List<Header> headers = new ArrayList<Header>();
+        lockscreen.setText(WAIT_FOR_A_WHILE);
+        lockscreen.setEnabled(false);
         headers.add(new BasicHeader("Authorization", accessToken));
         try{
             api.getByUrlHeader(context,"LIVE".equalsIgnoreCase(API_STATUS) ? G_VERSION_LOGGED_IN_LIVE : G_VERSION_LOGGED_IN_TEST,headers.toArray(new Header[headers.size()]),rp,new JsonHttpResponseHandler(){
@@ -106,23 +119,35 @@ public class HomeDAO {
                                 email.setText(getValueString("EMAIL",context));
                             }
                         }
+                        if (isMyServiceRunning(LockscreenService.class, context)) {
+                            lockscreen.setText(STOP);
+
+                        } else {
+                            lockscreen.setText(START);
+                        }
+                        lockscreen.setEnabled(true);
                     } catch (Exception e) {
                         Utility.globalMessageBox(context,e.getMessage(),EXPIRED_LOG_IN,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
+
                     }
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
+
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     Utility.globalMessageBox(context,LOGIN_EXPIRED_MSG,EXPIRED_LOG_IN,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
+
                 }
             });
         }catch (Exception e){
             Utility.globalMessageBox(context,e.getMessage(),EXPIRED_LOG_IN,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
+            lockscreen.setText(PLEASE_CHECK_CONNECTION);
+            lockscreen.setEnabled(false);
         }
     }
     public static void sendLocation(String id, List<Address> addresses, Context context, String accessToken) {
@@ -255,14 +280,19 @@ public class HomeDAO {
                         if(null != response){
                             try{
                                 JSONObject serverResponse = new JSONObject(response.toString());
-                                String points = serverResponse.getString("amount");
+                                Double points = serverResponse.getDouble("amount");
+
+                                DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+                                decimalFormat.setGroupingUsed(true);
+                                decimalFormat.setGroupingSize(3);
+
                                 if(PHP.equals(currency)){
                                     phpWallet.setTypeface(setFont(context, GOTHIC_FONT_PATH));
-                                    phpWallet.setText(PHP_CURRENCY_WALLET + Double.parseDouble(points));
+                                    phpWallet.setText(PHP_CURRENCY_WALLET + decimalFormat.format(points));
                                     getUserWallet(context,accessToken,POINTS,phpWallet,rafflePoints,view,util,mDialog);
                                 }else{
                                     rafflePoints.setTypeface(setFont(context, GOTHIC_FONT_PATH));
-                                    rafflePoints.setText(RAFFLE_POINTS_WALLET + points + " " + POINTS);
+                                    rafflePoints.setText(RAFFLE_POINTS_WALLET + decimalFormat.format(points) + " " + POINTS);
                                     new Utility().showMessageBox(true,view,mDialog);
 //                                    util.hideLoading();
                                 }

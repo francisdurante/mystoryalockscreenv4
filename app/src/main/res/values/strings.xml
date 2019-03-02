@@ -11,7 +11,7 @@
     <string name="show_hide_data_usage">HIDE / SHOW DATA USAGE</string>
     <string name="story_download_setting">my|storya Article Stream Settings</string>
     <string name="setting_sign">+</string>
-    <string name="wifi_mobile"><b>MOBILE DATA OR WIFI</b>\n<font size='10'><i>Data charges may apply</i></font></string>
+    <string name="wifi_mobile">STREAM USING MOBILE DATA</string>
     <string name="wifi_only"><b>WIFI ONLY</b></string>
     <string name="do_not_download"><b>DO NOT DOWNLOAD</b></string>
     <string name="account_setting">Account Settings</string>

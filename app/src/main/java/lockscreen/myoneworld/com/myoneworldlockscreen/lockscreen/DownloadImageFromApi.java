@@ -71,6 +71,7 @@ public class DownloadImageFromApi extends AsyncTask<String, Integer, String> {
 //
                 pathCover = url[0];
                 try {
+                    save("DOWNLOADING_LOCKSCREEN_COVER_ID_"+articleId,"1",mContext);
                     URL urlForImg = new URL(pathCover);
                     URLConnection urlConnection = urlForImg.openConnection();
                     urlConnection.connect();
@@ -211,8 +212,8 @@ public class DownloadImageFromApi extends AsyncTask<String, Integer, String> {
     protected void onPostExecute(String response) {
         if("success".equals(response)) {
             if (ft == 1) {
-                save("image_url_" + articleId, pathCover, mContext);
-                Log.d("url_downloaded_cover", pathCover);
+                save("LOCKSCREEN_COVER_" + articleId, pathCover, mContext);
+                save("DOWNLOADING_LOCKSCREEN_COVER_ID_"+articleId,"",mContext);
                 ActivityLockscreen.status = 1;
             }
             if (ft == 2) {

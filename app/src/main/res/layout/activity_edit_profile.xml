@@ -31,15 +31,13 @@
         android:textColor="#fff"/>
     <TextView
         android:id="@+id/message_notif"
-        android:layout_below="@id/signup_header"
+        android:layout_below="@id/text_registration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="5dp"
+        android:padding="10sp"
         android:background="#ffbc00"
         android:drawableStart="@drawable/ic_icon"
         android:gravity="center"
-        android:padding="10sp"
         android:layout_marginStart="10sp"
         android:layout_marginEnd="10sp"
         android:textColor="#000"
@@ -50,7 +48,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="1"
-        android:layout_below="@+id/text_registration">
+        android:layout_below="@+id/message_notif">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -70,12 +68,11 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="32dp"
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="32dp"
-                    android:ems="10"
                     android:padding="5sp"
                     android:hint="@string/required_first_name"
-                    android:inputType="textPersonName"
+                    android:inputType="textLongMessage"
                     android:textColor="#3a5daa"
                     android:background="#60ffffff"
                     android:gravity="start"
@@ -92,35 +89,60 @@
                     android:layout_marginStart="32dp"
                     android:layout_marginTop="25dp"
                     android:layout_marginEnd="32dp"
-                    android:ems="10"
                     android:hint="@string/required_last_name"
                     android:padding="5sp"
-                    android:inputType="textPersonName"
+                    android:inputType="textLongMessage"
                     android:textColor="#3a5daa"
                     android:background="#60ffffff"
                     android:gravity="left"
                     android:textSize="15sp"/>
 
-                <EditText
-                    android:id="@+id/birth_date_edit"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/last_name_edit"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginEnd="32dp"
-                    android:background="#60ffffff"
-                    android:ems="10"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:gravity="start"
-                    android:hint="@string/required_birthday"
-                    android:padding="5sp"
-                    android:textColor="#3a5daa"
-                    android:textColorHint="#FFFFFF"
-                    android:textSize="15sp" />
+                    android:id="@+id/birth_date_edit"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="270sp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginStart="32dp">
+
+                        <EditText
+                            android:id="@+id/birthdate_edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="25dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="#60ffffff"
+                            android:ems="10"
+                            android:gravity="start"
+                            android:hint="@string/birthday"
+                            android:inputType="date"
+                            android:padding="5sp"
+                            android:textColor="#3a5daa"
+                            android:textColorHint="#FFFFFF"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom">
+
+                        <ImageButton
+                            android:id="@+id/birthday_icon_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_calendar"
+                            android:layout_marginEnd="27sp"
+                            android:layout_marginTop="25sp"
+                            android:padding="20sp"/>
+                    </LinearLayout>
+                </LinearLayout>
 
 
                 <EditText
@@ -196,7 +218,6 @@
                     android:textColor="#3a5daa"
                     android:background="#60ffffff"
                     android:textColorHint="#FFFFFF" />
-
 
                 <Button
                     android:id="@+id/edit_submit"

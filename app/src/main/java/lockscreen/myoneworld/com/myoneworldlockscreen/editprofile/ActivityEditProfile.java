@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -29,11 +30,20 @@ import java.util.Calendar;
 import lockscreen.myoneworld.com.myoneworldlockscreen.R;
 import lockscreen.myoneworld.com.myoneworldlockscreen.home.ActivityHome;
 
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.ADDRESS_RQUIRED;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DEFAULT_BIRTHDAY;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.EMAIL_REQUIRED;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.FIRST_NAME_REQUIRED;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.GOTHIC_FONT_PATH;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INVALID_DATE;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.INVALID_EMAIL;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.LAST_NAME_REQUIRED;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.PHONE_NUMBER_REQUIRED;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.getValueString;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.editProfilePopUp;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isValidBirthday;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.setFont;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.showTopNotification;
 
 public class ActivityEditProfile extends AppCompatActivity {
     private Context mContext = this;
@@ -60,6 +70,8 @@ public class ActivityEditProfile extends AppCompatActivity {
     private String dealer;
     private String galleryId;
     private DatePickerDialog.OnDateSetListener mDatePicker;
+    private ImageButton calendarIcon;
+    private TextView messageNotif;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         font = setFont(mContext,GOTHIC_FONT_PATH);
@@ -115,10 +127,12 @@ public class ActivityEditProfile extends AppCompatActivity {
         tvFirstName = findViewById(R.id.first_name_edit);
         tvLastName = findViewById(R.id.last_name_edit);
         tvAddress = findViewById(R.id.address_edit);
-        tvBirthday = findViewById(R.id.birth_date_edit);
+        tvBirthday = findViewById(R.id.birthdate_edit);
         tvEmail = findViewById(R.id.email_edit);
         tvPhoneNumber = findViewById(R.id.phone_number_edit);
         submitEdit = findViewById(R.id.edit_submit);
+        calendarIcon = findViewById(R.id.birthday_icon_edit);
+        messageNotif = findViewById(R.id.message_notif);
 
         tvFirstName.addTextChangedListener(textWatcher);
         tvLastName.addTextChangedListener(textWatcher);
@@ -141,7 +155,7 @@ public class ActivityEditProfile extends AppCompatActivity {
         tvEmail.setText(email);
         tvPhoneNumber.setText(phoneNumber);
 
-        tvBirthday.setOnClickListener(v -> {
+        calendarIcon.setOnClickListener(v -> {
             Calendar cal = Calendar.getInstance();
             int year = cal.get(Calendar.YEAR);
             int day = cal.get(Calendar.DAY_OF_MONTH);
@@ -162,13 +176,21 @@ public class ActivityEditProfile extends AppCompatActivity {
         };
 
         submitEdit.setOnClickListener(v -> {
-            if(!"".equals(tvFirstName.getText().toString()) &&
-                    tvLastName.getText().toString().length() > 0 &&
-                    tvEmail.getText().toString().length() > 0 &&
-                    tvEmail.getText().toString().contains("@") &&
-                    !tvBirthday.getText().toString().equals(DEFAULT_BIRTHDAY) &&
-                    tvAddress.getText().toString().length() > 0 &&
-                    tvPhoneNumber.getText().toString().length() > 0) {
+            if("".equals(tvFirstName.getText().toString())){
+                showTopNotification(mContext,messageNotif,FIRST_NAME_REQUIRED);
+            }else if("".equals(tvLastName.getText().toString())){
+                showTopNotification(mContext,messageNotif,LAST_NAME_REQUIRED);
+            }else if("".equals(tvEmail.getText().toString())){
+                showTopNotification(mContext,messageNotif,EMAIL_REQUIRED);
+            }else if(!tvEmail.getText().toString().contains("@")){
+                showTopNotification(mContext,messageNotif,INVALID_EMAIL);
+            }else if("".equals(tvAddress.getText().toString())){
+                showTopNotification(mContext,messageNotif,ADDRESS_RQUIRED);
+            }else if("".equals(tvPhoneNumber.getText().toString())){
+                showTopNotification(mContext,messageNotif,PHONE_NUMBER_REQUIRED);
+            }else if(!isValidBirthday(tvBirthday.getText().toString())){
+                showTopNotification(mContext,messageNotif,INVALID_DATE);
+            }else{
                 EditProfileVO vo = new EditProfileVO();
                 EditProfileDAO dao = new EditProfileDAO();
                 vo.setFirstName(tvFirstName.getText().toString());
@@ -181,8 +203,6 @@ public class ActivityEditProfile extends AppCompatActivity {
                 vo.setDealer(dealer);
                 vo.setImageId(galleryId);
                 dao.sendEditProfile(mContext,vo,getValueString("ACCESS_TOKEN",mContext));
-            }else{
-                //invalid email
             }
         });
     }

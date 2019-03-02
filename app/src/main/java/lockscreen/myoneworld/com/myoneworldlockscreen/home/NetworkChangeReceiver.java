@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,23 +35,26 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     TextView fullName;
     TextView email;
     ImageView profilePic;
+    Button serviceButton;
     public NetworkChangeReceiver(ImageView header, Activity activity){
         this.header = header;
         this.activity = activity;
     }
-    public NetworkChangeReceiver(ImageView header, Activity activity,DrawerLayout drawerLayout,TextView fullName, TextView email,ImageView profilePic){
+    public NetworkChangeReceiver(ImageView header, Activity activity,DrawerLayout drawerLayout,TextView fullName, TextView email,ImageView profilePic,Button serviceButton){
         this.header = header;
         this.activity = activity;
         this.drawerLayout = drawerLayout;
         this.fullName = fullName;
         this.email = email;
         this.profilePic = profilePic;
+        this.serviceButton = serviceButton;
     }
     @Override
     public void onReceive(Context context, Intent intent) {
         Animation myanim = AnimationUtils.loadAnimation(context, R.anim.bounce);
         switch (Objects.requireNonNull(intent.getAction())){
             case ConnectivityManager.CONNECTIVITY_ACTION:
+                HomeDAO dao = new HomeDAO(context,((Activity)context));
                 NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
                 if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected() || networkInfo.getType() == ConnectivityManager.TYPE_MOBILE && networkInfo.isConnected()) {
                     header.startAnimation(myanim);
@@ -64,14 +68,14 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                     if("outdated".equalsIgnoreCase(getValueString("VERSION_ONLINE",context))){
                         globalMessageBox(context,NEW_VERSION_MSG,NEW_VERSION_TITLE,MSG_BOX_WARNING,new AlertDialog.Builder(context).create());
                     }
-                    HomeDAO dao = new HomeDAO(context,((Activity)context));
-                    dao.checkIfValidLogin(getValueString("ACCESS_TOKEN",context),drawerLayout,fullName,email,profilePic);
+                    dao.checkIfValidLogin(getValueString("ACCESS_TOKEN",context),drawerLayout,fullName,email,profilePic,serviceButton);
                 }
                 else {
                     header.startAnimation(myanim);
                     header.setBackgroundColor(Color.parseColor("#3a5daa"));
                     header.setImageResource(R.drawable.connection);
                     header.setClickable(false);
+                    dao.checkIfValidLogin(getValueString("ACCESS_TOKEN",context),drawerLayout,fullName,email,profilePic,serviceButton);
                 }
                 break;
         }

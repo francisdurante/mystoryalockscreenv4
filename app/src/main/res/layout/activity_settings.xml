@@ -28,7 +28,8 @@
             android:paddingStart="10sp"
             android:gravity="center"
             android:textSize="15sp"
-            android:textColor="#90fdfd65"/>
+            android:textColor="#90fdfd65"
+            android:visibility="gone"/>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -120,7 +121,8 @@
                         android:paddingTop="20sp"
                         android:paddingBottom="15sp"
                         android:text="@string/wifi_only"
-                        android:textColor="#FFF" />
+                        android:textColor="#FFF"
+                        android:visibility="gone"/>
 
                     <Switch
                         android:id="@+id/do_not_download"
@@ -131,7 +133,8 @@
                         android:paddingTop="20sp"
                         android:paddingBottom="15sp"
                         android:text="@string/do_not_download"
-                        android:textColor="#FFF" />
+                        android:textColor="#FFF"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <TextView

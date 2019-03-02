@@ -147,7 +147,7 @@ public class LoginDAO {
                             String facebookKey = serverResp.getString("facebook_key");
                             String googleKey = serverResp.getString("google_key");
                             String twitterKey = serverResp.getString("twitter_key");
-
+                            String decrypt = serverResp.getString("decrypt");
                             vo.setFullName(fullName);
                             vo.setUserID(userId);
                             vo.setEmail(email);
@@ -160,7 +160,7 @@ public class LoginDAO {
                             save("FB_KEY",facebookKey,mContext);
                             save("GOOGLE_KEY",googleKey,mContext);
                             save("TWITTER_KEY",twitterKey,mContext);
-
+                            save("DECRYPT",decrypt,mContext);
 
                             util.hideLoading();
                             mContext.startActivity(new Intent(mContext, ActivityHome.class));
@@ -317,7 +317,7 @@ public class LoginDAO {
 
             @Override
             public void failure(TwitterException exception) {
-                Toast.makeText(mContext,exception.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext,"Login failed." ,Toast.LENGTH_SHORT).show();
                 TwitterCore.getInstance().getSessionManager().clearActiveSession();
             }
         });

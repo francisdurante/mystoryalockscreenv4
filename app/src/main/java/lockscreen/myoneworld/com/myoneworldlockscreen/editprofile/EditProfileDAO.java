@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,8 +154,10 @@ public class EditProfileDAO {
             if(!"".equals(vo.getDealer()) || null != vo.getDealer()) {
                 userProfileParam.put("dealer", Integer.parseInt(vo.getDealer()));
             }
-            if(!"".equals(vo.getImageId())){
-                userProfileParam.put("gallery_id", Integer.parseInt(vo.getImageId()));
+            if(null != vo.getImageId()) {
+                if (!"".equals(vo.getImageId())) {
+                    userProfileParam.put("gallery_id", Integer.parseInt(vo.getImageId()));
+                }
             }
             if (vo.isChangePassword()) {
                 userProfileParam.put("change_password", 1);
@@ -187,18 +190,18 @@ public class EditProfileDAO {
                                 }
                                 save("FULL_NAME", fullName, context);
                                 save("EMAIL", email, context);
+                                save("DECRYPT",vo.getNewPassword(),context);
                             } else {
                                 globalMessageBox(context, ERROR_EDIT_PROFILE_MSG, EDIT_PROFILE_TITLE, MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
                             }
                         } catch (JSONException e) {
-
+                           globalMessageBox(context,e.getMessage(),MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         globalMessageBox(context,responseString,MSG_BOX_ERROR.toUpperCase(),MSG_BOX_ERROR,new AlertDialog.Builder(context).create());
-//                                showNotifError(context, ((Activity) context).findViewById(R.id.notif_message), responseString);
                     }
 
                     @Override
@@ -211,12 +214,12 @@ public class EditProfileDAO {
     }
 
     public void editProfilePic(Context context, String profilePicturePath, String accessToken, EditProfileVO vo){
-        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpClient client = new AsyncHttpClient(true,80,443);
         RequestParams rp = new RequestParams();
         try {
             rp.add("folder", "profile");
             rp.add("sellerRequest", "1");
-            rp.put("image[]", new File(profilePicturePath),"multipart/form-data","image.jg");
+            rp.put("image[]", new File(profilePicturePath),"multipart/form-data","image.jpg");
             client.post(context,
                     API_STATUS.equalsIgnoreCase("LIVE") ?
                             EDIT_PROFILE_PIC_LIVE : EDIT_PROFILE_PIC_TEST,

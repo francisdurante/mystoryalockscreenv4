@@ -30,7 +30,7 @@ public class Constant {
 
 
     public static final String ANDROID_PATH = Environment.getExternalStorageDirectory().toString() + "/Android/data/";
-    public static final String DEFAULT_BIRTHDAY = "1890/04/11";
+    public static final String DEFAULT_BIRTHDAY = "1890-04-11";
     public static final String DEFAULT_COUNTRY = "Philippines";
     public static final String DEFAULT_CONTACT = "DEFAULT_CONTACT_ANDROID";
     public static final String DEFAULT_ADDRESS = "DEFAULT_ADDRESS_ANDROID";
@@ -53,7 +53,7 @@ public class Constant {
     public static final String EXPIRED_LOG_IN = "Expired Login";
     public static final String LOGGING_OUT_TITLE = "Logging Out";
     public static final String LOGGING_OUT_MESSAGE = "Do you want to logout my|storya?";
-    public static final String LOGIN_EXPIRED_MSG = "Your session is invalid or expired.\nPlease log in again";
+    public static final String LOGIN_EXPIRED_MSG = "Please check your internet connection and try again.";
     public static final String NEW_VERSION_MSG = "New Version is now available in Google Play Store. Please update to continue using the lockscreen.";
     public static final String NEW_VERSION_TITLE = "Application Update";
     public static final String DATA_USAGE_MSG = "Using Mobile Data Connection, may cause data charges";
@@ -73,6 +73,8 @@ public class Constant {
     public static final String EMAIL_ALREADY_REGISTERED = "This email address was already registered using different social or manual login.";
     public static final String ERROR_OCCURED = "ERROR OCCURED.";
     public static final String DEVELOPMENT_VERSION = "DEVELOPMENT VERSION";
+    public static final String SET_NEW_PASSWORD = "SET NEW PASSWORD";
+    public static final String WAIT_FOR_A_WHILE = "LOADING...";
 
     public static final String CONSUMER_KEY = "F64atV1oWBXFAKhwn6tyktWMA";
     public static final String CONSUMER_SECRET = "FgOylOPUnzV9g063MbvLlA6sTTaHxq0kpPDLUK2CtGuaNcnbyd";
@@ -96,11 +98,10 @@ public class Constant {
     public static final String BIRTHDAY_REQUIRED = "Birthday Field is Required";
     public static final String ADDRESS_RQUIRED = "Address Field is Required";
     public static final String INVALID_EMAIL = "Invalid Email Address"; //@
-    public static final String INVALID_DATE = "Invalid date format. Need date format(YYYY/MM/DD)";
+    public static final String INVALID_DATE = "Invalid date format. Need date format(YYYY/MM/DD) or (YYYY-MM-DD)";
     public static final String REGISTER_SUCCESS = "Registration Successful!\nYou will now be redirected to login page.";
     public static final String NO_PHOTO = "No photo is selected or capture. Please try again.";
     public static final String DOWNLOADING_VIDEO = "Video is still download wait for download to finish";
-
     public static final String MSG_BOX_WARNING = "warning";
     public static final String MSG_BOX_SUCCESS = "success";
     public static final String MSG_BOX_ERROR = "error";
@@ -188,7 +189,7 @@ public class Constant {
     public static final int REQUEST_CODE_CAMERA = 10003;
     public static final int REQUEST_CODE_READ_STORAGE = 10004;
 
-    public static final String PHP_CURRENCY_WALLET = "MY.RING\n";
+    public static final String PHP_CURRENCY_WALLET = "RING.PH\n";
     public static final String RAFFLE_POINTS_WALLET = "RAFFLE POINTS\n";
 
     public static final String PHP = "PHP";

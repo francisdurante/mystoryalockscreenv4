@@ -8,6 +8,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -59,6 +62,8 @@ import lockscreen.myoneworld.com.myoneworldlockscreen.webviews.ActivityWebView;
 
 public class ActivityLockscreen extends AppCompatActivity {
     String id;
+    private SensorManager mSensorManager;
+    private Sensor mSensor;
     public static String article_id;
     public static int ads_count = -1;
     public static int totalSize = -1;
@@ -129,8 +134,11 @@ public class ActivityLockscreen extends AppCompatActivity {
             super.onCreate(savedInstanceState);
         }
     }
+
     private void init(){
         try {
+            mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             right = this.findViewById(R.id.right);
             left = this.findViewById(R.id.left);
@@ -477,5 +485,4 @@ public class ActivityLockscreen extends AppCompatActivity {
         super.onStart();
         setActivityRunning(true);
     }
-
 }

@@ -274,7 +274,7 @@ public class ActivityRegister extends AppCompatActivity {
             });
 
             mDatePicker = (view, year, month, dayOfMonth) -> {
-                month =+ 1;
+                month = month + 1;
                 birthday.setText(year+"/"+month+"/"+dayOfMonth);
             };
         }

@@ -22,6 +22,7 @@ import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.NEGATIVE_B
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DISABLE_LOCKSCREEN_MSG;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.DISABLE_LOCKSCREEN_TITLE;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.MSG_BOX_WARNING;
+import static lockscreen.myoneworld.com.myoneworldlockscreen.Constant.SET_NEW_PASSWORD;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.SharedPreferences.*;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.dataChargesSettingMessageBox;
 import static lockscreen.myoneworld.com.myoneworldlockscreen.Utility.isMyServiceRunning;
@@ -83,6 +84,17 @@ public class ActivitySettings extends AppCompatActivity {
 
         Typeface font = Typeface.createFromAsset(getAssets(), "font/Century_Gothic.ttf");
 
+        String decrypt = getValueString("DECRYPT",mContext);
+        String facebookKey = getValueString("FB_KEY",mContext);
+        String googleKey = getValueString("GOOGLE_KEY",mContext);
+        String twitterKey = getValueString("TWITTER_KEY",mContext);
+
+        if(decrypt.contains(facebookKey) ||
+                decrypt.contains(googleKey) ||
+                decrypt.contains(twitterKey)){
+            changePasswordText.setText(SET_NEW_PASSWORD);
+        }
+
         downloadSettingText.setTypeface(font);
         accountSettingText.setTypeface(font);
         settingText.setTypeface(font);
@@ -91,7 +103,6 @@ public class ActivitySettings extends AppCompatActivity {
         wifiAndData.setTypeface(font);
         doNotDownload.setTypeface(font);
         wifiOnly.setTypeface(font);
-//        logoutText.setTypeface(font);
         changePasswordText.setTypeface(font);
 
         settingText.setText(SETTING_TEXT);

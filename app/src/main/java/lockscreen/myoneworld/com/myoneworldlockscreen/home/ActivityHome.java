@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -47,6 +48,7 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -197,8 +199,8 @@ public class ActivityHome extends AppCompatActivity {
         }
         if (requestCode == REQUEST_CODE_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, REQUEST_CODE_CAMERA);
+//                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(intent, REQUEST_CODE_CAMERA);
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA);
             }
@@ -321,11 +323,11 @@ public class ActivityHome extends AppCompatActivity {
         logout.setOnMenuItemClickListener(menuClick);
         wallet.setOnMenuItemClickListener(menuClick);
 
-        ncr = new NetworkChangeReceiver(header, this, drawerLayout, fullName, email, profilePicture
-        );
+        serviceButton = findViewById(R.id.stopService);
+        ncr = new NetworkChangeReceiver(header, this, drawerLayout, fullName, email, profilePicture,
+                serviceButton);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        serviceButton = findViewById(R.id.stopService);
         registerReceiver(ncr, intentFilter);
     }
 
@@ -359,8 +361,8 @@ public class ActivityHome extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
                 if (null != photo) {
-//                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//                    photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    photo.compress(Bitmap.CompressFormat.PNG, 100, bytes);
                     Utility.customLoadProfilePic(mContext, photo, R.drawable.com_facebook_profile_picture_blank_square);
                 } else {
                     globalMessageBox(mContext, NO_PHOTO, MSG_BOX_ERROR.toUpperCase(), MSG_BOX_ERROR,new AlertDialog.Builder(mContext).create());

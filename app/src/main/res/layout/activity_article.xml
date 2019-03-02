@@ -63,7 +63,14 @@
             android:id="@+id/seek_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10sp"
+            android:padding="5sp"
+            android:progressDrawable="@drawable/seek_bar"
+            android:thumb="@drawable/seeker_thumb_layout"
+            android:minHeight="30dp"
+            android:minWidth="30dp"
+            android:maxHeight="5dp"
+            android:maxWidth="5dp"
+
             />
     </LinearLayout>
 

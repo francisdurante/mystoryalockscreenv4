@@ -114,158 +114,32 @@ public class LockscreenDAO {
                     JSONArray data = serverResp.getJSONArray("data");
                     for (int x = 0; x < data.length(); x++) {
                         String url = getValueString("image_url_" + data.getJSONObject(x).getString("id"), mContext);
-                        String idForSetting = data.getJSONObject(x).getString("id");
+                        String storyId = data.getJSONObject(x).getString("id");
                         String kindDownload = data.getJSONObject(x).getString("show");
+                        String lockscreenCoverUrl = data.getJSONObject(x).getString("image_url");
+                        String videoUrl = data.getJSONObject(x).getString("video_url");
                         String title = data.getJSONObject(x).getString("title");
-                        save("my_storya_title_" + idForSetting, title, mContext);
-                        if (!"1".equals(getValueString("DO_NOT_DOWNLOAD", mContext))) {
-                            String video = data.getJSONObject(x).getString("video_url");
-                            String id = data.getJSONObject(x).getString("id");
-                            String imageUrl = data.getJSONObject(x).getString("image_url");
-                            if (!"".equals(video) && !"null".equals(video) && kindDownload.equals("slide_show")) {
-                                save("article_kind_" + id, "video_with_slide_show", mContext);
-                            } else {
-                                save("article_kind_" + id, kindDownload, mContext);
-                            }
-                            downloadArticle = new DownloadImageFromApi(1, id, mContext, 0).execute(imageUrl);
-                            if ("video".equals(kindDownload)) {
-                                if (getValueString("WIFI_ONLY", mContext).equals("1") &&
-                                        getConnectionType(mContext).equalsIgnoreCase("WIFI")) {
-                                    String videoUrlWifiOnly = data.getJSONObject(x).getString("video_url");
-                                    if (!getValueString("video_url_download_" + idForSetting, mContext).equals(videoUrlWifiOnly)) {
-                                        save("video_url_download_" + idForSetting, videoUrlWifiOnly, mContext);
-                                        save("video_url_" + idForSetting, videoUrlWifiOnly, mContext);
-                                        downloadVideo = new DownloadImageFromApi(2, idForSetting, mContext, 0).execute(videoUrlWifiOnly);
-                                        Log.d("Video Download", "Download video with id " + idForSetting);
-                                    }
-                                } else if (getValueString("WIFI_OR_DATA", mContext).equals("1") &&
-                                        getConnectionType(mContext).equalsIgnoreCase("WIFI") ||
-                                        getConnectionType(mContext).equalsIgnoreCase("MOBILE")) { // wifi or data
+                        save("my_storya_title_" + storyId, title, mContext);
 
-                                    String videoUrlWifiOrData = data.getJSONObject(x).getString("video_url");
-                                    if (!getValueString("video_url_download_" + idForSetting, mContext).equals(videoUrlWifiOrData)) {
-                                        save("video_url_download_" + idForSetting, videoUrlWifiOrData, mContext);
-                                        save("video_url_" + idForSetting, videoUrlWifiOrData, mContext);
-                                        downloadVideo = new DownloadImageFromApi(2, idForSetting, mContext, 0).execute(videoUrlWifiOrData);
-                                        Log.d("Video Download", "Download video with id " + idForSetting);
-                                    }
-                                }
-                            } else if ("slide_show".equals(kindDownload)) {
-                                String[] imageComicsUrl;
-                                Log.d("downloading", "downloading article comic id " + idForSetting);
-                                JSONObject imageData = new JSONObject(response.toString());
-                                JSONArray data1 = imageData.getJSONArray("data");
-                                JSONArray imageDataDownload = data1.getJSONObject(x).getJSONArray("slide_show_images");
-                                imageComicsUrl = new String[imageDataDownload.length()];
-                                for (int i = 0; i < imageDataDownload.length(); i++) {
-                                    Log.d("comics url", imageDataDownload.getString(i));
-                                    if (!imageDataDownload.getString(i).equals(getValueString("comic_article_download_" + idForSetting + "_" + i, mContext))) {
-                                        imageComicsUrl[i] = imageDataDownload.getString(i);
-                                        save("comic_article_download_" + idForSetting + "_" + i, imageComicsUrl[i], mContext);
-                                        downloadVideo = new DownloadImageFromApi(3, idForSetting, mContext, 0, i).execute(imageComicsUrl[i]);
-                                    }
-                                }
-                            }
+                        //downloading article cover
+                        if("".equals(getValueString("LOCKSCREEN_COVER_"+storyId,mContext))
+                                && "".equals(getValueString("DOWNLOADING_LOCKSCREEN_COVER_ID_"+storyId,mContext))) {
+                            downloadArticle = new DownloadImageFromApi(1, storyId, mContext, 0).execute(lockscreenCoverUrl);
+                            System.out.println("downloading cover " + storyId);
                         }
-                        if (!"".equals(data.getJSONObject(x).getString("image_url")) && "".equals(url)) {
-                            String kind = data.getJSONObject(x).getString("show");
-                            String video = data.getJSONObject(x).getString("video_url");
-                            String id = data.getJSONObject(x).getString("id");
-                            String imageUrl = data.getJSONObject(x).getString("image_url");
-                            if (!"".equals(video) && !"null".equals(video) && kind.equals("slide_show")) {
-                                save("article_kind_" + id, "video_with_slide_show", mContext);
-                            } else {
-                                save("article_kind_" + id, kind, mContext);
-                            }
-                            downloadArticle = new DownloadImageFromApi(1, id, mContext, 0).execute(imageUrl);
-                            ///video things..
-                            if (getValueString("DO_NOT_DOWNLOAD", mContext).equals("1")) { // cloud loading
-                                String videoUrl = data.getJSONObject(x).getString("video_url");
-                                save("video_url_" + id, videoUrl, mContext);
-                            } else if (getValueString("WIFI_ONLY", mContext).equals("1") &&
-                                    getConnectionType(mContext).equalsIgnoreCase("WIFI")) { //wifi only
-                                String videoUrlWifiOnly = data.getJSONObject(x).getString("video_url");
-                                if (!getValueString("video_url_download_" + id, mContext).equals(videoUrlWifiOnly)) {
-                                    save("video_url_download_" + id, videoUrlWifiOnly, mContext);
-                                    downloadVideo = new DownloadImageFromApi(2, id, mContext, 0).execute(videoUrlWifiOnly);
-                                }
-                                if ("slide_show".equals(kind)) {
-                                    String[] imageComicsUrl;
-                                    Log.d("downloading", "downloading article comic id " + id);
-                                    JSONObject imageData = new JSONObject(response.toString());
-                                    JSONArray data1 = imageData.getJSONArray("data");
-                                    JSONArray imageDataDownload = data1.getJSONObject(x).getJSONArray("slide_show_images");
-                                    imageComicsUrl = new String[imageDataDownload.length()];
-                                    for (int i = 0; i < imageDataDownload.length(); i++) {
-                                        Log.d("comics url", imageDataDownload.getString(i));
-                                        if (!imageDataDownload.getString(i).equals(getValueString("comic_article_download_" + id + "_" + i, mContext))) {
-                                            imageComicsUrl[i] = imageDataDownload.getString(i);
-                                            save("comic_article_download_" + id + i, imageComicsUrl[i], mContext);
-                                            downloadVideo = new DownloadImageFromApi(3, id, mContext, 0).execute(imageComicsUrl[i]);
-                                        }
-                                    }
-                                }
-                            } else if (getValueString("WIFI_OR_DATA", mContext).equals("1") &&
-                                    getConnectionType(mContext).equalsIgnoreCase("WIFI") ||
-                                    getConnectionType(mContext).equalsIgnoreCase("MOBILE")) { // wifi or data
-                                String videoUrlWifiOrData = data.getJSONObject(x).getString("video_url");
-                                if (!getValueString("video_url_download_" + id, mContext).equals(videoUrlWifiOrData)) {
-                                    save("video_url_download_" + id, videoUrlWifiOrData, mContext);
-                                    downloadVideo = new DownloadImageFromApi(2, id, mContext, 0).execute(videoUrlWifiOrData);
-                                }
-                                if ("slide_show".equals(kind)) {
-                                    String[] imageComicsUrl;
-                                    Log.d("downloading", "downloading article comic id " + idForSetting);
-                                    JSONObject imageData = new JSONObject(response.toString());
-                                    JSONArray data1 = imageData.getJSONArray("data");
-                                    JSONArray imageDataDownload = data1.getJSONObject(x).getJSONArray("slide_show_images");
-                                    imageComicsUrl = new String[imageDataDownload.length()];
-                                    for (int i = 0; i < imageDataDownload.length(); i++) {
-                                        Log.d("comics url", imageDataDownload.getString(i));
-                                        if (!imageDataDownload.getString(i).equals(getValueString("comic_article_download_" + id + "_" + i, mContext))) {
-                                            imageComicsUrl[i] = imageDataDownload.getString(i);
-                                            save("comic_article_download_" + id + "_" + i, imageComicsUrl[i], mContext);
-                                            downloadVideo = new DownloadImageFromApi(3, id, mContext, 0).execute(imageComicsUrl[i]);
-                                        }
-                                    }
-                                }
-                            }
+                        if(!"".equals(getValueString("LOCKSCREEN_COVER_"+storyId,mContext))
+                                && !lockscreenCoverUrl.equals(getValueString("LOCKSCREEN_COVER_"+storyId,mContext))){
+                            downloadArticle = new DownloadImageFromApi(1, storyId, mContext, 1).execute(lockscreenCoverUrl);
+                            System.out.println("EDITED LOCKSCREEN COVER");
                         }
-                        if (!"".equals(url) && !url.equals(data.getJSONObject(x).getString("image_url"))) { //edit in admin panel
-                            String kind = data.getJSONObject(x).getString("show");
-                            String video = data.getJSONObject(x).getString("video_url");
-                            String id = data.getJSONObject(x).getString("id");
-                            String imageUrl = data.getJSONObject(x).getString("image_url");
-                            if (!"".equals(video) && !"null".equals(video) && kind.equals("slide_show")) {
-                                save("article_kind_" + id, "video_with_slide_show", mContext);
-                            } else {
-                                save("article_kind_" + id, kind, mContext);
-                            }
-                            downloadArticle = new DownloadImageFromApi(1, id, mContext, 1).execute(imageUrl);
-                            //edited video
-                            if (!"".equals(getValueString("video_url_" + id, mContext)) && !getValueString("video_url_" + id, mContext).equals(data.getJSONObject(x).getString("video_url"))) {
-                                if (getValueString("DO_NOT_DOWNLOAD", mContext).equals("1")) { // cloud loading
-                                    String videoUrl = data.getJSONObject(x).getString("video_url");
-                                    save("video_url_" + id, videoUrl, mContext);
-                                } else if (getValueString("WIFI_ONLY", mContext).equals("1") &&
-                                        getConnectionType(mContext).equalsIgnoreCase("WIFI")) { //wifi only
-                                    String videoUrlWifiOnly = data.getJSONObject(x).getString("video_url");
-                                    if (!getValueString("video_url_" + id, mContext).equals(videoUrlWifiOnly)) {
-                                        save("video_url_" + id, videoUrlWifiOnly, mContext);
-                                        save("video_url_download_" + id, videoUrlWifiOnly, mContext);
-                                        downloadVideo = new DownloadImageFromApi(2, id, mContext, 1).execute(videoUrlWifiOnly);
-                                    }
-                                } else if (getValueString("WIFI_OR_DATA", mContext).equals("1") &&
-                                        getConnectionType(mContext).equalsIgnoreCase("WIFI") ||
-                                        getConnectionType(mContext).equalsIgnoreCase("MOBILE")) { // wifi or data
-                                    String videoUrlWifiOrData = data.getJSONObject(x).getString("video_url");
-                                    if (!getValueString("video_url_" + id, mContext).equals(videoUrlWifiOrData)) {
-                                        save("video_url_" + id, videoUrlWifiOrData, mContext);
-                                        save("video_url_download_" + id, videoUrlWifiOrData, mContext);
-                                        downloadVideo = new DownloadImageFromApi(2, id, mContext, 1).execute(videoUrlWifiOrData);
-                                    }
-                                }
-                            }
+
+                        if (!"".equals(videoUrl) && !"null".equals(videoUrl) && kindDownload.equals("slide_show")) {
+                            save("ARTICLE_KIND_" + storyId, "video_with_slide_show", mContext);
+                        }else {
+                            save("ARTICLE_KIND_" + storyId, kindDownload, mContext);
+                        }
+                        if("video".equals(kindDownload)){
+                            save("VIDEO_URL_ID_"+storyId,videoUrl,mContext);
                         }
                     }
                 } catch (JSONException e) {
